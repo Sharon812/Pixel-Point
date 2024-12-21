@@ -3,6 +3,7 @@ const app = express();
 
 const loadHomePage = async (req, res) => {
   try {
+    res.render("");
   } catch (error) {
     console.log("error at home page");
     res.status(500).send("server error occured");

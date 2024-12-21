@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 
+//for admin page dashboard rendering
 const loadAdminDashboard = async (req, res) => {
   try {
     return res.render("admindashboard");
