@@ -1,9 +1,10 @@
 const express = require("express");
 const app = express();
 
-const loadHomePage = async (req, res) => {
+//function to render user login page 
+const loadLoginPage = async (req, res) => {
   try {
-    res.render("");
+    res.render("userLoginPage");
   } catch (error) {
     console.log("error at home page");
     res.status(500).send("server error occured");
@@ -11,5 +12,5 @@ const loadHomePage = async (req, res) => {
 };
 
 module.exports = {
-  loadHomePage,
+  loadLoginPage,
 };
