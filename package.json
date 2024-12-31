@@ -4,7 +4,7 @@
   "description": "A e-commerce store which sells both new and refurbished laptops",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon index"
   },
   "repository": {
     "type": "git",
