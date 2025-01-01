@@ -24,6 +24,12 @@ app.use(
   })
 );
 
+//need to check why i did it
+app.use((req,res,next) => {
+  res.set('cache-control', 'no-store')
+  next()
+})
+
 app.use(express.static(path.join(__dirname, "public")));
 
 app.set("view engine", "ejs");
