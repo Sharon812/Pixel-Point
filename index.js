@@ -5,7 +5,7 @@ const session = require("express-session");
 const env = require("dotenv").config();
 const db = require("./config/db");
 const passport = require('./config/passport')
-// const adminSide = require("./routes/admin/adminRoute");
+const adminSide = require("./routes/admin/adminRoute");
 const userSide = require("./routes/user/userRoute");
 db();
 
@@ -45,9 +45,9 @@ app.set("views", [
 ]);
 
 //setting up admin route
-// app.use("/admin", adminSide);
+app.use("/admin", adminSide);
 
-//setting up user routee
+//setting up user routee 
 app.use("/", userSide);
 
 app.listen(process.env.PORT, () => {
