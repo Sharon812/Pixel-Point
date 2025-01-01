@@ -74,6 +74,7 @@ async function sendVerificationEmail(email,otp){
 //function on verifying signup details
 const signup = async (req,res) => {
     try {
+      console.log(req.body)
     const {name, phone, email , password , cpassword} = req.body
    
     if(password !== cpassword){
@@ -82,7 +83,7 @@ const signup = async (req,res) => {
 
     const findUser = await User.findOne({email})
     if(findUser){
-      return res.render("signaUpPage",{message:""})
+      return res.render("signUpPage",{message:"user already exists"})
     }
     
     const otp = generateOtp()
@@ -119,7 +120,6 @@ const securePassword = async (password) => {
 //function to do verify otp
 const verifyOtp = async (req,res) => {
   try {
-    console.log(req.body)
     const {otp} = req.body;
     
     console.log("otp",otp)
@@ -136,7 +136,7 @@ const verifyOtp = async (req,res) => {
       })
       await saveUserData.save()
       req.session.user = saveUserData._id;
-      res.json({ success: true, redirectUrl: '_self' });
+      res.json({ success: true, redirectUrl:"/" });
     }else{
       res.status(400).json({success:false, message:"Please try again"})
     }
@@ -147,6 +147,35 @@ const verifyOtp = async (req,res) => {
 
   }
 }
+
+//function for resending otp
+const resendOtp = async (req,res)=> {
+    try {
+      
+      const {email} = req.session.userData;
+      console.log("emailskdio",email)
+      if(!email){
+        return res.status(400).status({success:false, message:"email not found in session"})
+      }
+
+      const otp = generateOtp()
+      req.session.userOtp = otp;
+
+      const emailSent = await sendVerificationEmail(email,otp)
+
+      if(emailSent){
+        console.log("resend email send ",otp)
+        res.status(200).json({success:true,message:"otp send successfully"})
+      }else{
+        res.status(500).json({success:false,message:"Otp failed to send"})
+      }
+
+    } catch (error) {
+      console.log("Error at resend otp",error)
+      res.status(500).json({success:false,message:"Internal server error "})
+
+    }
+}
   
 module.exports = {
     loadLoginPage,
@@ -154,4 +183,5 @@ module.exports = {
     signup,
     loadHomePage,
     verifyOtp,
+    resendOtp,
 }

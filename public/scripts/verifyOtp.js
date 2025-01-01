@@ -1,81 +1,131 @@
-let timerElement = document.getElementById('timer');
-let resendLink = document.getElementById('resend-link');
-let timeLeft = 120; // 2 minutes in seconds
+document.addEventListener('DOMContentLoaded', function() {
+    const otpInput = document.querySelector('.otp-input');
+    const form = document.getElementById('otpForm');
+    const resendButton = document.getElementById('resendOTP');
+    const timerSpan = document.getElementById('timer');
+    let timeLeft = 60;
+    let timerInterval;
 
-const updateTimer = () => {
-    let minutes = Math.floor(timeLeft / 60);
-    let seconds = timeLeft % 60;
-    timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    resendButton.style.display = 'none';
+    otpInput.focus();
 
-    if (timeLeft > 0) {
-        timeLeft--;
-    } else {
-        resendLink.classList.remove('disabled');
+    // Handle OTP input - restrict to numbers and 6 digits
+    otpInput.addEventListener('input', function(e) {
+        this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6);
+    });
+
+    // Timer functionality
+    function startTimer() {
+        timeLeft = 60;
+        resendButton.style.display = 'none';
+        timerSpan.parentElement.parentElement.style.display = 'block';
+        
+        clearInterval(timerInterval);
+        updateTimer();
+        timerInterval = setInterval(() => {
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                resendButton.style.display = 'inline';
+                timerSpan.parentElement.parentElement.style.display = 'none';
+                return;
+            }
+            timeLeft--;
+            updateTimer();
+        }, 1000);
     }
-};
 
-resendLink.addEventListener('click', (e) => {
-    e.preventDefault();
-    if (resendLink.classList.contains('disabled')) return;
+    function updateTimer() {
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        timerSpan.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
 
-    // Simulate OTP resend logic here
-    alert('OTP has been resent!');
+    // Start the initial timer
+    startTimer();
 
-    timeLeft = 120; // Reset the timer
-    resendLink.classList.add('disabled');
+    // Handle resend OTP click
+    resendButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        // Here you can add your API call to resend OTP
+        startTimer();
+        otpInput.value = ''; // Clear the OTP input
+        otpInput.focus();
+    });
 });
 
-resendLink.classList.add('disabled'); // Disable resend initially
-setInterval(updateTimer, 1000);
-
-// document.getElementById('otp-form').addEventListener('submit', (e) => {
-//     e.preventDefault();
-//     const otp = document.getElementById('otp-input').value;
-
-//     if (otp.length === 6) {
-//         alert('OTP Verified Successfully!');
-//     } else {
-//         alert('Invalid OTP. Please try again.');
-//     }
-// });
-
-function validateOTP() {
-
-  const otp = document.getElementById('otp-input').value
   
-  $.ajax({
-    type:"POST",
-    url:"verify-otp",
-    data:({otp:otp}),
-    success: function (response){
-      if(response.success){
-        // Swal.fire({
-        //   icon:"success",
-        //   title:"Otp verifed successfully",
-        //   showConfirmButton:false,
-        //   timer:1500,
-        // }).then(()  => {
-          console.log("Redirecting to:", response.redirectUrl);
-          window.location.href = '/login';
-          // })
+  function validateOtp(){
+    const fullotp = document.getElementById("otp").value;
 
-      }else{
+    if (!otp) {
         Swal.fire({
-          icon:"error",
-          title:"Error",
-          text:response.message,
-        })
-      }
-    },
-    error:function (){
-      Swal.fire({
-        icon:"Error",
-        title:"Invalid otp",
-        text:"Please try again"  
-      })
+            icon: "error",
+            title: "Invalid OTP",
+            text: "Please enter a valid OTP.",
+            showConfirmButton: true
+        });
+        return false;
     }
-  })
-  return false;
+
+    $.ajax({
+        type:"POST",
+        url:"verify-otp",
+        data:{otp:fullotp},
+        success: function(response){
+            if(response.success){
+                Swal.fire({
+                    icon:"success",
+                    title:"OTP Verified Successfully",
+                    showConfirmButton: false,
+                    timer:1500,
+                }).then(()=>{
+                    window.location.href = response.redirectUrl;
+                })
+            }else{
+                Swal.fire({
+                    icon:"error",
+                    title:"Error",
+                    text: response.message,
+                    showConfirmButton: false,
+                    timer:1500,
+                })
+            }
+        },
+        error: function(){
+            Swal.fire({
+                icon:"error",
+                title:"invalid OTP",
+                text: "Please try again",
+                showConfirmButton: false,
+                timer:1500,
+            })
+        }
+    })
+    return false;
 }
 
+
+function resendOtp(){
+    $.ajax({
+        type: "POST",
+        url: "resend-otp",
+        success: function(response){
+            if(response.success){
+                Swal.fire({
+                    icon:"success",
+                    title:"Otp resended successfully",
+                    showConfirmButton: false,
+                    timer:1500
+                })
+            }else{
+                Swal.fire({
+                    icon:"error",
+                    title:"error",
+                    text:"An error occured while resending otp! please try again"
+                })
+            }
+        }
+    })
+    return false;  
+}
 

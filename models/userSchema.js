@@ -11,7 +11,7 @@ const userSchema = new Schema({
     required: true,
     unique: true,
   },
-  phoneNumber: {
+  phone: {
     type: String,
     required: false, //here its false because of google sign in
     unique: false,
