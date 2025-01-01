@@ -4,6 +4,7 @@ const path = require("path");
 const session = require("express-session");
 const env = require("dotenv").config();
 const db = require("./config/db");
+const passport = require('./config/passport')
 // const adminSide = require("./routes/admin/adminRoute");
 const userSide = require("./routes/user/userRoute");
 db();
@@ -23,6 +24,11 @@ app.use(
     },
   })
 );
+
+//google auth middleware
+app.use(passport.initialize());
+app.use(passport.session())
+
 
 //need to check why i did it
 app.use((req,res,next) => {

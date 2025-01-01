@@ -20,8 +20,8 @@ const userSchema = new Schema({
   },
   googleId: {
     type: String,
-    unique: false,
-  },
+    unique: true,
+   },
   password: {
     type: String,
     required: false, //due to google sign in

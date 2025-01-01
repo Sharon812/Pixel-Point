@@ -14,17 +14,6 @@ const loadHomePage = async (req, res) => {
     res.status(500).send('server error occured');
   }
 };
-
-//function to render user login page
-const loadLoginPage = async (req, res) => {
-  try {
-    return res.render('userLoginPage');
-  } catch (error) {
-    console.log('error at home page');
-    res.status(500).send('server error occured');
-  }
-};
-
 //function to render registeration page
 const loadRegisterPage = async (req, res) => {
     try {
@@ -91,7 +80,7 @@ const signup = async (req,res) => {
     const emailSent = sendVerificationEmail(email, otp)
 
     if(!emailSent){
-      return res.json("mail=error")
+      return res.json("Unable to send email")
     }
     req.session.userOtp = otp 
     req.session.userData = {email,password,name,phone }
@@ -176,6 +165,20 @@ const resendOtp = async (req,res)=> {
 
     }
 }
+//function to render user login page
+const loadLoginPage = async (req, res) => {
+  try {
+    if(!req.session.user){
+      return res.render('userLoginPage');
+    }else{
+      res.redirect('/')
+    }
+  } catch (error) {
+    console.log('error at server page');
+    res.status(500).send('server error occured');
+  }
+};
+
   
 module.exports = {
     loadLoginPage,
