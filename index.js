@@ -30,7 +30,7 @@ app.use(passport.initialize());
 app.use(passport.session())
 
 
-//need to check why i did it
+//middleware for not caching 
 app.use((req,res,next) => {
   res.set('cache-control', 'no-store')
   next()

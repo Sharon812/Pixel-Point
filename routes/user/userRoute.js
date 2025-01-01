@@ -4,11 +4,15 @@ const userRoute = express.Router();
 const userController = require("../../controller/users/userController");
 const passport = require('passport');
 
+//page not found route
+userRoute.get("/page-not-found",userController.loadPageNotFound)
+
 //for home page
 userRoute.get('/', userController.loadHomePage);
 
 //for login route
 userRoute.get('/login', userController.loadLoginPage)
+userRoute.post('/login',userController.loginVerification)
 
 //for registeration page
 userRoute.get('/signup', userController.loadRegisterPage);

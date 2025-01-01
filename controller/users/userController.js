@@ -5,6 +5,17 @@ const env = require('dotenv').config();
 const bycrypt = require('bcrypt');
 const { triggerAsyncId } = require('async_hooks');
 
+//function to render page 404
+const loadPageNotFound = async (req,res) => {
+  try {
+    res.render('page-404')
+  } catch (error) {
+    console.log('error rendering 404 page',error);
+    res.status(500).send('server error occured');
+  }
+ 
+}
+
 //function to render user home page
 const loadHomePage = async (req, res) => {
   try {
@@ -14,6 +25,7 @@ const loadHomePage = async (req, res) => {
     res.status(500).send('server error occured');
   }
 };
+
 //function to render registeration page
 const loadRegisterPage = async (req, res) => {
     try {
@@ -179,6 +191,33 @@ const loadLoginPage = async (req, res) => {
   }
 };
 
+//function to verify user login details
+const loginVerification = async (req,res) => {
+  try {
+    
+    const {email,password} = req.body
+    
+    const findUser = await User.findOne({isAdmin:0,email:email})
+    if(!findUser){
+      return res.render('userLoginPage',{message:"user not found"})
+    }
+    if(findUser.isBlocked){
+      return res.render('userLoginPage',{message:"user is blocked by admin"})
+    }
+
+    const passwordMatch = await bycrypt.compare(password,findUser.password)
+    if(!passwordMatch){
+      return res.render('userLoginPage',{message:"incorrect password"})
+    }
+
+    req.session.user = findUser._id
+
+    res.redirect('/')
+  } catch (error) {
+    console.log('error at login page', error);
+    res.render('userLoginPage',{message:"Login failed , please try again later"})
+  }
+}
   
 module.exports = {
     loadLoginPage,
@@ -187,4 +226,6 @@ module.exports = {
     loadHomePage,
     verifyOtp,
     resendOtp,
+    loadPageNotFound,
+    loginVerification
 }

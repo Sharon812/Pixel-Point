@@ -51,6 +51,11 @@
                       <label class="form-label" for="form3Example4cd">Repeat your password</label>
                     </div>
                   </div>
+                  <%  if(locals.message && message.length > 0){  %>
+                    <div class="alert alert-danger text-center">
+                        <%= message  %>
+                    </div>
+                <% } %>
 
                   <div class="form-check d-flex justify-content-center mb-5">
                     <input class="form-check-input me-2" type="checkbox" value="" id="form2Example3c" />
