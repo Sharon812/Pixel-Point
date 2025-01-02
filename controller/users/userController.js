@@ -128,7 +128,7 @@ const verifyOtp = async (req, res) => {
       });
       await saveUserData.save();
       req.session.user = saveUserData._id;
-      res.json({ success: true, redirectUrl: "/login" });
+      res.json({ success: true, redirectUrl: "/" });
     } else {
       res.status(400).json({ success: false, message: "Please try again" });
     }
