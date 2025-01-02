@@ -29,7 +29,8 @@
                             <form novalidate method="post" action="/verify-otp" id="otpForm" onsubmit="return validateOtp()">
                                 <div class="mb-4">
                                     <div class="d-flex justify-content-center">
-                                        <input type="text" id="otp" class="form-control form-control-lg text-center otp-input" maxlength="6" required pattern="[0-9]{6}" inputmode="numeric">
+                                        <input type="text" id="otp" name="otp" class="form-control form-control-lg text-center otp-input" maxlength="6" required
+                                            pattern="[0-9]{6}" inputmode="numeric">
                                     </div>
                                 </div>
                                 <div class="d-grid mb-3">

@@ -20,8 +20,11 @@ const userSchema = new Schema({
   },
   googleId: {
     type: String,
-    unique: true,
-   },
+    required: false, //here its false because of google sign in
+    unique: false,
+    default: null,
+    sparse: true,
+  },
   password: {
     type: String,
     required: false, //due to google sign in

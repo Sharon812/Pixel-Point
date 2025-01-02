@@ -5,9 +5,9 @@ const bcrypt = require("bcrypt");
 //function to load login page
 const loadlogin = async (req, res) => {
   if (req.session.admin) {
-    res.redirect("/admin/dashboard");
+    res.redirect("/admin");
   }
-  res.render("adminLoginPage", { message: null });
+  res.render("adminLoginPage");
 };
 
 //function to verify login details
@@ -16,16 +16,21 @@ const loginverification = async (req, res) => {
     console.log(req.body);
     const { email, password } = req.body;
     const admin = await User.findOne({ email, isAdmin: true });
-    console.log(admin);
     if (admin) {
-      const passwordMatch = bcrypt.compare(password, admin.password);
-
+      const passwordMatch = await bcrypt.compare(password, admin.password);
+      console.log("here", passwordMatch);
       if (passwordMatch) {
         req.session.admin = admin;
-        return res.redirect("/admin/dashboard");
+        return res.redirect("/admin");
       } else {
-        return res.redirect("/admin/login");
+        return res.render("adminLoginPage", {
+          message: "Invalid Username or Password",
+        });
       }
+    } else {
+      return res.render("adminLoginPage", {
+        message: "Invalid Username or Password",
+      });
     }
   } catch (error) {
     console.log(error);
@@ -35,10 +40,36 @@ const loginverification = async (req, res) => {
 
 //function to load dashboard
 const loaddashboard = async (req, res) => {
-  if (req.session.admin) {
-    try {
-      res.render("admindash");
-    } catch (error) {}
+  try {
+    res.render("admindash");
+  } catch (error) {
+    console.log(error);
+    res.redirect("/page-not-found");
+  }
+};
+
+//function for loggingout admin page
+const logout = async (req, res) => {
+  try {
+    req.session.destroy((err) => {
+      if (err) {
+        console.log(err, "eror destroying session");
+        return res.redirect("/admin");
+      }
+      res.redirect("/admin/login");
+    });
+  } catch (error) {
+    console.log(error, "error during logout");
+  }
+};
+
+//function to load user list page
+const loadUserlist = async (req, res) => {
+  try {
+    res.render("adminUsers");
+  } catch (error) {
+    console.log(error);
+    res.redirect("/page-not-found");
   }
 };
 
@@ -46,4 +77,6 @@ module.exports = {
   loadlogin,
   loginverification,
   loaddashboard,
+  logout,
+  loadUserlist,
 };
