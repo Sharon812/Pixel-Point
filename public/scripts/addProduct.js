@@ -29,11 +29,10 @@ function validateAndSubmit(event) {
       });
     });
 
-    // Add combos as a hidden field (sending JSON string)
     const combosField = document.createElement("input");
     combosField.type = "hidden";
     combosField.name = "combos";
-    combosField.value = JSON.stringify(combos); // Convert the combos array to a JSON string
+    combosField.value = JSON.stringify(combos); // Convert the combos array to a json string
     document.forms[0].appendChild(combosField);
 
     // Submit the form using AJAX
@@ -44,7 +43,7 @@ function validateAndSubmit(event) {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data); // Log the response for debugging
+        console.log(data);
         if (data.message) {
           Swal.fire({
             icon: "success",
@@ -83,6 +82,7 @@ function viewImage(event, index) {
   const input = event.target;
   const reader = new FileReader();
 
+  //to show image
   reader.onload = () => {
     const dataURL = reader.result;
     const image = document.getElementById("imgView" + index);
@@ -98,12 +98,11 @@ function viewImage(event, index) {
       ready() {
         // Set the crop box dimensions here
         this.cropper.setCropBoxData({
-          width: 283.15,
-          height: 220,
+          width: this.cropper.getContainerData().width * 0.7, // Example: 70% of container width
+          height: this.cropper.getContainerData().height * 0.5, // Example: 50% of container height
         });
       },
     });
-
     const cropperContainer = document.querySelector(
       "#croppedImg" + index
     ).parentNode;
@@ -111,6 +110,7 @@ function viewImage(event, index) {
 
     const saveButton = document.querySelector("#saveButton" + index);
     saveButton.addEventListener("click", async () => {
+      //creating cropper container
       const croppedCanvas = cropper.getCroppedCanvas({
         width: 283.15,
         height: 220,
@@ -208,7 +208,7 @@ function validateForm() {
       isValid = false;
     }
 
-    // Check if regular price is greater than sale price
+    // checking if regular price is greater than sale price
     if (parseFloat(regularPrice) <= parseFloat(salePrice)) {
       displayErrorMessage(
         `comboReg-error-${index}`,
@@ -217,7 +217,7 @@ function validateForm() {
       isValid = false;
     }
 
-    // Check for duplicate combos
+    // Checing for duplicate combos
     const comboKey = `${ram}-${storage}-${regularPrice}-${salePrice}-${color}`;
     if (comboSet.has(comboKey)) {
       displayErrorMessage(`combo-error-${index}`, "Duplicate combo detected.");
