@@ -52,7 +52,7 @@ function validateAndSubmit(event) {
             timer: 1000,
             showConfirmButton: false,
           }).then(() => {
-            window.location.href = "/admin/products";
+            window.location.href = "/admin/addProducts";
           });
         } else {
           Swal.fire({

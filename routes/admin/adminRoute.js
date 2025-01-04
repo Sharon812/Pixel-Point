@@ -35,7 +35,7 @@ router.post("/editCategory/:id", sessionCheck, catController.editCategory);
 
 //for product list page
 router.get("/addProducts", sessionCheck, productCont.getProductInfo);
-// router.post("/addProducts", sessionCheck, uploads.array("images", 4), productCont.addProducts);
+router.post("/addProducts", sessionCheck, uploads.array("images", 4), productCont.addProducts);
 
 
 module.exports = router;

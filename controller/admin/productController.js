@@ -19,41 +19,35 @@ const getProductInfo = async (req, res) => {
 //to add product
 const addProducts = async (req, res) => {
   try {
-    console.log("here", req.body);
-    const product = new Product(req.body);
-    const ProductExists = Product.findOne({
+    const product = req.body
+    const ProductExists = await Product.findOne({
       productName: product.productName,
     });
+    console.log("productexists",ProductExists)
     if (!ProductExists) {
       const images = [];
 
       if (req.files && req.files.length > 0) {
         for (let i = 0; i < req.files.length; i++) {
           const originalImagePath = req.files[i].path;
-
-          const rezizedImagePath = path.join(
-            "public",
-            "uploads",
-            "Product-images",
-            req.files[i].filename
-          );
+          const resizedImagePath = `public/uploads/product-images/resized-${Date.now()}-${req.files[i].filename}`;
+                    
           await sharp(originalImagePath)
             .resize({ width: 440, height: 440 })
-            .toFile(rezizedImagePath);
+            .toFile(resizedImagePath);
           images.push(req.files[i].filename);
         }
       }
 
-      const categoryId = await Category.findOne({ name: products.category });
-
+      const categoryId = await Category.findOne({ name: product.category });
+     
       if (!categoryId) {
-        return res.status(400).join("Category not found");
+        return res.status(400).send("Category not found");
       }
 
       const newProduct = new Product({
-        ProductName: product.productName,
+        productName: product.productName,
         description: product.description,
-        brand: product.brand,
         category: categoryId._id,
         regularPrice: product.regularPrice,
         salePrice: product.salePrice,
@@ -61,9 +55,10 @@ const addProducts = async (req, res) => {
         color: product.color,
         status: "Available",
       });
-
+     
       await newProduct.save();
-      return res.redirect("/admin/addProduct");
+
+      return res.status(200).json({ message: "Product added successfully!" });
     } else {
       return res
         .status(400)

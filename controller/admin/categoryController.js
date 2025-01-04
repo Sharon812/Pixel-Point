@@ -1,4 +1,3 @@
-const { name } = require("ejs");
 const Category = require("../../models/categorySchema");
 
 //function to display category details
@@ -8,7 +7,7 @@ const categoryInfo = async (req, res) => {
     const limit = 3;
     const skip = (page - 1) * limit;
     const categoryData = await Category.find({ isListed: true })
-      .sort({ createdAt: -1 })
+      .sort({ createdAt: 1 })
       .skip(skip)
       .limit(limit);
 
