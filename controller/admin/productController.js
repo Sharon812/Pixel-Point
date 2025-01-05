@@ -19,19 +19,21 @@ const getProductInfo = async (req, res) => {
 //to add product
 const addProducts = async (req, res) => {
   try {
-    const product = req.body
+    const product = req.body;
     const ProductExists = await Product.findOne({
       productName: product.productName,
     });
-    console.log("productexists",ProductExists)
+    console.log("productexists", ProductExists);
     if (!ProductExists) {
       const images = [];
 
       if (req.files && req.files.length > 0) {
         for (let i = 0; i < req.files.length; i++) {
           const originalImagePath = req.files[i].path;
-          const resizedImagePath = `public/uploads/product-images/resized-${Date.now()}-${req.files[i].filename}`;
-                    
+          const resizedImagePath = `public/uploads/product-images/resized-${Date.now()}-${
+            req.files[i].filename
+          }`;
+
           await sharp(originalImagePath)
             .resize({ width: 440, height: 440 })
             .toFile(resizedImagePath);
@@ -40,7 +42,7 @@ const addProducts = async (req, res) => {
       }
 
       const categoryId = await Category.findOne({ name: product.category });
-     
+
       if (!categoryId) {
         return res.status(400).send("Category not found");
       }
@@ -55,7 +57,7 @@ const addProducts = async (req, res) => {
         color: product.color,
         status: "Available",
       });
-     
+
       await newProduct.save();
 
       return res.status(200).json({ message: "Product added successfully!" });

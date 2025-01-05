@@ -4,10 +4,13 @@ const bcrypt = require("bcrypt");
 
 //function to load login page
 const loadlogin = async (req, res) => {
+  console.log("here");
+
   if (req.session.admin) {
     res.redirect("/admin");
+  } else {
+    res.render("adminLoginPage");
   }
-  res.render("adminLoginPage");
 };
 
 //function to verify login details
