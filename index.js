@@ -44,6 +44,9 @@ app.set("views", [
   path.join(__dirname, "/views/admin"),
 ]);
 
+console.log("prot", process.env.PORT);
+console.log("API Key:", process.env.CLOUDINARY_API_KEY);
+
 //setting up admin route
 app.use("/admin", adminSession, adminSide);
 

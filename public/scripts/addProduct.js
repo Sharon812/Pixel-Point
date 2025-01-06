@@ -112,12 +112,11 @@ function viewImage(event, index) {
     saveButton.addEventListener("click", async () => {
       //creating cropper container
       const croppedCanvas = cropper.getCroppedCanvas({
-        width: 283.15,
-        height: 220,
+        width: image.naturalWidth,
+        height: image.naturalHeight,
       });
       const croppedImage = document.getElementById("croppedImg" + index);
-      croppedImage.src = croppedCanvas.toDataURL("image/jpeg", 1.0);
-
+      croppedImage.src = croppedCanvas.toDataURL("image/png");
       const timestamp = new Date().getTime();
       const fileName = `cropped-img-${timestamp}-${index}.png`;
 
