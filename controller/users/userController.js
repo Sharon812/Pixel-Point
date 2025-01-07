@@ -1,6 +1,7 @@
 const User = require("../../models/userSchema");
 const Category = require("../../models/categorySchema");
 const Products = require("../../models/productSchema");
+const brand = require("../../models/brandSchema");
 const nodemailer = require("nodemailer");
 const env = require("dotenv").config();
 const bycrypt = require("bcrypt");
@@ -19,25 +20,67 @@ const loadPageNotFound = async (req, res) => {
 const loadHomePage = async (req, res) => {
   try {
     const user = req.session.user;
+
+    const categoryList = await Category.find({ isListed: true });
+
+    const Brands = await brand.find({ isBlocked: false });
+
+    const refurbishedLaptopsCategory = await Category.findOne({
+      name: "Refurbished laptops",
+    });
+
+    const laptopsCategory = await Category.findOne({
+      name: "Laptops",
+    });
+
+    const refurbishedLaptops = await Products.find({
+      isBlocked: false,
+      combos: { $elemMatch: { quantity: { $gt: 0 } } },
+      category: refurbishedLaptopsCategory._id,
+    });
+
+    const laptops = await Products.find({
+      isBlocked: false,
+      combos: { $elemMatch: { quantity: { $gt: 0 } } },
+      category: laptopsCategory._id,
+      brand: { $exists: true, $ne: null },
+    }).populate({
+      path: "brand",
+      model: "Brands",
+    });
+
+    console.log(laptops);
+
+    // Fetch new arrivals
+    const newArrivals = await Products.find({
+      isBlocked: false,
+      combos: { $elemMatch: { quantity: { $gt: 0 } } },
+    })
+      .sort({ createdAt: -1 })
+      .limit(6);
+
+    console.log(newArrivals);
+    // Render the home page
     if (user) {
-      const category = await Category.find({ isListed: true });
-      const productData = await Products.find({
-        isBlocked: false,
-        category: { $in: category.map((category) => category._id) },
-        quantity: { $gt: 0 },
-      });
-
-      productData.sort((a, b) => new Date(b.CreatedOn) - new Date(a.CreatedOn));
-
-      productData = productData.slice(0, 4);
       const userData = await User.findOne({ _id: user._id });
-      res.render("homePage", { user: userData });
+      console.log(userData);
+      
+      return res.render("homePage", {
+        user: userData,
+        refurbishedLaptops,
+        laptops,
+        newArrivals,
+      });
     } else {
-      return res.render("homePage");
+      return res.render("homePage", {
+        refurbishedLaptops,
+        laptops,
+        newArrivals,
+      });
     }
   } catch (error) {
-    console.log("Error at home page");
-    res.status(500).send("server error occured");
+    console.log("Error at home page", error);
+    res.status(500).send("server error occurred");
   }
 };
 

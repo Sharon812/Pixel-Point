@@ -6,7 +6,7 @@ const cloudinary = require("../../config/cloudinary");
 const getProductInfo = async (req, res) => {
   try {
     const category = await Category.find({ isListed: true });
-    const brand = await Brand.find({ isBlocked: true });
+    const brand = await Brand.find({ isBlocked: false });
     res.render("addProduct", {
       cat: category,
       brand: brand,
@@ -18,19 +18,18 @@ const getProductInfo = async (req, res) => {
 const addProducts = async (req, res) => {
   try {
     const product = req.body;
-    const ProductExists = await Product.findOne({
-      productName: product.productName,
-    });
+    const { productName, brand, description, category, combos } = req.body;
 
+    // Check if the product already exists
+    const ProductExists = await Product.findOne({ productName });
     if (ProductExists) {
       return res
         .status(400)
         .send("Product already exists, try another product");
     }
 
-    const imageUrl = [];
-
     // Upload images to Cloudinary
+    const imageUrl = [];
     if (req.files && req.files.length > 0) {
       for (let i = 0; i < req.files.length; i++) {
         const result = await cloudinary.uploader.upload(req.files[i].path, {
@@ -40,22 +39,35 @@ const addProducts = async (req, res) => {
       }
     }
 
+    // Initialize combosArray
+    let combosArray = [];
+
+    // Parse combos if provided
+    if (combos) {
+      combosArray = JSON.parse(combos);
+      combosArray.forEach((combo) => {
+        if (combo.color && typeof combo.color === "string") {
+          combo.color = combo.color.split(",").map((color) => color.trim());
+        }
+      });
+    }
+    console.log("combios",combos)
+
     // Find category by name
-    const categoryId = await Category.findOne({ name: product.category });
+    const categoryId = await Category.findOne({ name: category });
     if (!categoryId) {
       return res.status(400).send("Category not found");
     }
-
+    const brandId = await Brand.findOne({ brandName: brand });
+    console.log('here',brandId);
     // Create and save the new product
     const newProduct = new Product({
-      productName: product.productName,
-      description: product.description,
-      productImage: imageUrl, // Save image URLs array
-      category: categoryId._id,
-      regularPrice: product.regularPrice,
-      salePrice: product.salePrice,
-      quantity: product.quantity,
-      color: product.color,
+      productName,
+      description,
+      brand: brandId._id,
+      category: categoryId._id, // Store category ID
+      combos: combosArray,
+      productImage: imageUrl,
       status: "Available",
     });
 

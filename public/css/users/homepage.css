@@ -381,8 +381,8 @@ table {
   color: var(--body-color);
   padding-inline: 1.75rem;
   /* padding: 0.75rem 1.75rem; */
-  height: 49px;
-  line-height: 43px;
+  height: 45px;
+  line-height: 29px;
   font-family: var(--second-font);
   font-size: var(--small-font-size);
   font-weight: var(--weight-700);
@@ -410,12 +410,12 @@ table {
 
 .btn--md {
   height: 45px;
-  line-height: 40px;
+  line-height: 29px;
 }
 
 .btn--sm {
-  height: 40px;
-  line-height: 35px;
+  height: 45px;
+  line-height: 29px;
 }
 
 /*=============== CATEGORIES ===============*/

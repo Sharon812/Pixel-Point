@@ -3,6 +3,7 @@ const userRoute = express.Router();
 
 const userController = require("../../controller/users/userController");
 const passport = require("passport");
+const productController = require("../../controller/users/productController");
 
 //page not found route
 userRoute.get("/page-not-found", userController.loadPageNotFound);
@@ -39,5 +40,10 @@ userRoute.get(
 
 //for userlogout
 userRoute.get("/logout", userController.logout);
+
+//for product management
+userRoute.get("/productDetails/:productId", productController.productDetails);
+
+userRoute.get( "/productDetails/combo/:id",productController.loadComboDetails);
 
 module.exports = userRoute;
