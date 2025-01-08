@@ -1,114 +1,81 @@
-const nameid = document.getElementsByName("name");
-const emailid = document.getElementsByName("email");
-const phoneid = document.getElementsByName("phone");
-const passwordid = document.getElementsByName("password");
-const confirmpasswordid = document.getElementsByName("cpassword");
-const signupform = document.getElementsByName("signUpForm");
+document.getElementById("signUpForm").addEventListener("submit", function (e) {
+  e.preventDefault();
 
-const nameerror = document.getElementById("nameerror");
-const emailerror = document.getElementById("emailerror");
-const phoneerror = document.getElementById("phoneerror");
-const passworderror = document.getElementById("passworderror");
-const cpassworderror = document.getElementById("cpassworderror");
+  const nameid = document.getElementById("name").value.trim();
+  const emailid = document.getElementById("email").value.trim();
+  const phoneid = document.getElementById("phone").value.trim();
+  const passwordid = document.getElementById("password").value;
+  const confirmpasswordid = document.getElementById("cpassword").value;
 
-function nameValidation(e) {
-  const nameval = nameid.value;
-  const namePatteren = /^[A-Za-z\s]+$/;
+  const nameerror = document.getElementById("nameerror");
+  const emailerror = document.getElementById("emailerror");
+  const phoneerror = document.getElementById("phoneerror");
+  const passworderror = document.getElementById("passworderror");
+  const cpassworderror = document.getElementById("cpassworderror");
 
-  if (nameval.trim() === "") {
+  let isValid = true;
+
+  // Name Validation
+  const namePattern = /^[a-zA-Z\s]+$/;
+  if (nameid === "") {
     nameerror.style.display = "block";
-    nameerror.innerHTML = "Please enter a valid name";
-  } else if (!namePatteren.test(nameval)) {
+    nameerror.textContent = "Please enter a valid name";
+    nameerror.style.color = "red";
+    isValid = false;
+  } else if (!namePattern.test(nameid)) {
     nameerror.style.display = "block";
-    nameerror.innerHTML = "Name should contain only alphabets";
+    nameerror.textContent = "Name should contain only alphabets and spaces";
+    nameerror.style.color = "red";
+    isValid = false;
   } else {
     nameerror.style.display = "none";
-    nameerror.innerHTML = "";
   }
-}
 
-function emailValidation(e) {
-  const emailval = emailid.value;
+  // Email Validation
   const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-
-  if (!emailPattern.test(emailval)) {
+  if (!emailPattern.test(emailid)) {
     emailerror.style.display = "block";
-    emailerror.innerHTML = "Please enter a valid email";
+    emailerror.textContent = "Please enter a valid email";
+    emailerror.style.color = "red";
+    isValid = false;
   } else {
     emailerror.style.display = "none";
-    emailerror.innerHTML = "";
   }
-}
 
-function phoneValidation(e) {
-  const phoneval = phoneid.value;
-
-  if (phoneval.trim() == "") {
+  // Phone Validation
+  if (phoneid === "" || phoneid.length !== 10 || isNaN(phoneid)) {
     phoneerror.style.display = "block";
-    phoneerror.innerHTML = "Please enter a valid phone number";
-  } else if (phoneval.length != 10 || phoneval.length > 10) {
-    phoneerror.style.display = "block";
-    phoneerror.innerHTML = "Enter 10 digits";
+    phoneerror.textContent = "Enter a valid 10-digit phone number";
+    phoneerror.style.color = "red";
+    isValid = false;
   } else {
     phoneerror.style.display = "none";
-    phoneerror.innerHTML = "";
   }
-}
 
-function passwordValidation(e) {
-  const passid = passwordid;
-  const cpassval = confirmpasswordid;
-  const alphabetic = /[a-ZA-Z]/;
-  const digit = /\d/;
-  if (passid < 8) {
+  // Password Validation
+  const passwordPattern = /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/;
+  if (!passwordPattern.test(passwordid)) {
     passworderror.style.display = "block";
-    passworderror.innerHTML = "Should contain atleast 8 characters";
-  } else if (alphabetic.test(passid) || !digit.test(passid)) {
-    passworderror.style.display = "block";
-    error4.innerHTML = "Should contain numbers and alphabets";
+    passworderror.textContent =
+      "Password must be at least 8 characters long and contain both letters and numbers";
+    passworderror.style.color = "red";
+    isValid = false;
   } else {
     passworderror.style.display = "none";
-    passworderror.innerHTML = "";
   }
 
-  if (passid != cpassval) {
+  // Confirm Password Validation
+  if (passwordid !== confirmpasswordid) {
     cpassworderror.style.display = "block";
-    cpassworderror.innerHTML = "Password do not match";
+    cpassworderror.textContent = "Passwords do not match";
+    cpassworderror.style.color = "red";
+    isValid = false;
   } else {
     cpassworderror.style.display = "none";
-    cpassworderror.innerHTML = "";
   }
-}
 
-document.addEventListener("DOMContentLoaded", function () {
-  signupform.addEventListener("submit", function (event) {
-    nameValidation();
-    emailValidation();
-    phoneValidation();
-    passwordValidation();
-
-    if (
-      !nameid ||
-      !emailid ||
-      !phoneid ||
-      !passwordid ||
-      !nameerror ||
-      !emailerror ||
-      !phoneerror ||
-      !passworderror ||
-      !cpassworderror
-    ) {
-      console.log("one or more elements are missing");
-    }
-
-    if (
-      nameerror.innerHTML ||
-      emailerror.innerHTML ||
-      phoneerror.innerHTML ||
-      passworderror.innerHTML ||
-      cpassworderror.innerHTML
-    ) {
-      event.preventDefault();
-    }
-  });
+  // Submit Form if Valid
+  if (isValid) {
+    e.target.submit();
+  }
 });

@@ -49,22 +49,20 @@ const loadHomePage = async (req, res) => {
       model: "Brands",
     });
 
-    console.log(laptops);
-
     // Fetch new arrivals
     const newArrivals = await Products.find({
       isBlocked: false,
-      combos: { $elemMatch: { quantity: { $gt: 0 } } },
+      combos: { $elemMatch: { quantity: { $gte: 0 } } },
     })
       .sort({ createdAt: -1 })
       .limit(6);
 
-    console.log(newArrivals);
     // Render the home page
     if (user) {
-      const userData = await User.findOne({ _id: user._id });
+      console.log(user);
+      const userData = await User.findOne({ _id: user });
       console.log(userData);
-      
+
       return res.render("homePage", {
         user: userData,
         refurbishedLaptops,
@@ -131,14 +129,9 @@ async function sendVerificationEmail(email, otp) {
 //function on verifying signup details
 const signup = async (req, res) => {
   try {
-    console.log(req.body);
-    const { name, phone, email, password, cpassword } = req.body;
-
-    if (password !== cpassword) {
-      return res.render("signUpPage", { message: "password do not matched" });
-    }
-
-    const findUser = await User.findOne({ email });
+    const { name, phone, password } = req.body;
+    const email = req.body.email.trim().toLowerCase();
+    const findUser = await User.findOne({ email: email });
     if (findUser) {
       return res.render("signUpPage", { message: "user already exists" });
     }
@@ -148,7 +141,7 @@ const signup = async (req, res) => {
     const emailSent = sendVerificationEmail(email, otp);
 
     if (!emailSent) {
-      return res.json("Unable to send email");
+      return res.render("signUpPage", { message: "Unable to sent email" });
     }
     req.session.userOtp = otp;
     req.session.userData = { email, password, name, phone };
@@ -157,7 +150,7 @@ const signup = async (req, res) => {
     console.log("otp send", otp);
   } catch (error) {
     console.error("error in save usr", error);
-    res.status(500).send("internal server error");
+    res.status(500).redirect("/page-not-found");
   }
 };
 
@@ -166,7 +159,10 @@ const securePassword = async (password) => {
   try {
     const passwordHash = await bycrypt.hash(password, 10);
     return passwordHash;
-  } catch (error) {}
+  } catch (error) {
+    console.log("error at securing password", error);
+    return false;
+  }
 };
 
 //function to do verify otp
@@ -187,6 +183,7 @@ const verifyOtp = async (req, res) => {
         password: passwordHash,
       });
       await saveUserData.save();
+
       req.session.user = saveUserData._id;
       res.json({ success: true, redirectUrl: "/" });
     } else {
@@ -194,7 +191,7 @@ const verifyOtp = async (req, res) => {
     }
   } catch (error) {
     console.error("error verifying otp", error);
-    res.status(400).json({ success: false, message: "an error  r try again" });
+    res.status(400).json({ success: false, message: "an error try again" });
   }
 };
 
@@ -202,11 +199,10 @@ const verifyOtp = async (req, res) => {
 const resendOtp = async (req, res) => {
   try {
     const { email } = req.session.userData;
-    console.log("emailskdio", email);
     if (!email) {
       return res
         .status(400)
-        .status({ success: false, message: "email not found in session" });
+        .status({ success: false, message: "email not found " });
     }
 
     const otp = generateOtp();
