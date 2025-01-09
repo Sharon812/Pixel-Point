@@ -21,7 +21,7 @@ const userInfo = async (req, res) => {
         { email: { $regex: ".*" + search + ".*" } },
       ],
     })
-      .sort({ createdOn: 1 })
+      .sort({ CreatedOn: -1 })
       .limit(limit * 1)
       .skip((page - 1) * limit)
       .exec();
@@ -51,10 +51,14 @@ const userInfo = async (req, res) => {
 const userBlocked = async (req, res) => {
   try {
     let id = req.query.id;
-    await User.updateOne({ _id: id }, { $set: { isBlocked: true } });
-    res.redirect("/admin/users");
+    const result = await User.updateOne(
+      { _id: id },
+      { $set: { isBlocked: true } }
+    );
+    return res.json({ response: "user blocked successfully" });
   } catch (error) {
-    res.redirect("/page-not-found");
+    console.log(("error at blocking user", error));
+    res.status(500).json({ response: "an error try again" });
   }
 };
 
@@ -63,9 +67,10 @@ const userUnblocked = async (req, res) => {
   try {
     let id = req.query.id;
     await User.updateOne({ _id: id }, { $set: { isBlocked: false } });
-    res.redirect("/admin/users");
+    return res.json({ response: "user unblocked successfully" });
   } catch (error) {
-    res.redirect("/page-not-found");
+    console.log("error at unblocking user", error);
+    res.status(500).json({ response: "an error try again" });
   }
 };
 

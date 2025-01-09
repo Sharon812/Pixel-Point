@@ -72,6 +72,7 @@ const geteditCategory = async (req, res) => {
 const editCategory = async (req, res) => {
   try {
     const id = req.params.id;
+
     const { categoryname, description } = req.body;
     const existingCategory = await Category.findOne({ name: categoryname });
     if (existingCategory) {
@@ -86,7 +87,7 @@ const editCategory = async (req, res) => {
       { new: true }
     ); //we get return of updated data
     if (updateCategory) {
-      res.redirect("/admin/category");
+      res.status(200).json({ response: "updated successfully" });
     } else {
       res.status(400).json({ error: "Category not updated" });
     }
