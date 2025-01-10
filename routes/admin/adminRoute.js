@@ -42,6 +42,15 @@ router.post(
   uploads.array("images", 4),
   productCont.addProducts
 );
+router.get("/products", productCont.getAllProducts);
+router.put("/products/deleteProduct", productCont.deleteProducts);
+router.get("/editProduct", productCont.getEditProducts);
+router.post(
+  "/editProduct/:id",
+  uploads.array("images", 4),
+  productCont.editProduct
+);
+router.post("/deleteimage", productCont.deleteSingleImage);
 
 //for brands section
 router.get("/brands", brandController.getBrandPage);

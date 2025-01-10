@@ -47,7 +47,7 @@ const deleteCategory = async (req, res) => {
   const id = req.query.id;
   try {
     await Category.updateOne({ _id: id }, { $set: { isListed: false } });
-    return res.redirect("/admin/category");
+    return res.status(200).json({ response: "category deleted successfully" });
   } catch (error) {
     console.log("error at delete category,", error);
     return res.redirect("/page-not-found");

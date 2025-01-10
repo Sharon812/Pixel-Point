@@ -95,7 +95,7 @@ function deleteCategory(categoryId) {
     confirmButtonText: "Yes, block them!",
   })
     .then((result) => {
-      fetch(`/admin/deleteCategory?id=${categoryId}`, {
+      fetch(`/admin/deleteProduct?id=${categoryId}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
