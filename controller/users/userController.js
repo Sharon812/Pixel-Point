@@ -35,13 +35,11 @@ const loadHomePage = async (req, res) => {
 
     const refurbishedLaptops = await Products.find({
       isBlocked: false,
-      combos: { $elemMatch: { quantity: { $gt: 0 } } },
       category: refurbishedLaptopsCategory._id,
     });
 
     const laptops = await Products.find({
       isBlocked: false,
-      combos: { $elemMatch: { quantity: { $gt: 0 } } },
       category: laptopsCategory._id,
       brand: { $exists: true, $ne: null },
     }).populate({
@@ -52,7 +50,6 @@ const loadHomePage = async (req, res) => {
     // Fetch new arrivals
     const newArrivals = await Products.find({
       isBlocked: false,
-      combos: { $elemMatch: { quantity: { $gte: 0 } } },
     })
       .sort({ createdAt: -1 })
       .limit(6);
@@ -269,15 +266,16 @@ const loginVerification = async (req, res) => {
 //for logout
 const logout = async (req, res) => {
   try {
-    req.session.destroy((err) => {
+    req.session.user = null;
+    req.session.save((err) => {
       if (err) {
-        console.log("session destruction error", err);
+        console.log("Error saving session:", err);
         return res.redirect("/page-not-found");
       }
-      return res.redirect("/");
+      res.redirect("/");
     });
   } catch (error) {
-    console.log("error at logout", error);
+    console.log("Error at logout:", error);
     res.redirect("/page-not-found");
   }
 };

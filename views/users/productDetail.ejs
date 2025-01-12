@@ -213,18 +213,21 @@
             <li>
               <!-- <a href="#" class="size__link size-active"></a> -->
               <% product.combos.forEach((combo, index) => { %>
-              <button
-                type="button"
-                data-product-id="<%= product._id %>"
-                data-ram="<%= combo.ram %>"
-                data-storage="<%= combo.storage %>"
-                data-color="<%= combo.color %>"
-                class="size__link <%= index === 0 ? 'size-active' : 'size__link' %> combo-option"
-                onclick="selectCombo(this)"
-              >
-                <%= combo.ram %>GB / <%= combo.storage %>GB / <%= combo.color %>
-              </button>
+                <button
+                  type="button"
+                  data-product-id="<%= product._id %>"
+                  data-ram="<%= combo.ram %>"
+                  data-storage="<%= combo.storage %>"
+                  data-color="<%= combo.color %>"
+                  class="size__link <%= index === 0 ? 'size-active' : '' %> combo-option"
+                  aria-label="Select combo: <%= combo.ram %>GB RAM, <%= combo.storage %>GB Storage, <%= combo.color %> color"
+                  onclick="selectCombo(this)"
+                >
+                  <%= combo.ram %>GB / <%= combo.storage %>GB / <%= combo.color %>
+                </button>
               <% }); %>
+              
+              
             </li>
             <!-- <li>
             <a href="#" class="size__link">L</a>
@@ -272,61 +275,26 @@
       <div class="details__tab-content active-tab" content id="info">
         <table class="info__table">
           <tr>
-            <th>Stand Up</th>
-            <td>35" L x 24"W x 37-45"H(front to back wheel)</td>
+            <th>GPU</th>
+            <td>NVIDIA</td>
           </tr>
           <tr>
-            <th>Folded (w/o wheels)</th>
-            <td>32.5"L x 18.5"W x 16.5"H</td>
+            <th>Processor</th>
+            <td>M3 chip</td>
           </tr>
           <tr>
-            <th>Folded (w/o wheels)</th>
-            <td>32.5"L x 24"W x 18.5"H</td>
+            <th>Storage</th>
+            <td>256GB</td>
           </tr>
           <tr>
-            <th>Door Pass THrough</th>
-            <td>24</td>
-          </tr>
-          <tr>
-            <th>Frame</th>
-            <td>Aluminum</td>
-          </tr>
-          <tr>
-            <th>Weight (w/o wheels)</th>
-            <td>20 LBS</td>
-          </tr>
-          <tr>
-            <th>Weight Capacity</th>
-            <td>60 LBS</td>
-          </tr>
-          <tr>
-            <th>Width</th>
-            <td>24</td>
-          </tr>
-          <tr>
-            <th>Handle Height (ground to handle)</th>
-            <td>37-45</td>
-          </tr>
-          <tr>
-            <th>Wheels</th>
-            <td>12" air / wide track slick tread</td>
-          </tr>
-          <tr>
-            <th>Seat back height</th>
-            <td>21.5</td>
-          </tr>
-          <tr>
-            <th>Head Room(inside canopy)</th>
-            <td>25"</td>
+            <th>Ram</th>
+            <td>12GB</td>
           </tr>
           <tr>
             <th>Color</th>
             <td>Black, Blue, Red, White</td>
           </tr>
-          <tr>
-            <th>Size</th>
-            <td>M, S</td>
-          </tr>
+          
         </table>
       </div>
       <div class="details__tab-content" content id="reviews">
@@ -419,15 +387,16 @@
   <section class="products container section--lg">
     <h3 class="section__title"><span>Related</span> Products</h3>
     <div class="products__container grid">
+      <% for(let i = 0; i <relatedProducts.length; i++) { %>
       <div class="product__item">
         <div class="product__banner">
-          <a href="details.html" class="product__images">
+          <a href="/productDetails/<%= relatedProducts[i]._id %>" class="product__images">
             <img
-              src="/img/product-1-1.jpg"
+              src=" <%= relatedProducts[i].productImage[0] %> "
               alt=""
               class="product__img default"
             />
-            <img src="/img/product-1-2.jpg" alt="" class="product__img hover" />
+            <img src="<%= relatedProducts[i].productImage[0] %>" alt="" class="product__img hover" />
           </a>
           <div class="product__actions">
             <a href="#" class="action__btn" aria-label="Quick View">
@@ -442,10 +411,11 @@
           </div>
           <div class="product__badge light-pink">Hot</div>
         </div>
+
         <div class="product__content">
-          <span class="product__category">Clothing</span>
+          <span class="product__category"> <%= relatedProducts[i].brand.brandName %> </span>
           <a href="details.html">
-            <h3 class="product__title">Colorful Pattern Shirts</h3>
+            <h3 class="product__title"> <%= relatedProducts[i].productName %> </h3>
           </a>
           <div class="product__rating">
             <i class="fi fi-rs-star"></i>
@@ -455,145 +425,15 @@
             <i class="fi fi-rs-star"></i>
           </div>
           <div class="product__price flex">
-            <span class="new__price">$238.85</span>
-            <span class="old__price">$245.8</span>
+            <span class="new__price">₹<%= relatedProducts[i].combos[0].salePrice %> </span>
+            <span class="old__price">₹<%= relatedProducts[i].combos[0].regularPrice %> </span>
           </div>
           <a href="#" class="action__btn cart__btn" aria-label="Add To Cart">
             <i class="fi fi-rs-shopping-bag-add"></i>
           </a>
         </div>
       </div>
-      <div class="product__item">
-        <div class="product__banner">
-          <a href="details.html" class="product__images">
-            <img
-              src="/img/product-2-1.jpg"
-              alt=""
-              class="product__img default"
-            />
-            <img src="/img/product-2-2.jpg" alt="" class="product__img hover" />
-          </a>
-          <div class="product__actions">
-            <a href="#" class="action__btn" aria-label="Quick View">
-              <i class="fi fi-rs-eye"></i>
-            </a>
-            <a href="#" class="action__btn" aria-label="Add to Wishlist">
-              <i class="fi fi-rs-heart"></i>
-            </a>
-            <a href="#" class="action__btn" aria-label="Compare">
-              <i class="fi fi-rs-shuffle"></i>
-            </a>
-          </div>
-          <div class="product__badge light-green">Hot</div>
-        </div>
-        <div class="product__content">
-          <span class="product__category">Clothing</span>
-          <a href="details.html">
-            <h3 class="product__title">Colorful Pattern Shirts</h3>
-          </a>
-          <div class="product__rating">
-            <i class="fi fi-rs-star"></i>
-            <i class="fi fi-rs-star"></i>
-            <i class="fi fi-rs-star"></i>
-            <i class="fi fi-rs-star"></i>
-            <i class="fi fi-rs-star"></i>
-          </div>
-          <div class="product__price flex">
-            <span class="new__price">$238.85</span>
-            <span class="old__price">$245.8</span>
-          </div>
-          <a href="#" class="action__btn cart__btn" aria-label="Add To Cart">
-            <i class="fi fi-rs-shopping-bag-add"></i>
-          </a>
-        </div>
-      </div>
-      <div class="product__item">
-        <div class="product__banner">
-          <a href="details.html" class="product__images">
-            <img
-              src="/img/product-3-1.jpg"
-              alt=""
-              class="product__img default"
-            />
-            <img src="/img/product-3-2.jpg" alt="" class="product__img hover" />
-          </a>
-          <div class="product__actions">
-            <a href="#" class="action__btn" aria-label="Quick View">
-              <i class="fi fi-rs-eye"></i>
-            </a>
-            <a href="#" class="action__btn" aria-label="Add to Wishlist">
-              <i class="fi fi-rs-heart"></i>
-            </a>
-            <a href="#" class="action__btn" aria-label="Compare">
-              <i class="fi fi-rs-shuffle"></i>
-            </a>
-          </div>
-          <div class="product__badge light-orange">Hot</div>
-        </div>
-        <div class="product__content">
-          <span class="product__category">Clothing</span>
-          <a href="details.html">
-            <h3 class="product__title">Colorful Pattern Shirts</h3>
-          </a>
-          <div class="product__rating">
-            <i class="fi fi-rs-star"></i>
-            <i class="fi fi-rs-star"></i>
-            <i class="fi fi-rs-star"></i>
-            <i class="fi fi-rs-star"></i>
-            <i class="fi fi-rs-star"></i>
-          </div>
-          <div class="product__price flex">
-            <span class="new__price">$238.85</span>
-            <span class="old__price">$245.8</span>
-          </div>
-          <a href="#" class="action__btn cart__btn" aria-label="Add To Cart">
-            <i class="fi fi-rs-shopping-bag-add"></i>
-          </a>
-        </div>
-      </div>
-      <div class="product__item">
-        <div class="product__banner">
-          <a href="details.html" class="product__images">
-            <img
-              src="/img/product-4-1.jpg"
-              alt=""
-              class="product__img default"
-            />
-            <img src="/img/product-4-2.jpg" alt="" class="product__img hover" />
-          </a>
-          <div class="product__actions">
-            <a href="#" class="action__btn" aria-label="Quick View">
-              <i class="fi fi-rs-eye"></i>
-            </a>
-            <a href="#" class="action__btn" aria-label="Add to Wishlist">
-              <i class="fi fi-rs-heart"></i>
-            </a>
-            <a href="#" class="action__btn" aria-label="Compare">
-              <i class="fi fi-rs-shuffle"></i>
-            </a>
-          </div>
-          <div class="product__badge light-blue">Hot</div>
-        </div>
-        <div class="product__content">
-          <span class="product__category">Clothing</span>
-          <a href="details.html">
-            <h3 class="product__title">Colorful Pattern Shirts</h3>
-          </a>
-          <div class="product__rating">
-            <i class="fi fi-rs-star"></i>
-            <i class="fi fi-rs-star"></i>
-            <i class="fi fi-rs-star"></i>
-            <i class="fi fi-rs-star"></i>
-            <i class="fi fi-rs-star"></i>
-          </div>
-          <div class="product__price flex">
-            <span class="new__price">$238.85</span>
-            <span class="old__price">$245.8</span>
-          </div>
-          <a href="#" class="action__btn cart__btn" aria-label="Add To Cart">
-            <i class="fi fi-rs-shopping-bag-add"></i>
-          </a>
-        </div>
+      <% } %>
       </div>
     </div>
   </section>

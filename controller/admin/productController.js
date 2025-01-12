@@ -18,7 +18,6 @@ const getProductInfo = async (req, res) => {
 //to add product
 const addProducts = async (req, res) => {
   try {
-    const product = req.body;
     const { productName, brand, description, category, combos } = req.body;
 
     // Check if the product already exists

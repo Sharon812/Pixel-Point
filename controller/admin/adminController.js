@@ -57,16 +57,17 @@ const loaddashboard = async (req, res) => {
 //function for loggingout admin page
 const logout = async (req, res) => {
   try {
-    req.session.destroy((err) => {
+    req.session.admin = null;
+    req.session.save((err) => {
       if (err) {
-        console.log(err, "eror destroying session");
-        return res.redirect("/admin");
+        console.log("Error saving session:", err);
+        return res.redirect("/page-not-found");
       }
       res.redirect("/admin/login");
     });
   } catch (error) {
-    console.log(error, "error during logout");
-    return res.redirect("/page-not-found");
+    console.log("Error at logout:", error);
+    res.redirect("/page-not-found");
   }
 };
 

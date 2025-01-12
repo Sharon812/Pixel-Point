@@ -48,3 +48,23 @@ function softDeleteProduct(productId) {
     }
   });
 }
+
+function selectCombo(button) {
+  document.querySelectorAll(".combo-option").forEach((btn) => {
+    btn.classList.remove("size-active");
+  });
+
+  button.classList.add("size-active");
+}
+
+document.querySelectorAll(".combo-option").forEach((button) => {
+  button.addEventListener("click", function () {
+    // Remove 'size-active' from all buttons
+    document.querySelectorAll(".combo-option").forEach((btn) => {
+      btn.classList.remove("size-active");
+    });
+
+    // Add 'size-active' to the clicked button
+    this.classList.add("size-active");
+  });
+});
