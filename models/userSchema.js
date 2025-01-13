@@ -28,6 +28,8 @@ const userSchema = new Schema({
   password: {
     type: String,
     required: false, //due to google sign in
+    default: null,
+    sparse: true,
   },
   isBlocked: {
     type: Boolean,
@@ -74,6 +76,12 @@ const userSchema = new Schema({
       },
     },
   ],
+  resetToken: {
+    type: String,
+  },
+  resetTokenExpiry: {
+    type: Date,
+  },
 });
 const User = mongoose.model("User", userSchema);
 

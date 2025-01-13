@@ -50,10 +50,11 @@
                                 <p id="message"></p>
 
                             <input
-                                style="margin-bottom: 30px;"
+                                style="margin-bottom: 10px;"
                                 class="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
                                 type="password" placeholder="Password" name="password" id="passwordInput" />
 
+                                <a class="float-right text-gray-600 hover:text-blue-600 hover:underline text-sm"  href="/forgot-password">Forgot Password?</a>
 
                                <%  if(locals.message && message.length > 0){  %>
                                     <div id="messagess" class="alert alert-danger text-center">
@@ -106,6 +107,6 @@
             </div>
         </div>
     </div>
-
+<script src="/scripts/users/loginpage.js" ></script>
     
     <%- include("../layouts/users/footer.ejs") %>

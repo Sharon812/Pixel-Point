@@ -4,6 +4,7 @@ const userRoute = express.Router();
 const userController = require("../../controller/users/userController");
 const passport = require("passport");
 const productController = require("../../controller/users/productController");
+const accountController = require("../../controller/users/accountController");
 
 //page not found route
 userRoute.get("/page-not-found", userController.loadPageNotFound);
@@ -43,7 +44,16 @@ userRoute.get("/logout", userController.logout);
 
 //for product management
 userRoute.get("/productDetails/:productId", productController.productDetails);
+userRoute.get("/productDetails/combo/:id", productController.loadComboDetails);
 
-userRoute.get( "/productDetails/combo/:id",productController.loadComboDetails);
+//for forgot password
+userRoute.get("/forgot-password", accountController.getForgotPassword);
+userRoute.post("/forgot-password", accountController.forgotPasswordOtp);
+userRoute.post(
+  "/verify-forgotPassword-otp",
+  accountController.verifyForgotPasswordOtp
+);
+userRoute.get("/reset-password/:token", accountController.getResetPassword);
+userRoute.post("/reset-password/:token", accountController.resetPassword);
 
 module.exports = userRoute;
