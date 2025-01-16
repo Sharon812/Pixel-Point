@@ -1,6 +1,8 @@
 document
   .getElementById("addAddressForm")
-  .addEventListener("submit", function (e) {
+  .addEventListener("submit", async function (e) {
+    e.preventDefault(); // Prevent form submission
+
     // Start by assuming the form is valid
     let isValid = true;
 
@@ -41,11 +43,12 @@ document
       isValid = false;
     }
 
-    //landmark
+    // Landmark
     const landmark = document.getElementById("landmark");
     if (!landmark.value.trim()) {
       document.getElementById("landMarkError").textContent =
-        "Landmark is required";
+        "Landmark is required.";
+      isValid = false;
     }
 
     // Pincode
@@ -64,6 +67,7 @@ document
       isValid = false;
     }
 
+    // Alternate Phone
     const altPhone = document.getElementById("alt-phone");
     if (!altPhone.value.match(/^\d{10}$/)) {
       document.getElementById("altPhoneError").textContent =
@@ -71,9 +75,65 @@ document
       isValid = false;
     }
 
-    // Prevent form submission if any validation fails
     if (!isValid) {
-      e.preventDefault(); // Stop form submission
+      // Display SweetAlert for validation errors
+      Swal.fire({
+        icon: "error",
+        title: "Validation Error",
+        text: "Please fix the errors and try again.",
+      });
       console.log("Form submission prevented due to validation errors.");
+      return; // Stop further execution
+    }
+
+    // If the form is valid, prepare data for submission
+    const formData = {
+      houseName: houseName.value.trim(),
+      type: addressType.value,
+      city: city.value.trim(),
+      state: state.value.trim(),
+      landmark: landmark.value.trim(),
+      pincode: pincode.value,
+      phone: phone.value,
+      altPhone: altPhone.value,
+    };
+
+    try {
+      // Send data using Fetch API
+      const response = await fetch("/add-address", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      // Handle server response
+      if (response.ok) {
+        const result = await response.json();
+        Swal.fire({
+          icon: "success",
+          title: "Success",
+          timer: 1500,
+          showConfirmButton: false,
+          text: result.message || "Address added successfully!",
+        }).then(() => {
+          window.location.href = "/address";
+        });
+      } else {
+        const error = await response.json();
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: error.message || "Failed to add the address.",
+        });
+      }
+    } catch (error) {
+      // Handle network or server errors
+      Swal.fire({
+        icon: "error",
+        title: result.message || "Network Error",
+        text: "An error occurred while submitting the form. Please try again.",
+      });
     }
   });

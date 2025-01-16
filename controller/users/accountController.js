@@ -281,39 +281,39 @@ const addAddress = async (req, res) => {
     const userData = await User.findById({ _id: user }).lean();
     console.log("userData", userData);
     console.log("reqnody", req.body);
-    const {
-      addressType,
-      house_name,
-      city,
-      landmark,
-      state,
-      pincode,
-      phone,
-      alt_phone,
-    } = req.body;
+    const { type, houseName, city, landmark, state, pincode, phone, altPhone } =
+      req.body;
     if (userData) {
       const newAddress = new Address({
         userId: userData,
         address: [
           {
-            addressType: addressType,
-            name: house_name,
+            addressType: type,
+            name: houseName,
             city: city,
             landMark: landmark,
             state: state,
             pincode: pincode,
             phone: phone,
-            alternatePhone: alt_phone,
+            alternatePhone: altPhone,
           },
         ],
       });
       await newAddress.save();
+      return res
+        .status(200)
+        .json({ success: true, message: "address added successfully" });
     } else {
       console.log("error");
+      return res
+        .status(400)
+        .json({ success: false, message: "Unable to add user" });
     }
   } catch (error) {
     console.log(error, "error at adding address");
-    return res.redirect("/page-not-found");
+    return res
+      .status(500)
+      .json({ success: false, message: "internal server error" });
   }
 };
 
