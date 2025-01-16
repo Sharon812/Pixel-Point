@@ -111,7 +111,7 @@
       <li><span class="breadcrumb__link">></span></li>
       <li><a href="/address" class="breadcrumb__link">Address</a></li>
       <li><span class="breadcrumb__link">></span></li>
-      <li><span class="breadcrumb__link">Add-address</span></li>
+      <li><span class="breadcrumb__link">Edit-Address</span></li>
     </ul>
   </section>
 
@@ -142,19 +142,19 @@
       </div>
       <div class="tabs__content">
         <div class="tab__content active-tab" content id="addresses">
-          <h3 class="tab__header">Add New Address</h3>
+          <h3 class="tab__header">Edit Address</h3>
           <div class="address__form-container">
             <form
               class="address__form"
               id="addAddressForm"
-              method="post"
-              action="/add-address"
+              onsubmit="handleFormSubmit('<%= addressData._id  %>' )"
             >
               <div class="form__group">
                 <label for="name" class="form__label">House Name</label>
                 <input
                   type="text"
                   id="houseName"
+                  value=" <%= addressData.name %> "
                   class="form__input"
                   name="house_name"
                 />
@@ -165,16 +165,23 @@
                 <label for="type" class="form__label">Address Type</label>
                 <select id="type" class="form__input" name="addressType">
                   <option value="">Select Type</option>
-                  <option value="home">Home</option>
-                  <option value="work">Work</option>
-                  <option value="other">Other</option>
+                  <option value="home" <%= addressData.addressType === 'home' ? 'selected' : '' %>>Home</option>
+                  <option value="work" <%= addressData.addressType === 'work' ? 'selected' : '' %>>Work</option>
+                  <option value="other" <%= addressData.addressType === 'other' ? 'selected' : '' %>>Other</option>
                 </select>
+                
                 <span id="addressTypeError" class="error-message"></span>
               </div>
 
               <div class="form__group">
                 <label for="city" class="form__label">City</label>
-                <input type="text" id="city" class="form__input" name="city" />
+                <input
+                  type="text"
+                  id="city"
+                  value=" <%= addressData.city %> "
+                  class="form__input"
+                  name="city"
+                />
                 <span id="" class="error-message"></span>
               </div>
 
@@ -183,6 +190,7 @@
                 <input
                   type="text"
                   id="landmark"
+                  value=" <%= addressData.landMark %> "
                   class="form__input"
                   name="landmark"
                 />
@@ -194,6 +202,7 @@
                 <input
                   type="text"
                   id="state"
+                  value=" <%=addressData.state%> "
                   class="form__input"
                   name="state"
                 />
@@ -206,9 +215,8 @@
                   type="text"
                   id="pincode"
                   name="pincode"
+                  value=" <%=addressData.pincode%> "
                   class="form__input"
-                  pattern="[0-9]{6}"
-                  maxlength="6"
                 />
                 <span id="pincodeError" class="error-message"></span>
               </div>
@@ -219,24 +227,23 @@
                   type="tel"
                   id="phone"
                   name="phone"
+                  value="<%=addressData.phone%>"
                   class="form__input"
-                  pattern="[0-9]{10}"
-                  maxlength="10"
                 />
                 <span id="phoneError" class="error-message"></span>
               </div>
 
               <div class="form__group">
                 <label for="alt-phone" class="form__label"
-                  >Alternate Phone (Optional)</label
+                  >Alternate Phone</label
                 >
                 <input
                   type="tel"
                   name="alt-phone"
                   id="alt-phone"
                   class="form__input"
-                  pattern="[0-9]{10}"
-                  maxlength="10"
+                  value=" <%=addressData.alternatePhone%> "
+               
                 />
                 <span id="altPhoneError" class="error-message"></span>
               </div>
@@ -338,11 +345,11 @@
     </div>
   </footer>
 
+  <script src="/scripts/users/editAddress.js" ></script>
   <!--=============== SWIPER JS ===============-->
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
   <!--=============== MAIN JS ===============-->
-
   <!-- Add SweetAlert2 CDN -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -350,7 +357,7 @@
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-  <script src="/scripts/users/addAddress.js"></script>
+  <!-- <script src="/scripts/users/addAddress.js"></script> -->
 
   <%- include("../layouts/users/footer.ejs") %>
 </main>

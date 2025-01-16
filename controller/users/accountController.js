@@ -1,5 +1,6 @@
 const User = require("../../models/userSchema");
 const nodemailer = require("nodemailer");
+const mongoose = require("mongoose");
 const env = require("dotenv").config();
 const bycrypt = require("bcrypt");
 const crypto = require("crypto");
@@ -279,8 +280,6 @@ const addAddress = async (req, res) => {
   try {
     const user = req.session.user;
     const userData = await User.findById({ _id: user }).lean();
-    console.log("userData", userData);
-    console.log("reqnody", req.body);
     const { type, houseName, city, landmark, state, pincode, phone, altPhone } =
       req.body;
     if (userData) {
@@ -317,6 +316,82 @@ const addAddress = async (req, res) => {
   }
 };
 
+const getEditAddress = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = req.session.user;
+    const userData = await User.findById({ _id: user });
+    const addressData = await Address.findOne(
+      { userId: user, "address._id": id }, // Find the address in the user's address array by its _id
+      { "address.$": 1 } // Project only the matched address object
+    );
+    if (!addressData) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Address not found" });
+    }
+    return res.render("editAddress", {
+      addressData: addressData.address[0],
+      user: userData,
+    });
+  } catch (error) {
+    console.log("error rendering edit address page", error);
+    res.redirect("/page-not-found");
+  }
+};
+
+const editAddress = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = req.session.user;
+    const { type, houseName, city, landmark, state, pincode, phone, altPhone } =
+      req.body;
+    console.log("reqbod", req.body);
+    if (!user) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Unauthorized access" });
+    }
+    console.log("iddsjo", id);
+    const addressUpdateResult = await Address.updateOne(
+      { userId: user, "address._id": id }, // Find the specific address in the user's address array
+      {
+        $set: {
+          "address.$.addressType": type, // Update the matched address object's fields
+          "address.$.name": houseName,
+          "address.$.city": city,
+          "address.$.landmark": landmark,
+          "address.$.state": state,
+          "address.$.pincode": pincode,
+          "address.$.phone": phone,
+          "address.$.alternatePhone": altPhone,
+        },
+      }
+    );
+    console.log(addressUpdateResult);
+    if (addressUpdateResult.matchedCount === 0) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Address not found" });
+    }
+
+    if (addressUpdateResult.modifiedCount === 0) {
+      return res
+        .status(400)
+        .json({ success: false, message: "No changes made to the address" });
+    }
+
+    return res
+      .status(200)
+      .json({ success: true, message: "Address updated successfully" });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Unable to edit address" });
+  }
+};
+
 module.exports = {
   getForgotPassword,
   forgotPasswordOtp,
@@ -328,4 +403,6 @@ module.exports = {
   getAddress,
   addAddress,
   getAddAddress,
+  getEditAddress,
+  editAddress,
 };
