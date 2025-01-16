@@ -66,5 +66,6 @@ userRoute.get("/add-address", accountController.getAddAddress);
 userRoute.post("/add-address", accountController.addAddress);
 userRoute.get("/editAddress/:id", accountController.getEditAddress);
 userRoute.patch("/editAddress/:id", accountController.editAddress);
+userRoute.delete("/deleteAddreess/:id", accountController.deleteAddress);
 
 module.exports = userRoute;

@@ -392,6 +392,37 @@ const editAddress = async (req, res) => {
   }
 };
 
+//for deleting address
+const deleteAddress = async (req, res) => {
+  try {
+    const userId = req.session.user; // Assuming the logged-in user's ID is in session
+    const { id } = req.params; // Address ObjectId from the path parameter
+    console.log("id", id);
+    // Find the address document and remove the address by ID
+    const updatedAddress = await Address.findOneAndUpdate(
+      { userId },
+      { $pull: { address: { _id: id } } },
+      { new: true }
+    );
+    console.log(updatedAddress);
+    if (!updatedAddress) {
+      return res.status(404).json({
+        success: false,
+        message: "Address not found or user unauthorized",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Address deleted successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Unable to delete address" });
+  }
+};
+
 module.exports = {
   getForgotPassword,
   forgotPasswordOtp,
@@ -405,4 +436,5 @@ module.exports = {
   getAddAddress,
   getEditAddress,
   editAddress,
+  deleteAddress,
 };

@@ -1721,6 +1721,7 @@ table {
 }
 
 .view__order,
+.delete,
 .edit {
   color: var(--first-color);
 }
@@ -1736,6 +1737,10 @@ table {
 }
 
 .edit {
+  font-size: var(--small-font-size);
+}
+
+.delete {
   font-size: var(--small-font-size);
 }
 
@@ -2260,6 +2265,18 @@ table {
 }
 
 .edit:hover {
+  text-decoration: underline;
+}
+
+.delete {
+  position: absolute;
+  top: 1rem;
+  right: 4rem;
+  color: #007bff;
+  text-decoration: none;
+}
+
+.delete:hover {
   text-decoration: underline;
 }
 
