@@ -1,0 +1,306 @@
+<%- include("../layouts/users/header.ejs") %>
+<link
+  rel="stylesheet"
+  href="https://cdn-uicons.flaticon.com/2.0.0/uicons-regular-straight/css/uicons-regular-straight.css"
+/>
+
+<!--=============== SWIPER CSS ===============-->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+/>
+
+<!--=============== CSS ===============-->
+<link rel="stylesheet" href="/css/users/homepage.css" />
+
+<header class="header">
+  <% if(!locals.user){ %>
+  <div class="header__top">
+    <div class="header__container container">
+      <div class="header__contact">
+        <span>(+01) - 2345 - 6789</span>
+        <span>Our location</span>
+      </div>
+      <div>
+        <p class="header__alert-news">Best Deals in Lowest Prices</p>
+      </div>
+      <div class="gap-10px">
+        <a href="/login" class="header__top-action"> Log In </a>
+        <a href="/signup" class="header__top-action ms-4"> Sign Up </a>
+      </div>
+    </div>
+  </div>
+  <% } %>
+
+  <nav class="nav container-fluid px-2">
+    <a href="/" class="nav__logo">
+      <img
+        class="nav__logo-img"
+        src="/img/Yellow and Blue Modern Typographic Pixel Studio Logo (1) (1).png"
+        alt="website logo"
+      />
+    </a>
+    <div class="nav__menu" id="nav-menu">
+      <div class="nav__menu-top">
+        <a href="/" class="nav__menu-logo">
+          <img src="/img/logo.svg" alt="" />
+        </a>
+        <div class="nav__close" id="nav-close">
+          <i class="fi fi-rs-cross-small"></i>
+        </div>
+      </div>
+      <ul class="nav__list">
+        <li class="nav__item">
+          <a href="/" class="nav__link active-link">Home</a>
+        </li>
+        <li class="nav__item">
+          <a href="shop.html" class="nav__link">Shop</a>
+        </li>
+        <li class="nav__item">
+          <a href="login-register.html" class="nav__link">Brands</a>
+        </li>
+        <li class="nav__item">
+          <a href="accounts.html" class="nav__link">Laptops</a>
+        </li>
+        <li class="nav__item">
+          <a href="compare.html" class="nav__link">Refubished Laptops</a>
+        </li>
+      </ul>
+      <div class="header__search">
+        <input
+          type="text"
+          placeholder="Search For Items..."
+          class="form__input"
+        />
+        <button class="search__btn">
+          <img src="/img/search.png" alt="search icon" />
+        </button>
+      </div>
+    </div>
+    <div class="header__user-actions">
+      <a href="wishlist.html" class="header__action-btn" title="Wishlist">
+        <img src="/img/icon-heart.svg" alt="" />
+        <!-- <span class="count">3</span> -->
+      </a>
+      <a href="cart.html" class="header__action-btn" title="Cart">
+        <img src="/img/icon-cart.svg" alt="" />
+        <!-- <span class="count">3</span> -->
+      </a>
+      <% if(locals.user){ %>
+      <div class="dropdown">
+        <a href="http://"><%= locals.user.name %></a>
+        <div class="dropdown-content">
+          <a href="/accountDetails">Profile</a>
+          <a href="/logout">Logout</a>
+        </div>
+      </div>
+      <% } %>
+
+      <div class="header__action-btn nav__toggle" id="nav-toggle">
+        <img src="/img/menu-burger.svg" alt="" />
+      </div>
+    </div>
+  </nav>
+</header>
+<!--=============== MAIN ===============-->
+<main class="main">
+  <!--=============== BREADCRUMB ===============-->
+  <section class="breadcrumb">
+    <ul class="breadcrumb__list flex container">
+      <li><a href="/" class="breadcrumb__link">Home</a></li>
+      <li><span class="breadcrumb__link">></span></li>
+      <li><span class="breadcrumb__link">Address</span></li>
+    </ul>
+  </section>
+
+  <!--=============== ACCOUNTS ===============-->
+  <section class="accounts section--lg">
+    <div class="accounts__container container grid">
+      <div class="account__tabs">
+        <a
+          href="/accountDetails"
+          class="account__tab"
+          data-target="#accountDetails"
+        >
+          <i class="fi fi-rs-settings"></i> Account details
+        </a>
+        <p class="account__tab" data-target="#orders">
+          <i class="fi fi-rs-shopping-bag"></i> Orders
+        </p>
+        <p class="account__tab" data-target="#update-profile">
+          <i class="fi fi-rs-user"></i> Update Profile
+        </p>
+        <p class="account__tab active-tab" data-target="#address">
+          <i class="fi fi-rs-marker active-tab"></i> My Address
+        </p>
+        <p class="account__tab" data-target="#change-password">
+          <i class="fi fi-rs-settings-sliders"></i> Change Password
+        </p>
+        <p class="account__tab"><i class="fi fi-rs-exit"></i> Logout</p>
+      </div>
+      <div class="tabs__content">
+        <div class="tab__content active-tab" content id="address">
+          <div class="tab__header d-flex justify-content-between">
+            <h3 class="">Shipping Address</h3>
+            <a href="/add-address">Add address</a>
+          </div>
+          <div class="addresses-container">
+          <% if (addresses && addresses.length > 0) { %> <% for (let i = 0; i <
+          addresses.length; i++) { %> <% for (let j = 0; j <
+          addresses[i].address.length; j++) { %>
+          <div class="tab__body address-card">
+            <address class="address">
+              <%= addresses[i].address[j].name %> <br />
+              <%= addresses[i].address[j].city %> <br />
+              <%= addresses[i].address[j].landMark %>. <br />
+              <%= addresses[i].address[j].pincode %> <br />
+              <%= addresses[i].address[j].phone %> , <%=
+              addresses[i].address[j].alternatePhone %> <br />
+              <%=addresses[i].address[j].pincode %>
+
+              <p class="city"><%= addresses[i].address[j].state %></p>
+            </address>
+            <p class="type"><%= addresses[i].address[j].addressType %></p>
+
+            <a href="#" class="edit">Edit</a>
+          </div>
+          <% } %> <% } %>
+          </div>
+          <% } else { %>
+          <p>No addresses found.</p>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!--=============== NEWSLETTER ===============-->
+  <section class="newsletter section">
+    <div class="newsletter__container container grid">
+      <h3 class="newsletter__title flex">
+        <img src="/img/icon-email.svg" alt="" class="newsletter__icon" />
+        Sign in to Newsletter
+      </h3>
+      <p class="newsletter__description">
+        ...and receive $25 coupon for first shopping.
+      </p>
+      <form action="" class="newsletter__form">
+        <input
+          type="text"
+          placeholder="Enter Your Email"
+          class="newsletter__input"
+        />
+        <button type="submit" class="newsletter__btn">Subscribe</button>
+      </form>
+    </div>
+  </section>
+</main>
+
+<!--=============== FOOTER ===============-->
+  <footer class="footer container">
+    <div class="footer__container grid">
+      <div class="footer__content">
+        <a href="/img/pixelpointlogo.png" class="footer__logo">
+          <img src="/img/pixelpointlogo.png" alt="" class="footer__logo-img" />
+        </a>
+        <h4 class="footer__subtitle">Contact</h4>
+        <p class="footer__description">
+          <span>Address:</span> 13 Tlemcen Road, Street 32, Beb-Wahren
+        </p>
+        <p class="footer__description">
+          <span>Phone:</span> +01 2222 365 /(+91) 01 2345 6789
+        </p>
+        <div class="footer__social">
+          <h4 class="footer__subtitle">Follow Me</h4>
+          <div class="footer__links flex">
+            <a href="#">
+              <img
+                src="/img/icon-facebook.svg"
+                alt=""
+                class="footer__social-icon"
+              />
+            </a>
+            <a href="#">
+              <img
+                src="/img/icon-twitter.svg"
+                alt=""
+                class="footer__social-icon"
+              />
+            </a>
+            <a href="#">
+              <img
+                src="/img/icon-instagram.svg"
+                alt=""
+                class="footer__social-icon"
+              />
+            </a>
+            <a href="#">
+              <img
+                src="/img/icon-pinterest.svg"
+                alt=""
+                class="footer__social-icon"
+              />
+            </a>
+            <a href="#">
+              <img
+                src="/img/icon-youtube.svg"
+                alt=""
+                class="footer__social-icon"
+              />
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="footer__content">
+        <h3 class="footer__title">Address</h3>
+        <ul class="footer__links">
+          <li><a href="#" class="footer__link">About Us</a></li>
+          <li><a href="#" class="footer__link">Delivery Information</a></li>
+          <li><a href="#" class="footer__link">Privacy Policy</a></li>
+          <li><a href="#" class="footer__link">Terms & Conditions</a></li>
+          <li><a href="#" class="footer__link">Contact Us</a></li>
+          <li><a href="#" class="footer__link">Support Center</a></li>
+        </ul>
+      </div>
+      <div class="footer__content">
+        <h3 class="footer__title">My Account</h3>
+        <ul class="footer__links">
+          <li><a href="#" class="footer__link">Sign In</a></li>
+          <li><a href="#" class="footer__link">View Cart</a></li>
+          <li><a href="#" class="footer__link">My Wishlist</a></li>
+          <li><a href="#" class="footer__link">Track My Order</a></li>
+          <li><a href="#" class="footer__link">Help</a></li>
+          <li><a href="#" class="footer__link">Order</a></li>
+        </ul>
+      </div>
+      <div class="footer__content">
+        <h3 class="footer__title">Secured Payed Gateways</h3>
+        <img
+          src= "/img/payment-method.png"
+          alt=""
+          class="payment__img"
+        />
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <p class="copyright">&copy; 2024 Pixel-Point. All right reserved</p>
+    </div>
+  </footer>
+
+  <!--=============== SWIPER JS ===============-->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+  <!--=============== MAIN JS ===============-->
+  <script src="/scripts/users/main.js"></script>
+</body>
+</html>
+
+<!-- Add SweetAlert2 CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@7.12.15/dist/sweetalert2.all.min.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script src="/scripts/users/accountDetails.js"></script>
+<%- include("../layouts/users/footer.ejs") %>

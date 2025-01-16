@@ -3,7 +3,7 @@ const { Schema } = mongoose;
 
 const addressSchema = new Schema({
   userId: {
-    type: Schema.Types.ObjecId,
+    type: Schema.Types.ObjectId,
     ref: "User",
     required: true,
   },

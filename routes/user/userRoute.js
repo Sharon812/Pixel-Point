@@ -56,4 +56,13 @@ userRoute.post(
 userRoute.get("/reset-password/:token", accountController.getResetPassword);
 userRoute.post("/reset-password/:token", accountController.resetPassword);
 
+//for account details
+userRoute.get("/accountDetails", accountController.getAccountDetails);
+userRoute.patch("/accountDetails/:id", accountController.updateAccountDetails);
+
+//for user address details
+userRoute.get("/address", accountController.getAddress);
+userRoute.get("/add-address", accountController.getAddAddress);
+userRoute.post("/add-address", accountController.addAddress);
+
 module.exports = userRoute;

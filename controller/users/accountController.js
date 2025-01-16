@@ -3,6 +3,7 @@ const nodemailer = require("nodemailer");
 const env = require("dotenv").config();
 const bycrypt = require("bcrypt");
 const crypto = require("crypto");
+const Address = require("../../models/addressSchema");
 
 //for forgot password
 const getForgotPassword = async (req, res) => {
@@ -190,10 +191,141 @@ const resetPassword = async (req, res) => {
   }
 };
 
+//for account details
+const getAccountDetails = async (req, res) => {
+  try {
+    const user = req.session.user;
+
+    if (user) {
+      const userData = await User.findById({ _id: user }).lean();
+      return res.render("accountDetails", {
+        user: userData,
+      });
+    } else {
+      return res.render("accountDetails");
+    }
+  } catch (error) {
+    console.log("error at getting account details", error);
+    res.redirect("/page-not-found");
+  }
+};
+
+//for updating account details
+const updateAccountDetails = async (req, res) => {
+  try {
+    console.log("reqbodu", req.body);
+    const { name, email, phone } = req.body;
+    const id = req.params.id;
+    const user = await User.findByIdAndUpdate(
+      id,
+      {
+        $set: {
+          name: name,
+          phone: phone,
+          email: email,
+        },
+      },
+      { new: true } // Return the updated document
+    );
+    console.log("user", user);
+    if (!user) {
+      return res
+        .status(400)
+        .json({ success: false, message: "User updating failed" });
+    }
+
+    return res
+      .status(200)
+      .json({ success: true, message: "user updated successfully" });
+  } catch (error) {
+    console.log("Error at updating account details", error);
+    return res.status(500).json({ success: false, message: "server error" });
+  }
+};
+
+//for showing address details
+const getAddress = async (req, res) => {
+  try {
+    const user = req.session.user;
+    const userData = await User.findById({ _id: user }).lean();
+    const addressData = await Address.find({ userId: user });
+    console.log(addressData);
+    return res.render("addressDetails", {
+      user: userData,
+      addresses: addressData,
+    });
+  } catch (error) {
+    console.log("error at getting address details", error);
+    res.redirect("/page-not-found");
+  }
+};
+
+//for showing add address page
+const getAddAddress = async (req, res) => {
+  try {
+    const user = req.session.user;
+    const userData = await User.findById({ _id: user }).lean();
+    return res.render("addAddress", {
+      user: userData,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.redirect("/page-not-found");
+  }
+};
+
+//for adding add address
+const addAddress = async (req, res) => {
+  try {
+    const user = req.session.user;
+    const userData = await User.findById({ _id: user }).lean();
+    console.log("userData", userData);
+    console.log("reqnody", req.body);
+    const {
+      addressType,
+      house_name,
+      city,
+      landmark,
+      state,
+      pincode,
+      phone,
+      alt_phone,
+    } = req.body;
+    if (userData) {
+      const newAddress = new Address({
+        userId: userData,
+        address: [
+          {
+            addressType: addressType,
+            name: house_name,
+            city: city,
+            landMark: landmark,
+            state: state,
+            pincode: pincode,
+            phone: phone,
+            alternatePhone: alt_phone,
+          },
+        ],
+      });
+      await newAddress.save();
+    } else {
+      console.log("error");
+    }
+  } catch (error) {
+    console.log(error, "error at adding address");
+    return res.redirect("/page-not-found");
+  }
+};
+
 module.exports = {
   getForgotPassword,
   forgotPasswordOtp,
   verifyForgotPasswordOtp,
   getResetPassword,
   resetPassword,
+  getAccountDetails,
+  updateAccountDetails,
+  getAddress,
+  addAddress,
+  getAddAddress,
 };
