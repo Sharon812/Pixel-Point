@@ -6,7 +6,7 @@ const productDetails = async (req, res) => {
   try {
     const user = req.session.user;
     const productId = req.params.productId;
-
+    const userData = await User.findById(user);
     const product = await Products.findById(productId, { isBlocked: false })
       .populate("category")
       .populate("brand");
@@ -32,7 +32,7 @@ const productDetails = async (req, res) => {
         category: findCategory,
         totalOffer: totalOffer,
         relatedProducts: relatedProducts,
-        user: user,
+        user: userData,
       });
     } else {
       res.render("productDetail", {
@@ -52,11 +52,8 @@ const productDetails = async (req, res) => {
 const loadComboDetails = async (req, res) => {
   try {
     const { id } = req.params;
-    const { ram, storage, color } = req.query;
-    console.log(typeof id); // Should be 'string'
-
-    console.log(req.params);
-    console.log(req.query);
+    const { ram, storage, color, comboId } = req.query;
+    console.log("combs", comboId);
 
     const product = await Products.findById(id);
     console.log(product);
@@ -66,7 +63,7 @@ const loadComboDetails = async (req, res) => {
         combo.storage === storage &&
         combo.color.includes(color)
     );
-
+    console.log("selectedcombo", selectedCombo);
     if (!selectedCombo) {
       return res
         .status(404)
@@ -79,6 +76,7 @@ const loadComboDetails = async (req, res) => {
         salePrice: selectedCombo.salePrice,
         regularPrice: selectedCombo.regularPrice,
         quantity: selectedCombo.quantity,
+        combosId: selectedCombo._id,
       },
     });
   } catch (error) {

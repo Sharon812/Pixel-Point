@@ -5,6 +5,7 @@ const userController = require("../../controller/users/userController");
 const passport = require("passport");
 const productController = require("../../controller/users/productController");
 const accountController = require("../../controller/users/accountController");
+const cartController = require("../../controller/users/cartController");
 
 //page not found route
 userRoute.get("/page-not-found", userController.loadPageNotFound);
@@ -67,5 +68,10 @@ userRoute.post("/add-address", accountController.addAddress);
 userRoute.get("/editAddress/:id", accountController.getEditAddress);
 userRoute.patch("/editAddress/:id", accountController.editAddress);
 userRoute.delete("/deleteAddreess/:id", accountController.deleteAddress);
+
+//for cart details
+userRoute.get("/cart", cartController.getCart);
+userRoute.post("/addCart/:productId/combo/:comboId", cartController.addToCart);
+userRoute.delete("/cart/:cartId/item/:itemId", cartController.deleteCartItem);
 
 module.exports = userRoute;

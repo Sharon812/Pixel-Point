@@ -84,19 +84,19 @@
         <img src="/img/icon-heart.svg" alt="" />
         <!-- <span class="count">3</span> -->
       </a>
-      <a href="cart.html" class="header__action-btn" title="Cart">
+      <a href="/cart" class="header__action-btn" title="Cart">
         <img src="/img/icon-cart.svg" alt="" />
         <!-- <span class="count">3</span> -->
       </a>
       <% if(locals.user){ %>
-      <div class="dropdown">
-        <a href="http://"><%= locals.user.name %></a>
-        <div class="dropdown-content">
-          <a href="#">Profile</a>
-          <a href="/logout">Logout</a>
+        <div class="dropdown" >
+            <a href="http://"><%= locals.user.name %></a>
+            <div class="dropdown-content" >
+                <a href="/accountDetails">Profile</a>
+                <a href="/logout">Logout</a>
+            </div>
         </div>
-      </div>
-      <% } %>
+        <% } %>
 
       <div class="header__action-btn nav__toggle" id="nav-toggle">
         <img src="/img/menu-burger.svg" alt="" />
@@ -216,6 +216,7 @@
                 <button
                   type="button"
                   data-product-id="<%= product._id %>"
+                  data-combos-id = "<%= combo._id  %>"
                   data-ram="<%= combo.ram %>"
                   data-storage="<%= combo.storage %>"
                   data-color="<%= combo.color %>"
@@ -223,7 +224,7 @@
                   aria-label="Select combo: <%= combo.ram %>GB RAM, <%= combo.storage %>GB Storage, <%= combo.color %> color"
                   onclick="selectCombo(this)"
                 >
-                  <%= combo.ram %>GB / <%= combo.storage %>GB / <%= combo.color %>
+                  <%= combo.ram %>GB / <%= combo.storage %>GB / <%= combo.color %>/<%= combo._id %>
                 </button>
               <% }); %>
               
@@ -240,9 +241,11 @@
           </li> -->
           </ul>
         </div>
-        <div class="details__action">
-          <input type="number" class="quantity" value="3" />
-          <a href="#" class="btn btn--sm">Add To Card</a>
+
+        <div class="details__action" id="actionButtons">
+          <input type="number" class="quantity" value="1" />
+
+          <button id="addToCart" onclick="addToCart('<%= product._id %>','<%=product.combos[0]._id%>')"  class="btn btn--sm">Add To Cart</button>
           <a href="#" class="details__action-btn">
             <i class="fi fi-rs-heart"></i>
           </a>
@@ -255,7 +258,8 @@
           <li class="meta__list flex">
             <span class="h5">Availability: </span>
             <span class="h4 text-danger" id="quantityStatus">
-              <%= product.combos[0].quantity %> Items in Stock
+              <%= product.combos[0].quantity %> 
+              <p id="quantityStatus"></p>
             </span>
           </li>
         </ul>
@@ -546,13 +550,16 @@
     <p class="copyright">&copy; 2024 Pixel-Point. All right reserved</p>
   </div>
 </footer>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- Include jQuery before your script -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <!--=============== SWIPER JS ===============-->
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
 <!--=============== MAIN JS ===============-->
 <!-- Include jQuery before your script -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script src="/scripts/users/product.js"></script>
 <script src="/scripts/users/main.js"></script>

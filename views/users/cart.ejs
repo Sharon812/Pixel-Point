@@ -1,0 +1,329 @@
+<%- include("../layouts/users/header.ejs") %>
+
+<!--=============== FLATICON ===============-->
+ <link
+ rel="stylesheet"
+ href="https://cdn-uicons.flaticon.com/2.0.0/uicons-regular-straight/css/uicons-regular-straight.css"
+/>
+
+<!--=============== SWIPER CSS ===============-->
+<link
+ rel="stylesheet"
+ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+/>
+
+<!--=============== CSS ===============-->
+<link rel="stylesheet" href="/css/users/cart.css" />
+<link rel="stylesheet" href="/css/users/homepage.css" />
+
+<title> Pixel Point</title>
+</head>
+<body>
+<!--=============== HEADER ===============-->
+<header class="header">
+    <% if(!locals.user){ %>
+    <div class="header__top">
+      <div class="header__container container">
+        <div class="header__contact">
+          <span>(+01) - 2345 - 6789</span>
+          <span>Our location</span>
+        </div>
+        <div>
+          <p class="header__alert-news">Best Deals in Lowest Prices</p>
+        </div>
+        <div class="gap-10px">
+          <a href="/login" class="header__top-action"> Log In </a>
+          <a href="/signup" class="header__top-action ms-4"> Sign Up </a>
+        </div>
+      </div>
+    </div>
+    <% } %>
+  
+    <nav class="nav container-fluid px-2">
+      <a href="/" class="nav__logo">
+        <img
+          class="nav__logo-img"
+          src="/img/Yellow and Blue Modern Typographic Pixel Studio Logo (1) (1).png"
+          alt="website logo"
+        />
+      </a>
+      <div class="nav__menu" id="nav-menu">
+        <div class="nav__menu-top">
+          <a href="/" class="nav__menu-logo">
+            <img src="/img/logo.svg" alt="" />
+          </a>
+          <div class="nav__close" id="nav-close">
+            <i class="fi fi-rs-cross-small"></i>
+          </div>
+        </div>
+        <ul class="nav__list">
+          <li class="nav__item">
+            <a href="/" class="nav__link active-link">Home</a>
+          </li>
+          <li class="nav__item">
+            <a href="shop.html" class="nav__link">Shop</a>
+          </li>
+          <li class="nav__item">
+            <a href="login-register.html" class="nav__link">Brands</a>
+          </li>
+          <li class="nav__item">
+            <a href="accounts.html" class="nav__link">Laptops</a>
+          </li>
+          <li class="nav__item">
+            <a href="compare.html" class="nav__link">Refubished Laptops</a>
+          </li>
+        </ul>
+        <div class="header__search">
+          <input
+            type="text"
+            placeholder="Search For Items..."
+            class="form__input"
+          />
+          <button class="search__btn">
+            <img src="/img/search.png" alt="search icon" />
+          </button>
+        </div>
+      </div>
+      <div class="header__user-actions">
+        <a href="wishlist.html" class="header__action-btn" title="Wishlist">
+          <img src="/img/icon-heart.svg" alt="" />
+          <!-- <span class="count">3</span> -->
+        </a>
+        <a href="cart.html" class="header__action-btn" title="Cart">
+          <img src="/img/icon-cart.svg" alt="" />
+          <!-- <span class="count">3</span> -->
+        </a>
+        <% if(locals.user){ %>
+        <div class="dropdown">
+          <a href="http://"><%= locals.user.name %></a>
+          <div class="dropdown-content">
+            <a href="#">Profile</a>
+            <a href="/logout">Logout</a>
+          </div>
+        </div>
+        <% } %>
+  
+        <div class="header__action-btn nav__toggle" id="nav-toggle">
+          <img src="/img/menu-burger.svg" alt="" />
+        </div>
+      </div>
+    </nav>
+  </header>
+
+<!--=============== MAIN ===============-->
+<main class="main">
+ <!--=============== BREADCRUMB ===============-->
+ <section class="breadcrumb">
+   <ul class="breadcrumb__list flex container">
+     <li><a href="index.html" class="breadcrumb__link">Home</a></li>
+     <li><span class="breadcrumb__link"></span>></li>
+     <li><span class="breadcrumb__link">Shop</span></li>
+     <li><span class="breadcrumb__link"></span>></li>
+     <li><span class="breadcrumb__link">Cart</span></li>
+   </ul>
+ </section>
+
+ <!--=============== CART ===============-->
+ <% if (cart && cart.items && cart.items.length > 0) { %>
+ <section class="cart section--lg container">
+   <div class="cart__container">
+     <!-- Cart Items -->
+     <div class="cart__items">
+
+        
+          <% cart.items.forEach(item => { %>
+            <!-- Cart Item -->
+            <div class="cart__item">
+              <img src=" <%= item.productId.productImage[0] %> " alt="Product Image" class="cart__item-img" />
+              <div class="cart__item-details">
+                <h3 class="cart__item-title">
+                  <%= item.productId.productName || "Unknown Product" %>
+                </h3>
+                <div class="cart__item-meta">
+                  <span>Ram/storage: <%= item.combo.ram %>GB/<%= item.combo.storage %>GB</span>
+                  <span class="cart__item-stock">In Stock</span>
+                </div>
+                <div>
+                  <span>Color: <%= item.combo.color[0] %></span>
+                </div>
+                <div class="cart__item-prices">
+                  <p class="cart__item-price">&#8377;<%= item.price %></p>
+                </div>
+              </div>
+              <div class="cart__item-controls">
+                <div class="cart__quantity">
+                  <button class="cart__quantity-btn minus">
+                    <i class="fi fi-rs-minus-small"></i>
+                  </button>
+                  <input type="number" value="<%= item.quantity %>" min="1" class="cart__quantity-input" />
+                  <button class="cart__quantity-btn plus">
+                    <i class="fi fi-rs-plus-small"></i>
+                  </button>
+                </div>
+                <button 
+                onclick="deleteCartItem('<%=cart._id%>','<%=item._id%>')"
+                class="cart__item-remove">
+                  <i class="fi fi-rs-trash"></i>
+                </button>
+              </div>
+            </div>
+          <% }) %>
+       
+    
+     </div>
+
+        
+    
+       
+     <!-- Cart Summary -->
+     <div class="cart__summary">
+       <!-- Coupon Section -->
+       <div class="cart__coupon">
+         <h3 class="section__title">Apply Coupon</h3>
+         <form class="coupon__form">
+           <input
+             type="text"
+             class="form__input"
+             placeholder="Enter coupon code..."
+           />
+           <button class="btn">Apply</button>
+         </form>
+       </div>
+
+       <!-- Cart Total -->
+       <div class="cart__total">
+         <h3 class="section__title">Cart Total</h3>
+         <table class="cart__total-table">
+           <tr>
+             <td class="cart__total-title">Subtotal:</td>
+             <td class="cart__total-price">&#8377; <%= cart.totalPrice %></td>
+           </tr>
+           <!-- <tr>
+             <td class="cart__total-title">Shipping:</td>
+             <td class="cart__total-price">$10.00</td>
+           </tr> -->
+           <tr>
+             <td class="cart__total-title">Total:</td>
+             <td class="cart__total-price">&#8377; <%= cart.totalPrice %> </td>
+           </tr>
+         </table>
+         <button class="btn">Proceed to Checkout</button>
+       </div>
+     </div>
+     <% } else { %>
+        <div class="cart__container">
+          <!-- Cart Items -->
+          <div class="cart__items ">
+            <p class="text-center" >Cart is empty</p>
+            <button class="btn " >Shop now</button>
+            </div>
+            </div>
+            
+        <% } %>
+ </section>
+
+</main>
+
+<!--=============== FOOTER ===============-->
+<!--=============== FOOTER ===============-->
+<footer class="footer container">
+    <div class="footer__container grid">
+      <div class="footer__content">
+        <a href="/img/pixelpointlogo.png" class="footer__logo">
+          <img src="/img/pixelpointlogo.png" alt="" class="footer__logo-img" />
+        </a>
+        <h4 class="footer__subtitle">Contact</h4>
+        <p class="footer__description">
+          <span>Address:</span> 13 Tlemcen Road, Street 32, Beb-Wahren
+        </p>
+        <p class="footer__description">
+          <span>Phone:</span> +01 2222 365 /(+91) 01 2345 6789
+        </p>
+        <div class="footer__social">
+          <h4 class="footer__subtitle">Follow Me</h4>
+          <div class="footer__links flex">
+            <a href="#">
+              <img
+                src="/img/icon-facebook.svg"
+                alt=""
+                class="footer__social-icon"
+              />
+            </a>
+            <a href="#">
+              <img
+                src="/img/icon-twitter.svg"
+                alt=""
+                class="footer__social-icon"
+              />
+            </a>
+            <a href="#">
+              <img
+                src="/img/icon-instagram.svg"
+                alt=""
+                class="footer__social-icon"
+              />
+            </a>
+            <a href="#">
+              <img
+                src="/img/icon-pinterest.svg"
+                alt=""
+                class="footer__social-icon"
+              />
+            </a>
+            <a href="#">
+              <img
+                src="/img/icon-youtube.svg"
+                alt=""
+                class="footer__social-icon"
+              />
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="footer__content">
+        <h3 class="footer__title">Address</h3>
+        <ul class="footer__links">
+          <li><a href="#" class="footer__link">About Us</a></li>
+          <li><a href="#" class="footer__link">Delivery Information</a></li>
+          <li><a href="#" class="footer__link">Privacy Policy</a></li>
+          <li><a href="#" class="footer__link">Terms & Conditions</a></li>
+          <li><a href="#" class="footer__link">Contact Us</a></li>
+          <li><a href="#" class="footer__link">Support Center</a></li>
+        </ul>
+      </div>
+      <div class="footer__content">
+        <h3 class="footer__title">My Account</h3>
+        <ul class="footer__links">
+          <li><a href="#" class="footer__link">Sign In</a></li>
+          <li><a href="#" class="footer__link">View Cart</a></li>
+          <li><a href="#" class="footer__link">My Wishlist</a></li>
+          <li><a href="#" class="footer__link">Track My Order</a></li>
+          <li><a href="#" class="footer__link">Help</a></li>
+          <li><a href="#" class="footer__link">Order</a></li>
+        </ul>
+      </div>
+      <div class="footer__content">
+        <h3 class="footer__title">Secured Payed Gateways</h3>
+        <img src="/img/payment-method.png" alt="" class="payment__img" />
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <p class="copyright">&copy; 2024 Pixel-Point. All right reserved</p>
+    </div>
+  </footer>
+  
+  <!--=============== SWIPER JS ===============-->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- Include jQuery before your script -->
+
+  <!--=============== MAIN JS ===============-->
+  <!-- Include jQuery before your script -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  
+  <script src="/scripts/users/cart.js" ></script>
+<!--=============== MAIN JS ===============-->
+<script src="scripts/users/main.js"></script>
+</body>
+<%- include("../layouts/users/footer.ejs") %>
