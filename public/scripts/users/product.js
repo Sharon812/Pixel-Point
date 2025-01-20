@@ -13,38 +13,44 @@ function selectCombo(button) {
     .then((response) => response.json())
     .then((data) => {
       if (data.success) {
+        // Update the price information
         document.getElementById(
           "currentPrice"
         ).innerHTML = `<span> ₹${data.combo.salePrice.toLocaleString()} </span> `;
-
         document.getElementById(
           "regularPrice"
         ).innerHTML = `<del>₹${data.combo.regularPrice.toLocaleString()}</del>`;
 
+        // Update the quantity status and action buttons
         const quantityStatus = document.getElementById("quantityStatus");
         const actionButtons = document.getElementById("actionButtons");
 
         if (data.combo.quantity > 0) {
           quantityStatus.innerHTML = `${data.combo.quantity} Items in Stock`;
-          console.log("comboid", data.combo.combosId);
           actionButtons.innerHTML = `
-              <button class="btn btn-success" id="addToCart" onclick="addToCart('${productId}','${data.combo.combosId}')"> Add to cart</button>
-            
-            
-            `;
+            <input type="number" class="quantity" value="1" />
+            <button class="btn btn-success" id="addToCart" onclick="addToCart('${productId}','${data.combo.combosId}')"> Add to cart</button>
+          `;
         } else {
           quantityStatus.innerHTML = `<span class="text-danger">Out of Stock</span>`;
           actionButtons.innerHTML = `<button class="btn btn-danger" disabled>Out of Stock</button>`;
         }
 
+        // Toggle the selected state for the combo buttons
         document.querySelectorAll(".combo-option").forEach((button) => {
           const isSelected =
             button.dataset.ram === ram &&
             button.dataset.storage === storage &&
             button.dataset.color === color;
 
-          button.classList.toggle("btn-primary", isSelected);
-          button.classList.toggle("btn-outline-primary", !isSelected);
+          // Apply the appropriate classes based on selection
+          if (isSelected) {
+            button.classList.add("btn-primary", "size__link", "size-active");
+            button.classList.remove("btn-outline-primary");
+          } else {
+            button.classList.remove("btn-primary", "size__link", "size-active");
+            button.classList.add("btn-outline-primary");
+          }
         });
       } else {
         alert("Combo not available.");

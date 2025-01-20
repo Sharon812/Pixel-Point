@@ -164,8 +164,8 @@ const loadShopPage = async (req, res) => {
       totalPages,
     });
   } catch (error) {
-    console.error("Error loading shop page:", error.message);
-    res.redirect("/page404");
+    console.error("Error loading shop page:", error);
+    res.redirect("/page-not-found");
   }
 };
 

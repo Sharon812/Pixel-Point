@@ -7,6 +7,7 @@ const productController = require("../../controller/users/productController");
 const accountController = require("../../controller/users/accountController");
 const cartController = require("../../controller/users/cartController");
 const shopController = require("../../controller/users/shopController");
+const orderController = require("../../controller/users/orderController");
 
 //page not found route
 userRoute.get("/page-not-found", userController.loadPageNotFound);
@@ -78,4 +79,6 @@ userRoute.delete("/cart/:cartId/item/:itemId", cartController.deleteCartItem);
 //for shop details
 userRoute.get("/shop", shopController.loadShopPage);
 
+//for checkout
+userRoute.get("/checkout", orderController.loadCheckOut);
 module.exports = userRoute;

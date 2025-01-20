@@ -1,0 +1,433 @@
+<%- include("../layouts/users/header.ejs") %>
+
+<!--=============== FLATICON ===============-->
+ <link
+ rel="stylesheet"
+ href="https://cdn-uicons.flaticon.com/2.0.0/uicons-regular-straight/css/uicons-regular-straight.css"
+/>
+<!--=============== SWIPER CSS ===============-->
+<link
+ rel="stylesheet"
+ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+/>
+
+<!--=============== CSS ===============-->
+<link rel="stylesheet" href="/css/users/checkout.css" />
+<link rel="stylesheet" href="/css/users/homepage.css" />
+
+</head>
+<body>
+<!--=============== HEADER ===============-->
+<header class="header">
+    <% if(!locals.user){ %>
+    <div class="header__top">
+      <div class="header__container container">
+        <div class="header__contact">
+          <span>(+01) - 2345 - 6789</span>
+          <span>Our location</span>
+        </div>
+        <div>
+          <p class="header__alert-news">Best Deals in Lowest Prices</p>
+        </div>
+        <div class="gap-10px">
+          <a href="/login" class="header__top-action"> Log In </a>
+          <a href="/signup" class="header__top-action ms-4"> Sign Up </a>
+        </div>
+      </div>
+    </div>
+    <% } %>
+  
+    <nav class="nav container-fluid px-2">
+      <a href="/" class="nav__logo">
+        <img
+          class="nav__logo-img"
+          src="/img/Yellow and Blue Modern Typographic Pixel Studio Logo (1) (1).png"
+          alt="website logo"
+        />
+      </a>
+      <div class="nav__menu" id="nav-menu">
+        <div class="nav__menu-top">
+          <a href="/" class="nav__menu-logo">
+            <img src="/img/logo.svg" alt="" />
+          </a>
+          <div class="nav__close" id="nav-close">
+            <i class="fi fi-rs-cross-small"></i>
+          </div>
+        </div>
+        <ul class="nav__list">
+          <li class="nav__item">
+            <a href="/" class="nav__link active-link">Home</a>
+          </li>
+          <li class="nav__item">
+            <a href="shop.html" class="nav__link">Shop</a>
+          </li>
+          <li class="nav__item">
+            <a href="login-register.html" class="nav__link">Brands</a>
+          </li>
+          <li class="nav__item">
+            <a href="accounts.html" class="nav__link">Laptops</a>
+          </li>
+          <li class="nav__item">
+            <a href="compare.html" class="nav__link">Refubished Laptops</a>
+          </li>
+        </ul>
+        <div class="header__search">
+          <input
+            type="text"
+            placeholder="Search For Items..."
+            class="form__input"
+          />
+          <button class="search__btn">
+            <img src="/img/search.png" alt="search icon" />
+          </button>
+        </div>
+      </div>
+      <div class="header__user-actions">
+        <a href="wishlist.html" class="header__action-btn" title="Wishlist">
+          <img src="/img/icon-heart.svg" alt="" />
+          <!-- <span class="count">3</span> -->
+        </a>
+        <a href="cart.html" class="header__action-btn" title="Cart">
+          <img src="/img/icon-cart.svg" alt="" />
+          <!-- <span class="count">3</span> -->
+        </a>
+        <% if(locals.user){ %>
+        <div class="dropdown">
+          <a href="http://"><%= locals.user.name %></a>
+          <div class="dropdown-content">
+            <a href="#">Profile</a>
+            <a href="/logout">Logout</a>
+          </div>
+        </div>
+        <% } %>
+  
+        <div class="header__action-btn nav__toggle" id="nav-toggle">
+          <img src="/img/menu-burger.svg" alt="" />
+        </div>
+      </div>
+    </nav>
+  </header>
+<!--=============== MAIN ===============-->
+<main class="main">
+  <!--=============== BREADCRUMB ===============-->
+  <section class="breadcrumb">
+    <ul class="breadcrumb__list flex container">
+      <li><a href="index.html" class="breadcrumb__link">Home</a></li>
+      <li><span class="breadcrumb__link">></span></li>
+      <li><span class="breadcrumb__link">Shop</span></li>
+      <li><span class="breadcrumb__link">></span></li>
+      <li><span class="breadcrumb__link">Checkout</span></li>
+    </ul>
+  </section>
+  <!--=============== CHECKOUT ===============-->
+  <section class="checkout section--lg">
+    <div class="checkout__container container">
+      <h2 class="section__title">Checkout</h2>
+
+      <div class="checkout__content">
+        <!-- Coupon Section -->
+        <div class="checkout__coupon">
+          <h3 class="section__title">Have a coupon?</h3>
+          <form class="coupon__form">
+            <input
+              type="text"
+              placeholder="Enter your coupon code"
+              class="coupon__input"
+            />
+            <button class="coupon__button">Apply Coupon</button>
+          </form>
+        </div>
+        <!-- Cart Details -->
+        <div class="checkout__cart">
+          <h3 class="section__title">Cart Items</h3>
+          <div class="cart__items">
+            <!-- Item 1 -->
+            <div class="cart__item">
+              <div class="item__image">
+                <img src="assets/img/laptop-1.jpg" alt="MacBook Pro M3" />
+              </div>
+              <div class="item__details">
+                <h4 class="item__name">
+                  MacBook Pro M3 (2023) | 14-inch Display
+                </h4>
+                <div class="item__meta">
+                  <span class="item__size">Space Gray</span>
+                  <span class="item__qty">Qty: 1</span>
+                </div>
+                <div class="item__price">₹149,999</div>
+              </div>
+              <button class="remove__item">
+                <i class="fi fi-rs-cross-small"></i>
+              </button>
+            </div>
+            <!-- Item 2 -->
+            <div class="cart__item">
+              <div class="item__image">
+                <img src="assets/img/phone-1.jpg" alt="iPhone 15 Pro" />
+              </div>
+              <div class="item__details">
+                <h4 class="item__name">iPhone 15 Pro | 256GB Storage</h4>
+                <div class="item__meta">
+                  <span class="item__size">Natural Titanium</span>
+                  <span class="item__qty">Qty: 1</span>
+                </div>
+                <div class="item__price">₹89,999</div>
+              </div>
+              <button class="remove__item">
+                <i class="fi fi-rs-cross-small"></i>
+              </button>
+            </div>
+          </div>
+          <!-- Price Details -->
+          <div class="price__details">
+            <h4 class="details__title">Price Details</h4>
+            <div class="price__row">
+              <span>Price (2 Items)</span>
+              <span>₹239,998</span>
+            </div>
+            <div class="price__row">
+              <span>Discount</span>
+              <span class="discount">-₹10,000</span>
+            </div>
+            <div class="price__row">
+              <span>Delivery Charges</span>
+              <span class="free">Free</span>
+            </div>
+            <div class="price__row total">
+              <span>Total Amount</span>
+              <span>₹229,998</span>
+            </div>
+          </div>
+          <div class="save__message">You will save ₹10,000 on this order</div>
+        </div>
+        <!-- Billing Details -->
+        <div class="checkout__billing">
+          <div class="billing__header">
+            <div class="location__icon">
+              <i class="fi fi-rs-marker"></i>
+            </div>
+            <h3 class="section__title">Delivery Address</h3>
+          </div>
+          <!-- Saved Address -->
+          <div class="saved__address">
+            <div class="address__info">
+              <div class="address__header">
+                <h4 class="customer__name">Sharon</h4>
+                <span class="address__type">Home</span>
+              </div>
+              <p class="address__details">
+                Puthiyandi house, Azhikkal, Boatpalam,<br />
+                Near Hashmi Vayanashala, Azhikode,<br />
+                Kerala - 670009
+              </p>
+              <p class="contact__number">+91 8848237115</p>
+            </div>
+            <button class="change__address">CHANGE</button>
+          </div>
+          <div class="new__address-form" style="display: none">
+            <form class="form">
+              <div class="form__row">
+                <div class="form__group">
+                  <input
+                    type="text"
+                    placeholder="Full Name"
+                    class="form__input"
+                    value="Sharon"
+                  />
+                </div>
+                <div class="form__group">
+                  <input
+                    type="tel"
+                    placeholder="Phone Number"
+                    class="form__input"
+                    value="8848237115"
+                  />
+                </div>
+              </div>
+              <div class="form__row">
+                <div class="form__group">
+                  <input
+                    type="text"
+                    placeholder="House No., Building Name"
+                    class="form__input"
+                    value="Puthiyandi house"
+                  />
+                </div>
+                <div class="form__group">
+                  <input
+                    type="text"
+                    placeholder="Road, Area, Colony"
+                    class="form__input"
+                    value="Azhikkal, Boatpalam"
+                  />
+                </div>
+              </div>
+              <div class="form__row">
+                <div class="form__group">
+                  <input
+                    type="text"
+                    placeholder="Pincode"
+                    class="form__input"
+                    value="670009"
+                  />
+                </div>
+                <div class="form__group">
+                  <input
+                    type="text"
+                    placeholder="City"
+                    class="form__input"
+                    value="Azhikode"
+                  />
+                </div>
+              </div>
+              <div class="form__row">
+                <div class="form__group">
+                  <input
+                    type="text"
+                    placeholder="State"
+                    class="form__input"
+                    value="Kerala"
+                  />
+                </div>
+                <div class="form__group">
+                  <input type="text" placeholder="Landmark (Optional)"
+                  class="form__input" value="Near Hashmi Vayanashala" /
+                </div>
+              </div>
+              <div class="address__actions">
+                <button type="button" class="cancel__btn">Cancel</button>
+                <button type="submit" class="save__btn">
+                  Save & Deliver Here
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <!-- Payment Details -->
+        <div class="checkout__payment">
+          <h3 class="section__title">Payment Methods</h3>
+          <div class="payment__methods">
+            <div class="payment__option">
+              <input type="radio" name="payment" id="bank" checked />
+              <label for="bank">Direct Bank Transfer</label>
+            </div>
+            <div class="payment__option">
+              <input type="radio" name="payment" id="card" />
+              <label for="card">Credit/Debit Card</label>
+            </div>
+            <div class="payment__option">
+              <input type="radio" name="payment" id="cod" />
+              <label for="cod">Cash on Delivery</label>
+            </div>
+            <button
+              class="coupon__button place-order-btn"
+              style="width: 100%; margin-top: 1rem"
+            >
+              Place Order
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!--=============== FOOTER ===============-->
+  <footer class="footer container">
+      <div class="footer__container grid">
+        <div class="footer__content">
+          <a href="/img/pixelpointlogo.png" class="footer__logo">
+            <img src="/img/pixelpointlogo.png" alt="" class="footer__logo-img" />
+          </a>
+          <h4 class="footer__subtitle">Contact</h4>
+          <p class="footer__description">
+            <span>Address:</span> 13 Tlemcen Road, Street 32, Beb-Wahren
+          </p>
+          <p class="footer__description">
+            <span>Phone:</span> +01 2222 365 /(+91) 01 2345 6789
+          </p>
+          <div class="footer__social">
+            <h4 class="footer__subtitle">Follow Me</h4>
+            <div class="footer__links flex">
+              <a href="#">
+                <img
+                  src="/img/icon-facebook.svg"
+                  alt=""
+                  class="footer__social-icon"
+                />
+              </a>
+              <a href="#">
+                <img
+                  src="/img/icon-twitter.svg"
+                  alt=""
+                  class="footer__social-icon"
+                />
+              </a>
+              <a href="#">
+                <img
+                  src="/img/icon-instagram.svg"
+                  alt=""
+                  class="footer__social-icon"
+                />
+              </a>
+              <a href="#">
+                <img
+                  src="/img/icon-pinterest.svg"
+                  alt=""
+                  class="footer__social-icon"
+                />
+              </a>
+              <a href="#">
+                <img
+                  src="/img/icon-youtube.svg"
+                  alt=""
+                  class="footer__social-icon"
+                />
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="footer__content">
+          <h3 class="footer__title">Address</h3>
+          <ul class="footer__links">
+            <li><a href="#" class="footer__link">About Us</a></li>
+            <li><a href="#" class="footer__link">Delivery Information</a></li>
+            <li><a href="#" class="footer__link">Privacy Policy</a></li>
+            <li><a href="#" class="footer__link">Terms & Conditions</a></li>
+            <li><a href="#" class="footer__link">Contact Us</a></li>
+            <li><a href="#" class="footer__link">Support Center</a></li>
+          </ul>
+        </div>
+        <div class="footer__content">
+          <h3 class="footer__title">My Account</h3>
+          <ul class="footer__links">
+            <li><a href="#" class="footer__link">Sign In</a></li>
+            <li><a href="#" class="footer__link">View Cart</a></li>
+            <li><a href="#" class="footer__link">My Wishlist</a></li>
+            <li><a href="#" class="footer__link">Track My Order</a></li>
+            <li><a href="#" class="footer__link">Help</a></li>
+            <li><a href="#" class="footer__link">Order</a></li>
+          </ul>
+        </div>
+        <div class="footer__content">
+          <h3 class="footer__title">Secured Payed Gateways</h3>
+          <img src="/img/payment-method.png" alt="" class="payment__img" />
+        </div>
+      </div>
+      <div class="footer__bottom">
+        <p class="copyright">&copy; 2024 Pixel-Point. All right reserved</p>
+      </div>
+    </footer>
+    <!--=============== SWIPER JS ===============-->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
+  <!-- Include jQuery before your script -->
+  
+    <!--=============== MAIN JS ===============-->
+    <!-- Include jQuery before your script -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+  <!--=============== MAIN JS ===============-->
+  <script src="/scripts/users/main.js"></script>
+  </body>
+  <%- include("../layouts/users/footer.ejs") %>
+  

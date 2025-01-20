@@ -214,18 +214,27 @@
               <!-- <a href="#" class="size__link size-active"></a> -->
               <% product.combos.forEach((combo, index) => { %>
                 <button
+                  
                   type="button"
                   data-product-id="<%= product._id %>"
                   data-combos-id = "<%= combo._id  %>"
                   data-ram="<%= combo.ram %>"
                   data-storage="<%= combo.storage %>"
                   data-color="<%= combo.color %>"
-                  class="size__link <%= index === 0 ? 'size-active' : '' %> combo-option"
+                  class="size__link <%= index === 0 ? 'size__link size-active' : 'size__link' %> combo-option"
                   aria-label="Select combo: <%= combo.ram %>GB RAM, <%= combo.storage %>GB Storage, <%= combo.color %> color"
                   onclick="selectCombo(this)"
                 >
                   <%= combo.ram %>GB / <%= combo.storage %>GB / <%= combo.color %>
                 </button>
+
+                  
+
+
+
+
+
+                
               <% }); %>
             </li>
             <!-- <li>
