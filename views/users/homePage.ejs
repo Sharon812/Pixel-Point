@@ -61,16 +61,16 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
             <a href="/" class="nav__link active-link">Home</a>
           </li>
           <li class="nav__item">
-            <a href="shop.html" class="nav__link">Shop</a>
+            <a href="/shop" class="nav__link">Shop</a>
           </li>
           <li class="nav__item">
-            <a href="login-register.html" class="nav__link">Brands</a>
+            <a href="" class="nav__link">Brands</a>
           </li>
           <li class="nav__item">
-            <a href="accounts.html" class="nav__link">Laptops</a>
+            <a href="/shop?search=&category=Laptops" class="nav__link">Laptops</a>
           </li>
           <li class="nav__item">
-            <a href="compare.html" class="nav__link">Refubished Laptops</a>
+            <a href="/shop?search=&category=Refurbished+laptops" class="nav__link">Refubished Laptops</a>
           </li>
          
         </ul>
@@ -292,8 +292,8 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
       
             <% for(let i = 0; i < laptops.length ; i++){ %>
               <div class="product__item">
-                <div class="product__banner">
-                  <a href="/productDetails/<%= newArrivals[i]._id %>" class="product__images">
+                <div class="product__banner">newArrivals
+                  <a href="/productDetails/<%= laptops[i]._id %>" class="product__images">
                     <img
                       src="<%= laptops[i].productImage[0] %>"
                       alt=""

@@ -1,0 +1,98 @@
+.filters-section {
+  width: 20%;
+  background-color: #fff;
+  padding: 1.5rem;
+  gap: 20px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.filter-header h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.clear-filters {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.clear-filters:hover {
+  background-color: #2563eb;
+}
+
+.filter-group {
+  margin-bottom: 1.5rem;
+}
+
+.filter-group:last-child {
+  margin-bottom: 0;
+}
+
+.filter-group label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: #374151;
+}
+
+.search-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.search-group input[type="text"] {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+}
+
+.search-group button {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.filter-group select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  background-color: white;
+  color: #374151;
+}
+
+.sort-group div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sort-group label {
+  font-weight: normal;
+  margin-left: 0.5rem;
+  cursor: pointer;
+}
+
+.sort-group input[type="radio"] {
+  cursor: pointer;
+}
+
+/* ...existing code... */

@@ -516,6 +516,9 @@ table {
 .products__container {
   grid-template-columns: repeat(4, 1fr);
 }
+.products__container_shop {
+  grid-template-columns: repeat(4, 1fr);
+}
 
 .product__item {
   border: 1px solid var(--border-color);
@@ -1751,7 +1754,7 @@ table {
     max-width: 1140px;
   }
 
-  .products__container,
+  .products__container_shop .products__container,
   .showcase__container {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -1961,6 +1964,7 @@ table {
     display: none;
   }
 
+  .products__container_shop,
   .products__container,
   .showcase__container,
   .footer__container,
@@ -2016,6 +2020,9 @@ table {
     grid-template-columns: 100%;
   }
   .products__container {
+    grid-template-columns: repeat(2, 1fr); /* 2 columns on small screens */
+  }
+  .products__container_shop {
     grid-template-columns: repeat(2, 1fr); /* 2 columns on small screens */
   }
 

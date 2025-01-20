@@ -1,0 +1,417 @@
+<%- include("../layouts/users/header.ejs") %>
+
+
+<!--=============== FLATICON ===============-->
+<link
+rel="stylesheet"
+href="https://cdn-uicons.flaticon.com/2.0.0/uicons-regular-straight/css/uicons-regular-straight.css"
+/>
+
+<!--=============== SWIPER CSS ===============-->
+<link
+rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+/>
+
+<!--=============== CSS ===============-->
+<link rel="stylesheet" href="/css/users/shop.css" />
+<link rel="stylesheet" href="/css/users/homepage.css" />
+
+<title> Pixel Point</title>
+</head>
+<body>
+<!--=============== HEADER ===============-->
+<header class="header">
+   <% if(!locals.user){ %>
+   <div class="header__top">
+     <div class="header__container container">
+       <div class="header__contact">
+         <span>(+01) - 2345 - 6789</span>
+         <span>Our location</span>
+       </div>
+       <div>
+         <p class="header__alert-news">Best Deals in Lowest Prices</p>
+       </div>
+       <div class="gap-10px">
+         <a href="/login" class="header__top-action"> Log In </a>
+         <a href="/signup" class="header__top-action ms-4"> Sign Up </a>
+       </div>
+     </div>
+   </div>
+   <% } %>
+ 
+   <nav class="nav container-fluid px-2">
+     <a href="/" class="nav__logo">
+       <img
+         class="nav__logo-img"
+         src="/img/Yellow and Blue Modern Typographic Pixel Studio Logo (1) (1).png"
+         alt="website logo"
+       />
+     </a>
+     <div class="nav__menu" id="nav-menu">
+       <div class="nav__menu-top">
+         <a href="/" class="nav__menu-logo">
+           <img src="/img/logo.svg" alt="" />
+         </a>
+         <div class="nav__close" id="nav-close">
+           <i class="fi fi-rs-cross-small"></i>
+         </div>
+       </div>
+       <ul class="nav__list">
+         <li class="nav__item">
+           <a href="/" class="nav__link ">Home</a>
+         </li>
+         <li class="nav__item">
+           <a href="shop.html" class="nav__link active-link" >Shop</a>
+         </li>
+         <li class="nav__item">
+           <a href="/shop?search=&category=Laptops" class="nav__link">Brands</a>
+         </li>
+         <li class="nav__item">
+           <a href="accounts.html" class="nav__link">Laptops</a>
+         </li>
+         <li class="nav__item">
+           <a href="compare.html" class="nav__link">Refubished Laptops</a>
+         </li>
+       </ul>
+       <div class="header__search">
+         <input
+           type="text"
+           placeholder="Search For Items..."
+           class="form__input"
+         />
+         <button class="search__btn">
+           <img src="/img/search.png" alt="search icon" />
+         </button>
+       </div>
+     </div>
+     <div class="header__user-actions">
+       <a href="wishlist.html" class="header__action-btn" title="Wishlist">
+         <img src="/img/icon-heart.svg" alt="" />
+         <!-- <span class="count">3</span> -->
+       </a>
+       <a href="cart.html" class="header__action-btn" title="Cart">
+         <img src="/img/icon-cart.svg" alt="" />
+         <!-- <span class="count">3</span> -->
+       </a>
+       <% if(locals.user){ %>
+       <div class="dropdown">
+         <a href="http://"><%= locals.user.name %></a>
+         <div class="dropdown-content">
+           <a href="#">Profile</a>
+           <a href="/logout">Logout</a>
+         </div>
+       </div>
+       <% } %>
+ 
+       <div class="header__action-btn nav__toggle" id="nav-toggle">
+         <img src="/img/menu-burger.svg" alt="" />
+       </div>
+     </div>
+   </nav>
+ </header>
+<!--=============== MAIN ===============-->
+<main class="main">
+<!--=============== BREADCRUMB ===============-->
+<section class="breadcrumb">
+  <ul class="breadcrumb__list flex container">
+    <li><a href="/" class="breadcrumb__link">Home</a></li>
+    <li><span class="breadcrumb__link"></span>></li>
+    <li><span class="breadcrumb__link">Shop</span></li>
+  </ul>
+</section>
+
+<!--=============== PRODUCTS ===============-->
+<div class="container-fluid d-flex">
+
+<div class="filters-section">
+  <form action="/shop" method="get" id="filtersForm">
+  <div class="filter-header">
+    
+    <h4>Filters</h4>
+    <button onclick="clearFilters()" class="clear-filters">Clear Filters</button>
+  </div>
+
+  <div class="filter-group search-group">
+    <input type="text" id="search" name="search" placeholder="Search products..." />
+    <button class="btn btn-primary" type="button" onclick="submitFilters()">Search</button>
+  </div>
+
+  <div class="filter-group">
+    <label for="category" >Category</label>
+    <select class="form-select" id="category" name="category" onchange="submitFilters()">
+      <option>All Categories</option>
+      <% categories.forEach(category => { %>
+        <option value="<%= category.name %>" <%= category.name === selectedCategory ? 'selected' : '' %>><%= category.name %></option>
+        <% }) %>
+    </select>
+  </div>
+
+  <div class="filter-group">
+    <label>Brand</label>
+    <select class="form-select" id="brand" name="brand" onchange="submitFilters()">
+      <option value="">All Brands</option>
+      <% brands.forEach(brand => { %>
+      <option value="<%= brand.brandName %>" <%= brand.brandName === selectedBrand ? 'selected' : '' %>><%= brand.brandName %></option>
+      <% }) %>
+    </select>
+  </div>
+
+  <div class="filter-group">
+    <label>Price Range</label>
+    <select class="form-select" id="priceRange" name="priceRange" onchange="submitFilters()">
+      <option value="">Any Price Range</option>
+      <option value="50000" <%= selectedPriceRange == 50000 ? 'selected' : '' %>>Up to ₹50000</option>
+      <option value="70000" <%= selectedPriceRange == 70000 ? 'selected' : '' %>>Up to ₹70000</option>
+      <option value="100000" <%= selectedPriceRange == 100000 ? 'selected' : '' %>>Up to ₹100000</option>
+      <option value="150000" <%= selectedPriceRange == 150000 ? 'selected' : '' %>>Up to ₹0000</option>
+
+    </select>
+  </div>
+
+  <div class="filter-group">
+    <label>RAM</label>
+    <select class="form-select" id="ram" name="ram" onchange="submitFilters()">
+      <option value="">Any RAM</option>
+      <% rams.forEach(ram => { %>
+      <option value="<%= ram %>" <%= selectedRam == ram ? 'selected' : '' %>><%= ram %>GB</option>
+      <% }) %>
+    </select>
+  </div>
+
+  <div class="filter-group">
+    <label>Storage</label>
+    <select class="form-select" id="storage" name="storage" onchange="submitFilters()">
+      <option value="">Any Storage</option>
+      <% storages.forEach(storage => { %>
+      <option value="<%= storage %>" <%= selectedStorage == storage ? 'selected' : '' %>><%= storage %>GB</option>
+      <% }) %>
+    </select>
+  </div>
+
+  <div class="filter-group">
+    <select class="form-select" id="color" name="color" onchange="submitFilters()">
+      <option value="">Any Color</option>
+      <% colors.forEach(color => { %>
+      <option value="<%= color %>" <%= selectedColor === color ? 'selected' : '' %>><%= color %></option>
+      <% }) %>
+    </select>
+  </div>
+
+  <div class="filter-group sort-group">
+    <label>Sort By</label>
+    <div >
+      <div class="d-flex">
+      <input class="form-check-input" type="radio" id="priceLowToHigh" name="sort" value="priceLowToHigh" onchange="submitFilters()" <%= selectedSort === 'priceLowToHigh' ? 'checked' : '' %>
+      for="lowToHigh"
+        ><label for="sort " class="d-inline-block"> Price Low to High</label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" id="priceHighToLow" name="sort" value="priceHighToLow" onchange="submitFilters()" <%= selectedSort === 'priceHighToLow' ? 'checked' : '' %>>
+        <label class="form-check-label" for="priceHighToLow">Price High to Low</label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" id="alphabeticalAZ" name="sort" value="alphabeticalAZ" onchange="submitFilters()" <%= selectedSort === 'alphabeticalAZ' ? 'checked' : '' %>>
+        <label class="form-check-label" for="alphabeticalAZ">Alphabetical A-Z</label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" id="alphabeticalZA" name="sort" value="alphabeticalZA" onchange="submitFilters()" <%= selectedSort === 'alphabeticalZA' ? 'checked' : '' %>>
+        <label class="form-check-label" for="alphabeticalZA">Alphabetical Z-A</label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" id="newArrivals" name="sort" value="newArrivals" onchange="submitFilters()" <%= selectedSort === 'newArrivals' ? 'checked' : '' %>>
+        <label class="form-check-label" for="newArrivals">New Arrivals</label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" id="oldArrivals" name="sort" value="oldArrivals" onchange="submitFilters()" <%= selectedSort === 'oldArrivals' ? 'checked' : '' %>>
+        <label class="form-check-label" for="oldArrivals">Old Arrivals</label>
+      </div>
+    </div>
+  </div>
+</form>
+</div>
+<section class="products container section--lg">
+  <div class="products__container_shop grid">
+
+    <% for(let i =0; i<products.length;i++){%>
+    <div class="product__item">
+      <div class="product__banner">
+        <a href="/productDetails/<%= products[i]._id %>" class="product__images">
+          <img
+            src="<%= products[i].productImage[0] %>"
+            alt="productImage"
+            class="product__img default"
+          />
+          <img
+          src="<%= products[i].productImage[0] %>"
+          alt="productImage"
+          class="product__img hover"
+          />
+        </a>
+        <div class="product__actions">
+          <a href="#" class="action__btn" aria-label="Quick View">
+            <i class="fi fi-rs-eye"></i>
+          </a>
+          <a href="#" class="action__btn" aria-label="Add to Wishlist">
+            <i class="fi fi-rs-heart"></i>
+          </a>
+        </div>
+        <div class="product__badge "> <%= products[i].category.name %> </div>
+      </div>
+      <div class="product__content">
+        <span class="product__category"> <%= products[i].brand.brandName %> </span>
+        <a href="/productDetails/<%= products[i]._id %>">
+          <h3 class="product__title"> <%= products[i].productName %>  </h3>
+        </a>
+        <div class="product__rating">
+          <i class="fi fi-rs-star"></i>
+          <i class="fi fi-rs-star"></i>
+          <i class="fi fi-rs-star"></i>
+          <i class="fi fi-rs-star"></i>
+          <i class="fi fi-rs-star"></i>
+        </div>
+        <div class="product__price flex">
+          <span class="new__price">&#8377; <%= products[i].combos[0].salePrice %> </span>
+          <span class="old__price">&#8377; <%= products[i].combos[0].regularPrice %> </span>
+        </div>
+        <a
+          href="#"
+          class="action__btn cart__btn"
+          aria-label="Add To Cart"
+        >
+          <i class="fi fi-rs-shopping-bag-add"></i>
+        </a>
+      </div>
+    </div>
+
+<% } %>
+   
+</div>
+  <ul class="pagination">
+    <% if (currentPage > 1) { %>
+      <a href="?<%= new URLSearchParams({ page: currentPage - 1 }) %>">&laquo; Previous</a>
+    <% } %>
+    <% for (let i = 1; i <= totalPages; i++) { %>
+      <a 
+        href="?<%= new URLSearchParams({  page: i }) %>" 
+        class="<%= i === currentPage ? 'pagination__link active' : 'pagination__link ' %>">
+        <%= i %>
+      </a>
+    <% } %>
+    <% if (currentPage < totalPages) { %>
+      <a href="?<%= new URLSearchParams({  page: currentPage + 1 }) %>">Next &raquo;</a>
+    <% } %>
+    
+    <li>
+      <a href="#" class="pagination__link icon">
+        <i class="fi-rs-angle-double-small-right"></i>
+      </a>
+    </li>
+  </ul>
+</section>
+
+
+</main>
+
+<!--=============== FOOTER ===============-->
+<footer class="footer container">
+    <div class="footer__container grid">
+      <div class="footer__content">
+        <a href="/img/pixelpointlogo.png" class="footer__logo">
+          <img src="/img/pixelpointlogo.png" alt="" class="footer__logo-img" />
+        </a>
+        <h4 class="footer__subtitle">Contact</h4>
+        <p class="footer__description">
+          <span>Address:</span> 13 Tlemcen Road, Street 32, Beb-Wahren
+        </p>
+        <p class="footer__description">
+          <span>Phone:</span> +01 2222 365 /(+91) 01 2345 6789
+        </p>
+        <div class="footer__social">
+          <h4 class="footer__subtitle">Follow Me</h4>
+          <div class="footer__links flex">
+            <a href="#">
+              <img
+                src="/img/icon-facebook.svg"
+                alt=""
+                class="footer__social-icon"
+              />
+            </a>
+            <a href="#">
+              <img
+                src="/img/icon-twitter.svg"
+                alt=""
+                class="footer__social-icon"
+              />
+            </a>
+            <a href="#">
+              <img
+                src="/img/icon-instagram.svg"
+                alt=""
+                class="footer__social-icon"
+              />
+            </a>
+            <a href="#">
+              <img
+                src="/img/icon-pinterest.svg"
+                alt=""
+                class="footer__social-icon"
+              />
+            </a>
+            <a href="#">
+              <img
+                src="/img/icon-youtube.svg"
+                alt=""
+                class="footer__social-icon"
+              />
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="footer__content">
+        <h3 class="footer__title">Address</h3>
+        <ul class="footer__links">
+          <li><a href="#" class="footer__link">About Us</a></li>
+          <li><a href="#" class="footer__link">Delivery Information</a></li>
+          <li><a href="#" class="footer__link">Privacy Policy</a></li>
+          <li><a href="#" class="footer__link">Terms & Conditions</a></li>
+          <li><a href="#" class="footer__link">Contact Us</a></li>
+          <li><a href="#" class="footer__link">Support Center</a></li>
+        </ul>
+      </div>
+      <div class="footer__content">
+        <h3 class="footer__title">My Account</h3>
+        <ul class="footer__links">
+          <li><a href="#" class="footer__link">Sign In</a></li>
+          <li><a href="#" class="footer__link">View Cart</a></li>
+          <li><a href="#" class="footer__link">My Wishlist</a></li>
+          <li><a href="#" class="footer__link">Track My Order</a></li>
+          <li><a href="#" class="footer__link">Help</a></li>
+          <li><a href="#" class="footer__link">Order</a></li>
+        </ul>
+      </div>
+      <div class="footer__content">
+        <h3 class="footer__title">Secured Payed Gateways</h3>
+        <img src="/img/payment-method.png" alt="" class="payment__img" />
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <p class="copyright">&copy; 2024 Pixel-Point. All right reserved</p>
+    </div>
+  </footer>
+  
+  <!--=============== SWIPER JS ===============-->
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- Include jQuery before your script -->
+
+  <!--=============== MAIN JS ===============-->
+  <!-- Include jQuery before your script -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  
+  <script src="/scripts/users/shop.js" ></script>
+<!--=============== MAIN JS ===============-->
+<script src="scripts/users/main.js"></script>
+
+<%- include("../layouts/users/footer.ejs") %>
