@@ -80,5 +80,5 @@ userRoute.delete("/cart/:cartId/item/:itemId", cartController.deleteCartItem);
 userRoute.get("/shop", shopController.loadShopPage);
 
 //for checkout
-userRoute.get("/checkout", orderController.loadCheckOut);
+userRoute.get("/checkout", orderController.processCheckout);
 module.exports = userRoute;

@@ -122,18 +122,14 @@
   <!--=============== CHECKOUT ===============-->
   <section class="checkout section--lg">
     <div class="checkout__container container">
-      <h2 class="section__title">Checkout</h2>
-
+      <h1 class="section__titlee">Checkout</h1>
+      
       <div class="checkout__content">
         <!-- Coupon Section -->
         <div class="checkout__coupon">
           <h3 class="section__title">Have a coupon?</h3>
           <form class="coupon__form">
-            <input
-              type="text"
-              placeholder="Enter your coupon code"
-              class="coupon__input"
-            />
+            <input type="text" placeholder="Enter your coupon code" class="coupon__input">
             <button class="coupon__button">Apply Coupon</button>
           </form>
         </div>
@@ -142,63 +138,53 @@
           <h3 class="section__title">Cart Items</h3>
           <div class="cart__items">
             <!-- Item 1 -->
+            <% if (cart.items.length > 0) { %>
+              <% cart.items.forEach((item) => { %>
             <div class="cart__item">
               <div class="item__image">
-                <img src="assets/img/laptop-1.jpg" alt="MacBook Pro M3" />
+                <img src=" <%= item.productId.productImage[0] %> " alt="MacBook Pro M3">
               </div>
               <div class="item__details">
-                <h4 class="item__name">
-                  MacBook Pro M3 (2023) | 14-inch Display
-                </h4>
+                <h4 class="item__name"><%= item.productId.productName %> </h4>
                 <div class="item__meta">
-                  <span class="item__size">Space Gray</span>
-                  <span class="item__qty">Qty: 1</span>
-                </div>
-                <div class="item__price">₹149,999</div>
+                  <span class="item__size"><%= item.productId.combos[0].color %> </span>
+                  <span class="item__qty">  Qty: <%= item.quantity %></span>
+                </div> 
+                <div class="item__price">₹ <%= item.price %> </div>
               </div>
               <button class="remove__item">
                 <i class="fi fi-rs-cross-small"></i>
               </button>
             </div>
-            <!-- Item 2 -->
-            <div class="cart__item">
-              <div class="item__image">
-                <img src="assets/img/phone-1.jpg" alt="iPhone 15 Pro" />
+            <% }); %>
+            <% } else { %>
+              <div class="empty__cart">
+                <p>Your cart is empty. Add items to proceed.</p>
               </div>
-              <div class="item__details">
-                <h4 class="item__name">iPhone 15 Pro | 256GB Storage</h4>
-                <div class="item__meta">
-                  <span class="item__size">Natural Titanium</span>
-                  <span class="item__qty">Qty: 1</span>
-                </div>
-                <div class="item__price">₹89,999</div>
-              </div>
-              <button class="remove__item">
-                <i class="fi fi-rs-cross-small"></i>
-              </button>
-            </div>
-          </div>
+            <% } %>
           <!-- Price Details -->
           <div class="price__details">
             <h4 class="details__title">Price Details</h4>
             <div class="price__row">
-              <span>Price (2 Items)</span>
-              <span>₹239,998</span>
+              <span>Price</span>
+              <span>₹<%= totalPrice %></span>
             </div>
-            <div class="price__row">
+            <!-- <div class="price__row">
               <span>Discount</span>
               <span class="discount">-₹10,000</span>
-            </div>
+            </div> -->
             <div class="price__row">
               <span>Delivery Charges</span>
               <span class="free">Free</span>
             </div>
             <div class="price__row total">
               <span>Total Amount</span>
-              <span>₹229,998</span>
+              <span>₹ <%= totalPrice %>  </span>
             </div>
           </div>
-          <div class="save__message">You will save ₹10,000 on this order</div>
+          <div class="save__message">
+            You will save ₹10,000 on this order
+          </div>
         </div>
         <!-- Billing Details -->
         <div class="checkout__billing">
@@ -209,122 +195,91 @@
             <h3 class="section__title">Delivery Address</h3>
           </div>
           <!-- Saved Address -->
+
+          <% if(defaultAddress){ %>
           <div class="saved__address">
             <div class="address__info">
               <div class="address__header">
-                <h4 class="customer__name">Sharon</h4>
-                <span class="address__type">Home</span>
+                <h4 class="customer__name"><%= user.name %>  </h4>
+                <span class="address__type"><%= defaultAddress.addressType %> </span>
               </div>
               <p class="address__details">
-                Puthiyandi house, Azhikkal, Boatpalam,<br />
-                Near Hashmi Vayanashala, Azhikode,<br />
-                Kerala - 670009
+                <%= defaultAddress.name %> , Azhikkal, Boatpalam,<br>
+                <%= defaultAddress.landMark %> , <%= defaultAddress.city %> ,<br>
+                <%= defaultAddress.state %>  - <%= defaultAddress.pincode %> 
               </p>
-              <p class="contact__number">+91 8848237115</p>
+              <p class="contact__number"><%= defaultAddress.phone %> </p>
+              <p class="contact__number"><%= defaultAddress.alternatePhone %> </p>
+
             </div>
-            <button class="change__address">CHANGE</button>
+            <button class="change__address"  onclick="toggleAddressModal()" >CHANGE</button>
           </div>
-          <div class="new__address-form" style="display: none">
+
+               <% } else{ %>
+              <p>Address not found</p>
+            <% } %>
+          <!-- <div class="new__address-form" style="display: none;">
             <form class="form">
               <div class="form__row">
                 <div class="form__group">
-                  <input
-                    type="text"
-                    placeholder="Full Name"
-                    class="form__input"
-                    value="Sharon"
-                  />
+                  <input type="text" placeholder="Full Name" class="form__input" value="Sharon" />
                 </div>
                 <div class="form__group">
-                  <input
-                    type="tel"
-                    placeholder="Phone Number"
-                    class="form__input"
-                    value="8848237115"
-                  />
+                  <input type="tel" placeholder="Phone Number" class="form__input" value="8848237115" />
                 </div>
               </div>
               <div class="form__row">
                 <div class="form__group">
-                  <input
-                    type="text"
-                    placeholder="House No., Building Name"
-                    class="form__input"
-                    value="Puthiyandi house"
-                  />
+                  <input type="text" placeholder="House No., Building Name" class="form__input" value="Puthiyandi house" />
                 </div>
                 <div class="form__group">
-                  <input
-                    type="text"
-                    placeholder="Road, Area, Colony"
-                    class="form__input"
-                    value="Azhikkal, Boatpalam"
-                  />
+                  <input type="text" placeholder="Road, Area, Colony" class="form__input" value="Azhikkal, Boatpalam" />
                 </div>
               </div>
               <div class="form__row">
                 <div class="form__group">
-                  <input
-                    type="text"
-                    placeholder="Pincode"
-                    class="form__input"
-                    value="670009"
-                  />
+                  <input type="text" placeholder="Pincode" class="form__input" value="670009" />
                 </div>
                 <div class="form__group">
-                  <input
-                    type="text"
-                    placeholder="City"
-                    class="form__input"
-                    value="Azhikode"
-                  />
+                  <input type="text" placeholder="City" class="form__input" value="Azhikode" />
                 </div>
               </div>
               <div class="form__row">
                 <div class="form__group">
-                  <input
-                    type="text"
-                    placeholder="State"
-                    class="form__input"
-                    value="Kerala"
-                  />
+                  <input type="text" placeholder="State" class="form__input" value="Kerala" />
                 </div>
                 <div class="form__group">
-                  <input type="text" placeholder="Landmark (Optional)"
-                  class="form__input" value="Near Hashmi Vayanashala" /
+                  <input type="text" placeholder="Landmark (Optional)" class="form__input" value="Near Hashmi Vayanashala" />
                 </div>
               </div>
               <div class="address__actions">
                 <button type="button" class="cancel__btn">Cancel</button>
-                <button type="submit" class="save__btn">
-                  Save & Deliver Here
-                </button>
+                <button type="submit" class="save__btn">Save & Deliver Here</button>
               </div>
             </form>
-          </div>
+          </div> -->
+
+
+       
+        </div>
         </div>
         <!-- Payment Details -->
         <div class="checkout__payment">
           <h3 class="section__title">Payment Methods</h3>
           <div class="payment__methods">
             <div class="payment__option">
-              <input type="radio" name="payment" id="bank" checked />
+              <input type="radio" name="payment" id="bank" checked>
               <label for="bank">Direct Bank Transfer</label>
             </div>
             <div class="payment__option">
-              <input type="radio" name="payment" id="card" />
+              <input type="radio" name="payment" id="card">
               <label for="card">Credit/Debit Card</label>
             </div>
             <div class="payment__option">
-              <input type="radio" name="payment" id="cod" />
+              <input type="radio" name="payment" id="cod">
               <label for="cod">Cash on Delivery</label>
             </div>
-            <button
-              class="coupon__button place-order-btn"
-              style="width: 100%; margin-top: 1rem"
-            >
-              Place Order
-            </button>
+            <button class="coupon__button place-order-btn" style="width: 100%; margin-top: 1rem;">Place Order</button>
           </div>
         </div>
       </div>
@@ -416,6 +371,7 @@
         <p class="copyright">&copy; 2024 Pixel-Point. All right reserved</p>
       </div>
     </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <!--=============== SWIPER JS ===============-->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -425,7 +381,8 @@
     <!--=============== MAIN JS ===============-->
     <!-- Include jQuery before your script -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    
+
+    <script src="/scripts/users/checkout.js" ></script>
   <!--=============== MAIN JS ===============-->
   <script src="/scripts/users/main.js"></script>
   </body>
