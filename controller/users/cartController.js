@@ -22,10 +22,6 @@ const getCart = async (req, res) => {
       })
       .lean();
 
-    if (!cartData) {
-      return res.status(400).json({ success: false, message: "Cart is empty" });
-    }
-
     // Attach the specific combo details to each item
     cartData.items = cartData.items.map((item) => {
       if (item.productId && item.productId.combos) {
@@ -37,8 +33,6 @@ const getCart = async (req, res) => {
       }
       return item; // If no product or combo, return item as is
     });
-
-    console.log(cartData); // Debugging the updated cart data
 
     res.render("cart", {
       cart: cartData,
@@ -95,12 +89,13 @@ const addToCart = async (req, res) => {
       );
       if (existingItem) {
         existingItem.quantity += quantity;
-        existingItem.price = combo.salePrice * existingItem.quantity; // Update item price
+        existingItem.totalPrice = combo.salePrice * existingItem.quantity; // Update item price
       } else {
         cart.items.push({
           productId: productId,
           quantity: quantity,
-          price: combo.salePrice * quantity, // Add price per quantity
+          price: combo.salePrice,
+          totalPrice: combo.salePrice * quantity, // Add price per quantity
           comboId: comboId,
         });
       }
@@ -112,7 +107,8 @@ const addToCart = async (req, res) => {
           {
             productId: productId,
             quantity: quantity,
-            price: combo.salePrice * quantity, // Set price per quantity
+            price: combo.salePrice,
+            totalPrice: combo.salePrice * quantity, // Set price per quantity
             comboId: comboId,
           },
         ],
@@ -223,10 +219,13 @@ const addquantity = async (req, res) => {
     product.quantity += 1;
 
     // Update the item price using the combo's salePrice
-    product.price = product.quantity * combo.salePrice;
+    product.totalPrice = product.quantity * combo.salePrice;
 
     // Update the total price of the cart
-    cart.totalPrice = cart.items.reduce((sum, item) => sum + item.price, 0);
+    cart.totalPrice = cart.items.reduce(
+      (sum, item) => sum + item.totalPrice,
+      0
+    );
 
     // Save the updated cart
     await cart.save();
@@ -295,7 +294,7 @@ const decreaseQuantity = async (req, res) => {
       cart.items = cart.items.filter((item) => item.comboId != comboId);
     } else {
       // Update the item price using the combo's salePrice
-      product.price = product.quantity * combo.salePrice;
+      product.totalPrice = product.quantity * combo.salePrice;
     }
 
     // Update the total price of the cart

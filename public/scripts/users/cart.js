@@ -61,7 +61,7 @@ async function deleteCartItem(cartId, itemId) {
 async function updateQuantity(comboId) {
   try {
     const response = await fetch(`/updateCart?comboId=${comboId}`, {
-      method: "PUT",
+      method: "PATCH",
     });
 
     if (!response.ok) {
@@ -97,7 +97,7 @@ async function updateQuantity(comboId) {
 async function decreaseQuantity(comboId) {
   try {
     const response = await fetch(`/decreaseQuantity?comboId=${comboId}`, {
-      method: "PUT",
+      method: "PATCH",
     });
 
     if (!response.ok) {

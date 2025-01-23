@@ -274,17 +274,40 @@ const getAddAddress = async (req, res) => {
     return res.redirect("/page-not-found");
   }
 };
-
-//for adding add address
+//for adding aaddress
 const addAddress = async (req, res) => {
   try {
     const user = req.session.user;
-    const userData = await User.findById({ _id: user }).lean();
     const { type, houseName, city, landmark, state, pincode, phone, altPhone } =
       req.body;
-    if (userData) {
+
+    const userData = await User.findById(user).lean();
+    if (!userData) {
+      return res
+        .status(400)
+        .json({ success: false, message: "User not found" });
+    }
+
+    const existingAddress = await Address.findOne({ userId: user });
+
+    if (existingAddress) {
+      existingAddress.address.push({
+        addressType: type,
+        name: houseName,
+        city: city,
+        landMark: landmark,
+        state: state,
+        pincode: pincode,
+        phone: phone,
+        alternatePhone: altPhone,
+      });
+      await existingAddress.save();
+      return res
+        .status(200)
+        .json({ success: true, message: "Address added successfully" });
+    } else {
       const newAddress = new Address({
-        userId: userData,
+        userId: userData._id,
         address: [
           {
             addressType: type,
@@ -301,18 +324,13 @@ const addAddress = async (req, res) => {
       await newAddress.save();
       return res
         .status(200)
-        .json({ success: true, message: "address added successfully" });
-    } else {
-      console.log("error");
-      return res
-        .status(400)
-        .json({ success: false, message: "Unable to add user" });
+        .json({ success: true, message: "Address added successfully" });
     }
   } catch (error) {
-    console.log(error, "error at adding address");
+    console.log(error, "Error at adding address");
     return res
       .status(500)
-      .json({ success: false, message: "internal server error" });
+      .json({ success: false, message: "Internal server error" });
   }
 };
 

@@ -75,12 +75,14 @@ userRoute.delete("/deleteAddreess/:id", accountController.deleteAddress);
 userRoute.get("/cart", cartController.getCart);
 userRoute.post("/addCart/:productId/combo/:comboId", cartController.addToCart);
 userRoute.delete("/cart/:cartId/item/:itemId", cartController.deleteCartItem);
-userRoute.put("/updateCart", cartController.addquantity);
-userRoute.put("/decreaseQuantity", cartController.decreaseQuantity);
+userRoute.patch("/updateCart", cartController.addquantity);
+userRoute.patch("/decreaseQuantity", cartController.decreaseQuantity);
 
 //for shop details
 userRoute.get("/shop", shopController.loadShopPage);
 
 //for checkout
 userRoute.get("/checkout", orderController.processCheckout);
+userRoute.post("/checkout", orderController.placeOrder);
+userRoute.get("/orderplaced", orderController.orderPlaced);
 module.exports = userRoute;

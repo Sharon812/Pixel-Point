@@ -65,6 +65,9 @@ const orderSchema = new Schema(
         },
       },
     ],
+    paymentMethod: {
+      type: "string",
+    },
     totalPrice: {
       type: Number,
       required: true,
@@ -84,19 +87,6 @@ const orderSchema = new Schema(
     },
     invoiceDate: {
       type: Date,
-    },
-    status: {
-      type: String,
-      required: true,
-      enum: [
-        "Pending",
-        "Processing",
-        "Shipped",
-        "Delivered",
-        "Cancelled",
-        "Return Request",
-        "Returned",
-      ],
     },
     couponApplied: {
       type: Boolean,

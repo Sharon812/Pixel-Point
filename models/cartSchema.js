@@ -22,9 +22,11 @@ const cartSchema = new Schema(
         price: {
           type: Number,
         },
+        totalPrice: {
+          type: Number,
+        },
         comboId: {
           type: Schema.Types.ObjectId,
-          ref: "Product.combos",
         },
       },
     ],

@@ -124,6 +124,7 @@
     <div class="checkout__container container">
       <h1 class="section__titlee">Checkout</h1>
       
+      <form action="">
       <div class="checkout__content">
         <!-- Coupon Section -->
         <div class="checkout__coupon">
@@ -196,28 +197,43 @@
           </div>
           <!-- Saved Address -->
 
-          <% if(defaultAddress){ %>
-          <div class="saved__address">
-            <div class="address__info">
-              <div class="address__header">
-                <h4 class="customer__name"><%= user.name %>  </h4>
-                <span class="address__type"><%= defaultAddress.addressType %> </span>
-              </div>
-              <p class="address__details">
-                <%= defaultAddress.name %> , Azhikkal, Boatpalam,<br>
-                <%= defaultAddress.landMark %> , <%= defaultAddress.city %> ,<br>
-                <%= defaultAddress.state %>  - <%= defaultAddress.pincode %> 
-              </p>
-              <p class="contact__number"><%= defaultAddress.phone %> </p>
-              <p class="contact__number"><%= defaultAddress.alternatePhone %> </p>
+          <% if (address && address.length > 0) { %>
+            <form action="/checkout" method="POST" id="checkout-form">
+              <% address.forEach((address, index) => { %>
+                <div class="saved__address">
+                  <div class="address__info">
+                    <div class="address__header">
+                      <input 
+                        type="radio" 
+                        id="address-<%= index %>" 
+                        name="selectedAddress" 
+                        value="<%= address._id %>" 
+                        <%= index === 0 ? "checked" : "" %> 
+                      />
+                      <label for="address-<%= index %>">
+                        <h4 class="customer__name"><%= user.name %></h4>
+                        <span class="address__type"><%= address.addressType %></span>
+                      </label>
+                    </div>
+                    <p class="address__details">
+                      <%= address.name %>, Azhikkal, Boatpalam,<br>
+                      <%= address.landMark %>, <%= address.city %>,<br>
+                      <%= address.state %> - <%= address.pincode %>
+                    </p>
+                    <p class="contact__number"><%= address.phone %></p>
+                    <p class="contact__number"><%= address.alternatePhone %></p>
+                  </div>
+                  <button type="button" class="change__address" onclick="toggleAddressModal()">CHANGE</button>
+                </div>
+              <% }); %>
+              <!-- <button type="submit" class="submit__button btn">Proceed with Selected Address</button> -->
+            </form>
+          <% } else { %>
+            <p>No saved addresses found. Please add a new address.</p>
+          <% } %>
+          
 
-            </div>
-            <button class="change__address"  onclick="toggleAddressModal()" >CHANGE</button>
-          </div>
 
-               <% } else{ %>
-              <p>Address not found</p>
-            <% } %>
           <!-- <div class="new__address-form" style="display: none;">
             <form class="form">
               <div class="form__row">
@@ -283,6 +299,7 @@
           </div>
         </div>
       </div>
+    </form>
     </div>
   </section>
   <!--=============== FOOTER ===============-->
