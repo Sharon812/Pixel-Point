@@ -75,6 +75,8 @@ userRoute.delete("/deleteAddreess/:id", accountController.deleteAddress);
 userRoute.get("/cart", cartController.getCart);
 userRoute.post("/addCart/:productId/combo/:comboId", cartController.addToCart);
 userRoute.delete("/cart/:cartId/item/:itemId", cartController.deleteCartItem);
+userRoute.put("/updateCart", cartController.addquantity);
+userRoute.put("/decreaseQuantity", cartController.decreaseQuantity);
 
 //for shop details
 userRoute.get("/shop", shopController.loadShopPage);

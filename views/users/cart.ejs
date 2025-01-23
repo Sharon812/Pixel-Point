@@ -152,11 +152,11 @@
               </div>
               <div class="cart__item-controls">
                 <div class="cart__quantity">
-                  <button class="cart__quantity-btn minus">
+                  <button onclick="decreaseQuantity( '<%=item.combo._id%>' )" class="cart__quantity-btn minus">
                     <i class="fi fi-rs-minus-small"></i>
                   </button>
                   <input type="number" value="<%= item.quantity %>" min="1" class="cart__quantity-input" />
-                  <button class="cart__quantity-btn plus">
+                  <button onclick="updateQuantity( '<%=item.combo._id%>' )" class="cart__quantity-btn plus">
                     <i class="fi fi-rs-plus-small"></i>
                   </button>
                 </div>

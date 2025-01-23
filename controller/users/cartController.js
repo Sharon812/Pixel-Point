@@ -52,7 +52,6 @@ const getCart = async (req, res) => {
 const addToCart = async (req, res) => {
   try {
     console.log("Entered");
-
     const { productId, comboId } = req.params;
     const { quantity } = req.body;
     const user = req.session.user;
@@ -63,7 +62,7 @@ const addToCart = async (req, res) => {
         .status(400)
         .json({ success: false, message: "Invalid input data" });
     }
-
+    debugger;
     // Fetch product and user data
     const productData = await Product.findById(productId);
     const userData = await User.findById(user);
@@ -176,8 +175,150 @@ const deleteCartItem = async (req, res) => {
   }
 };
 
+const addquantity = async (req, res) => {
+  try {
+    const user = req.session.user;
+    const { comboId } = req.query;
+
+    if (!user || !comboId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid request" });
+    }
+
+    // Find the cart for the user
+    const cart = await Cart.findOne({ userId: user });
+
+    if (!cart) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Cart not found" });
+    }
+
+    // Find the product in the cart
+    const product = cart.items.find((item) => item.comboId == comboId);
+
+    if (!product) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Product not found in cart" });
+    }
+
+    // Fetch the product containing the combo details
+    const productWithCombo = await Product.findOne(
+      { "combos._id": comboId },
+      { "combos.$": 1 }
+    );
+
+    if (!productWithCombo || !productWithCombo.combos.length) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Combo not found" });
+    }
+
+    // Extract the combo details
+    const combo = productWithCombo.combos[0];
+
+    // Increment the quantity
+    product.quantity += 1;
+
+    // Update the item price using the combo's salePrice
+    product.price = product.quantity * combo.salePrice;
+
+    // Update the total price of the cart
+    cart.totalPrice = cart.items.reduce((sum, item) => sum + item.price, 0);
+
+    // Save the updated cart
+    await cart.save();
+
+    return res
+      .status(200)
+      .json({ success: true, message: "Quantity updated", cart });
+  } catch (error) {
+    console.error("Error updating quantity:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
+  }
+};
+
+//for decreasing the quantity
+const decreaseQuantity = async (req, res) => {
+  try {
+    const user = req.session.user;
+    const { comboId } = req.query;
+
+    if (!user || !comboId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid request" });
+    }
+
+    // Find the cart for the user
+    const cart = await Cart.findOne({ userId: user });
+
+    if (!cart) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Cart not found" });
+    }
+
+    // Find the product in the cart
+    const product = cart.items.find((item) => item.comboId == comboId);
+
+    if (!product) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Product not found in cart" });
+    }
+
+    // Fetch the product containing the combo details
+    const productWithCombo = await Product.findOne(
+      { "combos._id": comboId },
+      { "combos.$": 1 }
+    );
+
+    if (!productWithCombo || !productWithCombo.combos.length) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Combo not found" });
+    }
+
+    // Extract the combo details
+    const combo = productWithCombo.combos[0];
+
+    // Decrement the quantity
+    product.quantity -= 1;
+
+    // Remove the product from the cart if quantity is 0
+    if (product.quantity === 0) {
+      cart.items = cart.items.filter((item) => item.comboId != comboId);
+    } else {
+      // Update the item price using the combo's salePrice
+      product.price = product.quantity * combo.salePrice;
+    }
+
+    // Update the total price of the cart
+    cart.totalPrice = cart.items.reduce((sum, item) => sum + item.price, 0);
+
+    // Save the updated cart
+    await cart.save();
+
+    return res
+      .status(200)
+      .json({ success: true, message: "Quantity updated", cart });
+  } catch (error) {
+    console.error("Error updating quantity:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
+  }
+};
+
 module.exports = {
   getCart,
   addToCart,
   deleteCartItem,
+  addquantity,
+  decreaseQuantity,
 };

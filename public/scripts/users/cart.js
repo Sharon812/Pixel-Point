@@ -1,7 +1,5 @@
 async function deleteCartItem(cartId, itemId) {
   try {
-    // Step 1: Ask for confirmation
-    console.log(cartId, itemId);
     const confirmation = await Swal.fire({
       title: "Are you sure?",
       text: "Do you want to remove this item from your cart?",
@@ -12,7 +10,6 @@ async function deleteCartItem(cartId, itemId) {
       confirmButtonText: "Yes, remove it!",
     });
 
-    // Step 2: If confirmed, send a fetch request
     if (confirmation.isConfirmed) {
       const response = await fetch(`/cart/${cartId}/item/${itemId}`, {
         method: "DELETE",
@@ -21,11 +18,9 @@ async function deleteCartItem(cartId, itemId) {
         },
       });
 
-      // Step 3: Handle the response
       if (response.ok) {
         const result = await response.json();
 
-        // Show a success toast
         Swal.fire({
           toast: true,
           position: "top-end",
@@ -39,7 +34,6 @@ async function deleteCartItem(cartId, itemId) {
       } else {
         const errorResult = await response.json();
 
-        // Show an error toast
         Swal.fire({
           toast: true,
           position: "top-end",
@@ -53,7 +47,6 @@ async function deleteCartItem(cartId, itemId) {
   } catch (error) {
     console.error("Error deleting cart item:", error);
 
-    // Show an error toast for unexpected errors
     Swal.fire({
       toast: true,
       position: "top-end",
@@ -61,6 +54,78 @@ async function deleteCartItem(cartId, itemId) {
       title: "An error occurred. Please try again.",
       showConfirmButton: false,
       timer: 3000,
+    });
+  }
+}
+
+async function updateQuantity(comboId) {
+  try {
+    const response = await fetch(`/updateCart?comboId=${comboId}`, {
+      method: "PUT",
+    });
+
+    if (!response.ok) {
+      Swal.fire({
+        toast: true,
+        icon: "error",
+        title: response.message || `error occured`,
+        position: "top-right",
+        timer: 3000,
+        showConfirmButton: false,
+      });
+    }
+
+    const result = await response.json();
+
+    if (result.success) {
+      location.reload();
+    } else {
+      throw new Error(result.message || "An error occurred.");
+    }
+  } catch (error) {
+    Swal.fire({
+      toast: true,
+      icon: "error",
+      title: error.message,
+      position: "top-right",
+      timer: 3000,
+      showConfirmButton: false,
+    });
+  }
+}
+
+async function decreaseQuantity(comboId) {
+  try {
+    const response = await fetch(`/decreaseQuantity?comboId=${comboId}`, {
+      method: "PUT",
+    });
+
+    if (!response.ok) {
+      Swal.fire({
+        toast: true,
+        icon: "error",
+        title: response.message || `error occured`,
+        position: "top-right",
+        timer: 3000,
+        showConfirmButton: false,
+      });
+    }
+
+    const result = await response.json();
+
+    if (result.success) {
+      location.reload();
+    } else {
+      throw new Error(result.message || "An error occurred.");
+    }
+  } catch (error) {
+    Swal.fire({
+      toast: true,
+      icon: "error",
+      title: error.message,
+      position: "top-right",
+      timer: 3000,
+      showConfirmButton: false,
     });
   }
 }
