@@ -6,6 +6,7 @@ const sessionCheck = require("../../middlewares/adminSessionAuth");
 const catController = require("../../controller/admin/categoryController");
 const productCont = require("../../controller/admin/productController");
 const brandController = require("../../controller/admin/brandController");
+const orderController = require("../../controller/admin/orderController");
 //for multer//not
 const multer = require("multer");
 const storage = require("../../helpers/multer");
@@ -56,5 +57,9 @@ router.post("/deleteimage", productCont.deleteSingleImage);
 router.get("/brands", brandController.getBrandPage);
 router.post("/addbrands", uploads.single("image"), brandController.addBrand);
 router.get("/blockBrand", brandController.blockBrand);
+
+//for orders
+router.get("/orders", orderController.getOrderDetails);
+router.post("/orders/update-status", orderController.updateStatus);
 
 module.exports = router;
