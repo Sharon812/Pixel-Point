@@ -227,6 +227,7 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                   type="button"
                   data-product-id="<%= product._id %>"
                   data-combos-id = "<%= combo._id  %>"
+                  data-combo-quantity = "<%= combo.quantity %>"
                   data-ram="<%= combo.ram %>"
                   data-storage="<%= combo.storage %>"
                   data-color="<%= combo.color %>"
@@ -257,7 +258,7 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
           </li> -->
           </ul>
         </div>
-
+        <% if(product.combos[0].quantity > 0 ) {%>
         <div class="details__action" id="actionButtons">
           <input type="number" class="quantity" value="1" />
 
@@ -275,10 +276,24 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
             <span class="h5">Availability: </span>
             <span class="h4 text-danger" id="quantityStatus">
               <%= product.combos[0].quantity %> 
-              <p id="quantityStatus"></p>
             </span>
           </li>
         </ul>
+        <% } else{ %>
+          <div class="details__action" id="actionButtons">
+            <button class="btn btn-danger" disabled>Out of Stock</button>
+          </div>
+          <ul class="details__meta">
+            <!-- <li class="meta__list flex"><span>SKU:</span>FWM15VKT</li>
+            <li class="meta__list flex">
+              <span>Tags:</span>Clothes, Women, Dress
+            </li> -->
+            <li class="meta__list flex">
+              <span class="h5">Availability: </span>
+              <span class=" h4 text-danger " id="quantityStatus">Out of Stock</span>
+            </li>
+          </ul>
+          <% } %>
       </div>
     </div>
   </section>

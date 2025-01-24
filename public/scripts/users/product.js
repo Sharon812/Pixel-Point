@@ -5,6 +5,7 @@ function selectCombo(button) {
   const storage = button.dataset.storage;
   const color = button.dataset.color;
   const combos = button.dataset.combosId;
+  const quantity = button.dataset.quantity;
 
   // Perform your fetch request using the dataset values
   fetch(
@@ -24,7 +25,7 @@ function selectCombo(button) {
         // Update the quantity status and action buttons
         const quantityStatus = document.getElementById("quantityStatus");
         const actionButtons = document.getElementById("actionButtons");
-
+        console.log(data.combo.quantity);
         if (data.combo.quantity > 0) {
           quantityStatus.innerHTML = `${data.combo.quantity} Items in Stock`;
           actionButtons.innerHTML = `
