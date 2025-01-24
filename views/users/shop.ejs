@@ -173,8 +173,8 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
     <label>RAM</label>
     <select class="form-select" id="ram" name="ram" onchange="submitFilters()">
       <option value="">Any RAM</option>
-      <% addresses.forEach(address => { %>
-      <option value="<%= address %>" <%= address == address ? 'selected' : '' %>><%= address %>GB</option>
+      <% rams.forEach(ram => { %>
+      <option value="<%= ram %>" <%= selectedRam == ram ? 'selected' : '' %>><%= ram %>GB</option>
       <% }) %>
     </select>
   </div>

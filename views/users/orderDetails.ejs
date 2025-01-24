@@ -12,6 +12,7 @@
 
 <!--=============== CSS ===============-->
 <link rel="stylesheet" href="/css/users/homepage.css" />
+<link rel="stylesheet" href="/css/users/orders.css">
 
 <header class="header">
   <% if(!locals.user){ %>
@@ -90,7 +91,7 @@
       <div class="dropdown">
         <a href="http://"><%= locals.user.name %></a>
         <div class="dropdown-content">
-          <a href="#">Profile</a>
+          <a href="/accountDetails">Profile</a>
           <a href="/logout">Logout</a>
         </div>
       </div>
@@ -102,7 +103,6 @@
     </div>
   </nav>
 </header>
-
 <!--=============== MAIN ===============-->
 <main class="main">
   <!--=============== BREADCRUMB ===============-->
@@ -110,7 +110,7 @@
     <ul class="breadcrumb__list flex container">
       <li><a href="/" class="breadcrumb__link">Home</a></li>
       <li><span class="breadcrumb__link">></span></li>
-      <li><span class="breadcrumb__link">Account</span></li>
+      <li><span class="breadcrumb__link">Orders</span></li>
     </ul>
   </section>
 
@@ -119,106 +119,85 @@
     <div class="accounts__container container grid">
       <div class="account__tabs">
         <a
-          href=""
-          class="account__tab active-tab"
+          href="/accountDetails"
+          class="account__tab"
           data-target="#accountDetails"
         >
           <i class="fi fi-rs-settings"></i> Account details
         </a>
-        <a class="account__tab" href="/orders"
-          ><i class="fi fi-rs-shopping-bag"></i> Orders</a
-        >
-        <a href="/address" class="account__tab">
+        <p class="account__tab active-tab" data-target="#orders">
+          <i class="fi fi-rs-shopping-bag active-tab"></i> Orders
+        </p>
+
+        <a class="account__tab" href="/address"  data-target="#address">
           <i class="fi fi-rs-marker"></i> My Address
         </a>
-        <p class="account__tab">
+        <p class="account__tab" data-target="#change-password">
           <i class="fi fi-rs-settings-sliders"></i> Change Password
         </p>
         <p class="account__tab"><i class="fi fi-rs-exit"></i> Logout</p>
       </div>
+
+  
       <div class="tabs__content">
-        <div class="tab__content active-tab" content id="accountDetails">
-          <div class="tab__header d-flex justify-content-between">
-            <div>
-              <h2 class="">Account details</h2>
-            </div>
-
-            <button class="btn btn--md" id="editBtn">Edit</button>
-          </div>
-
-          <div class="tab__body">
-            <form
-              class="form grid"
-              onsubmit="updateDetails(event,'<%= user._id %> ')"
-            >
-              <span>Name</span>
-              <input
-                type="text"
-                placeholder="Email"
-                class="form__input"
-                id="name"
-                value="<%= (typeof user !== 'undefined' && user.name) || '' %>"
-                readonly
-              />
-
-              <span>Email</span>
-              <input
-                type="text"
-                placeholder="Email"
-                id="email"
-                class="form__input"
-                value="<%= (typeof user !== 'undefined' && user.email) || '' %>"
-                readonly
-              />
-
-              <span>Mobile</span>
-              <input
-                type="text"
-                placeholder="Email"
-                id="phone"
-                class="form__input"
-                value="<%= (typeof user !== 'undefined' && user.phone) || '' %>"
-                readonly
-              />
-
-              <div class="form__btn">
-                <button
-                  type="submit"
-                  class="btn btn--md"
-                  id="saveBtn"
-                  style="display: none"
-                >
-                  Save
-                </button>
-              </div>
-            </form>
-          </div>
+        <div class="tabs__content">
+            <div class="tab__content  active-tab" content id="orders">
+              <h3 class="tab__header">Your Orders</h3>
+              <% if(orders){ %>
+              <div class="tab__body">
+                <% orders.forEach(order => { %>
+                    <% order.orderedItems.forEach(item => { %>
+                <div class="orders-container">
+                  <div class="order-card">
+                    <img src="<%= item.product.productImage[0] %> " alt="Product Image" class="order-image">
+                    <div class="order-content">
+                      <div class="order-header">
+                        <span class="order-number"> <%= item.productName %>  </span>
+                        <span class="order-date"> <%= order.createdAt.toLocaleDateString() %> </span>
+                      </div>
+                      <div class="order-details">
+                        <div class="order-info">
+                            <span class="order-label">Quantity</span>
+                            <span class="order-status"> <%= item.quantity %> </span>
+                          </div>
+                        <div class="order-info">
+                          <span class="order-label">Status</span>
+                          <% if(item.status === "Pending" ||item.status === "Processing"||item.status === "Shipped") {%>
+                          <span class="order-status status-processing"> <%= item.status %> </span>
+                          <% } else{ %>
+                            <span class="order-status status-completed"> <%= item.status %> </span>
+                        <% } %>
+                        </div>
+                        <div class="order-info">
+                          <span class="order-label">Total</span>
+                          <span class="order-value">&#8377;<%=item.totalPrice %> </span>
+                        </div>
+                        <div class="order-actions">
+                          <a href="/productDetails/<%= item.product._id %>" class="view-order-btn">View Order</a>
+                          <% if(item.status !== "Delivered") {%>
+                          <button class="cancel-order-btn">Cancel Order</button>
+                        </div>
+                        <% } else {%>
+                         <button class="cancel-order-btn">Return</button>
+<% } %>
+                      </div>
+                    </div>
+                  </div>
+                  </div>
+                  <% }); %>
+                  <% }); %>
+                </div>
+                
+                <% } else { %>
+                    <p>No orders yet</p>
+                <% } %>
+             </div>
         </div>
-      </div>
     </div>
-  </section>
-
-  <!--=============== NEWSLETTER ===============-->
-  <section class="newsletter section">
-    <div class="newsletter__container container grid">
-      <h3 class="newsletter__title flex">
-        <img src="/img/icon-email.svg" alt="" class="newsletter__icon" />
-        Sign in to Newsletter
-      </h3>
-      <p class="newsletter__description">
-        ...and receive $25 coupon for first shopping.
-      </p>
-      <form action="" class="newsletter__form">
-        <input
-          type="text"
-          placeholder="Enter Your Email"
-          class="newsletter__input"
-        />
-        <button type="submit" class="newsletter__btn">Subscribe</button>
-      </form>
-    </div>
+ 
   </section>
 </main>
+
 <!--=============== FOOTER ===============-->
 <footer class="footer container">
   <div class="footer__container grid">
@@ -309,8 +288,9 @@
 <!--=============== SWIPER JS ===============-->
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
+<script src="/scripts/users/addressDetails.js"></script>
 <!--=============== MAIN JS ===============-->
-<script src="/scripts/users/main.js"></script>
+
 <!-- Add SweetAlert2 CDN -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -318,5 +298,4 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<script src="/scripts/users/accountDetails.js"></script>
 <%- include("../layouts/users/footer.ejs") %>

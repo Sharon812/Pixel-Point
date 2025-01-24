@@ -5,6 +5,8 @@ const env = require("dotenv").config();
 const bycrypt = require("bcrypt");
 const crypto = require("crypto");
 const Address = require("../../models/addressSchema");
+const Cart = require("../../models/cartSchema");
+const Order = require("../../models/orderSchema");
 
 //for forgot password
 const getForgotPassword = async (req, res) => {
@@ -364,7 +366,6 @@ const editAddress = async (req, res) => {
     const user = req.session.user;
     const { type, houseName, city, landmark, state, pincode, phone, altPhone } =
       req.body;
-    console.log("reqbod", req.body);
     if (!user) {
       return res
         .status(401)
@@ -441,6 +442,23 @@ const deleteAddress = async (req, res) => {
   }
 };
 
+const getOrders = async (req, res) => {
+  try {
+    const user = req.session.user;
+    const userData = await User.findById(user);
+    const orders = await Order.find({ userId: user }).populate(
+      "orderedItems.product"
+    );
+    console.log(orders, "orders");
+    res.render("orderDetails", {
+      user: userData,
+      orders: orders,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   getForgotPassword,
   forgotPasswordOtp,
@@ -455,4 +473,5 @@ module.exports = {
   getEditAddress,
   editAddress,
   deleteAddress,
+  getOrders,
 };

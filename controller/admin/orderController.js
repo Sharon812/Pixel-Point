@@ -29,22 +29,12 @@ const getOrderDetails = async (req, res) => {
         totalAmount: order.FinalAmount, // Total final amount for the order
       }))
     );
-
-    // Debugging: Log the original and transformed orders
-    // console.log("Original Orders:", JSON.stringify(orders, null, 2));
-    // console.log(
-    //   "Transformed Orders for Frontend:",
-    //   JSON.stringify(transformedOrders, null, 2)
-    // );
-
-    // Send transformed orders to the frontend
-    res.render("orderDetails", { orders: transformedOrders });
+    res.render("adminOrderDetails", { orders: transformedOrders });
   } catch (error) {
     console.error("Error fetching orders:", error.message);
     res.status(500).send("Internal Server Error");
   }
 };
-
 const updateStatus = async (req, res) => {
   console.log(req.body);
   console.log(req.query);

@@ -85,4 +85,7 @@ userRoute.get("/shop", shopController.loadShopPage);
 userRoute.get("/checkout", orderController.processCheckout);
 userRoute.post("/checkout", orderController.placeOrder);
 userRoute.get("/orderplaced", orderController.orderPlaced);
+
+//for userorder details
+userRoute.get("/orders", accountController.getOrders);
 module.exports = userRoute;
