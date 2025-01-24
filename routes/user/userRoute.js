@@ -8,6 +8,7 @@ const accountController = require("../../controller/users/accountController");
 const cartController = require("../../controller/users/cartController");
 const shopController = require("../../controller/users/shopController");
 const orderController = require("../../controller/users/orderController");
+const userAuth = require("../../middlewares/userAuth");
 
 //page not found route
 userRoute.get("/page-not-found", userController.loadPageNotFound);
@@ -60,19 +61,35 @@ userRoute.get("/reset-password/:token", accountController.getResetPassword);
 userRoute.post("/reset-password/:token", accountController.resetPassword);
 
 //for account details
-userRoute.get("/accountDetails", accountController.getAccountDetails);
-userRoute.patch("/accountDetails/:id", accountController.updateAccountDetails);
+userRoute.get(
+  "/accountDetails",
+  userAuth.userCheck,
+  accountController.getAccountDetails
+);
+userRoute.patch(
+  "/accountDetails/:id",
+  userAuth.userCheck,
+  accountController.updateAccountDetails
+);
 
 //for user address details
-userRoute.get("/address", accountController.getAddress);
-userRoute.get("/add-address", accountController.getAddAddress);
+userRoute.get("/address", userAuth.userCheck, accountController.getAddress);
+userRoute.get(
+  "/add-address",
+  userAuth.userCheck,
+  accountController.getAddAddress
+);
 userRoute.post("/add-address", accountController.addAddress);
-userRoute.get("/editAddress/:id", accountController.getEditAddress);
+userRoute.get(
+  "/editAddress/:id",
+  userAuth.userCheck,
+  accountController.getEditAddress
+);
 userRoute.patch("/editAddress/:id", accountController.editAddress);
 userRoute.delete("/deleteAddreess/:id", accountController.deleteAddress);
 
 //for cart details
-userRoute.get("/cart", cartController.getCart);
+userRoute.get("/cart", userAuth.userCheck, cartController.getCart);
 userRoute.post("/addCart/:productId/combo/:comboId", cartController.addToCart);
 userRoute.delete("/cart/:cartId/item/:itemId", cartController.deleteCartItem);
 userRoute.patch("/updateCart", cartController.addquantity);
@@ -82,10 +99,10 @@ userRoute.patch("/decreaseQuantity", cartController.decreaseQuantity);
 userRoute.get("/shop", shopController.loadShopPage);
 
 //for checkout
-userRoute.get("/checkout", orderController.processCheckout);
+userRoute.get("/checkout", userAuth.userCheck, orderController.processCheckout);
 userRoute.post("/checkout", orderController.placeOrder);
-userRoute.get("/orderplaced", orderController.orderPlaced);
+userRoute.get("/orderplaced", userAuth.userCheck, orderController.orderPlaced);
 
 //for userorder details
-userRoute.get("/orders", accountController.getOrders);
+userRoute.get("/orders", userAuth.userCheck, accountController.getOrders);
 module.exports = userRoute;
