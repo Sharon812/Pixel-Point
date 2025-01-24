@@ -260,7 +260,7 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                 <div class="product__badge light-blue">-22%</div>
               </div>
               <div class="product__content">
-                <span class="product__category">Clothing</span>
+                <span class="product__category"><%= newArrivals[i].brand.brandName %></span>
                 <a href="/productDetails/<%= newArrivals[i]._id %>">
                   <h3 class="product__title"> <%= newArrivals[i].productName %> </h3>
                 </a>
@@ -272,16 +272,16 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                   <i class="fi fi-rs-star"></i>
                 </div>
                 <div class="product__price flex">
-                  <span class="new__price"> <%= newArrivals[i].combos[0].salePrice %> </span>
-                  <span class="old__price"> <%= newArrivals[i].combos[0].regularPrice %> </span>
+                  <span class="new__price">&#8377; <%= newArrivals[i].combos[0].salePrice %> </span>
+                  <span class="old__price">&#8377; <%= newArrivals[i].combos[0].regularPrice %> </span>
                 </div>
-                <a
-                  href="#"
-                  class="action__btn cart__btn"
-                  aria-label="Add To Cart"
-                >
-                  <i class="fi fi-rs-shopping-bag-add"></i>
-                </a>
+                <button
+                onclick="addToCart('<%=newArrivals[i]._id%>','<%=newArrivals[i].combos[0]._id%>')"
+                class="action__btn cart__btn"
+                aria-label="Add To Cart"
+              >
+                <i class="fi fi-rs-shopping-bag-add"></i>
+            </button>
               </div>
             </div>
             <% } %>
@@ -294,7 +294,7 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
       
             <% for(let i = 0; i < laptops.length ; i++){ %>
               <div class="product__item">
-                <div class="product__banner">newArrivals
+                <div class="product__banner">
                   <a href="/productDetails/<%= laptops[i]._id %>" class="product__images">
                     <img
                       src="<%= laptops[i].productImage[0] %>"
@@ -326,7 +326,7 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                 </div>
                 <div class="product__content">
                   <span class="product__category"> <%= laptops[i].brand.brandName %>  </span>
-                  <a href="/productDetails/<%= newArrivals[i]._id %>">
+                  <a href="/productDetails/<%= laptops[i]._id %>">
                     <h3 class="product__title"> <%= laptops[i].productName %> </h3>
                   </a>
                   <div class="product__rating">
@@ -337,16 +337,16 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                     <i class="fi fi-rs-star"></i>
                   </div>
                   <div class="product__price flex">
-                    <span class="new__price">₹ <%= laptops[i].combos[0].salePrice %> </span>
-                    <span class="old__price">₹ <%= laptops[i].combos[0].regularPrice %> </span>
+                    <span class="new__price">&#8377; <%= laptops[i].combos[0].salePrice %> </span>
+                    <span class="old__price">&#8377; <%= laptops[i].combos[0].regularPrice %> </span>
                   </div>
-                  <a
-                    href="#"
-                    class="action__btn cart__btn"
-                    aria-label="Add To Cart"
-                  >
-                    <i class="fi fi-rs-shopping-bag-add"></i>
-                  </a>
+                  <button
+                  onclick="addToCart('<%=newArrivals[i]._id%>','<%=newArrivals[i].combos[0]._id%>')"
+                  class="action__btn cart__btn"
+                  aria-label="Add To Cart"
+                >
+                  <i class="fi fi-rs-shopping-bag-add"></i>
+              </button>
                 </div>
               </div>
               <% } %>
@@ -362,7 +362,7 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
 
               <div class="product__item">
                 <div class="product__banner">
-                  <a href="/productDetails/<%= newArrivals[i]._id %>" class="product__images">
+                  <a href="/productDetails/<%= refurbishedLaptops[i]._id %>" class="product__images">
                     <img
                       src="<%= refurbishedLaptops[i].productImage[0] %>"
                       alt=""
@@ -392,8 +392,8 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                   <div class="product__badge light-blue">-22%</div>
                 </div>
                 <div class="product__content">
-                  <span class="product__category">Clothing</span>
-                  <a href="/productDetails/<%= newArrivals[i]._id %>">
+                  <span class="product__category"><%= refurbishedLaptops[i].brand.brandName %></span>
+                  <a href="/productDetails/<%= refurbishedLaptops[i]._id %>">
                     <h3 class="product__title"> <%= refurbishedLaptops[i].productName %> </h3>
                   </a>
                   <div class="product__rating">
@@ -404,16 +404,16 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                     <i class="fi fi-rs-star"></i>
                   </div>
                   <div class="product__price flex">
-                    <span class="new__price"> <%= refurbishedLaptops[i].combos[0].salePrice %> </span>
-                    <span class="old__price"> <%= refurbishedLaptops[i].combos[0].regularPrice %> </span>
+                    <span class="new__price">&#8377; <%= refurbishedLaptops[i].combos[0].salePrice %> </span>
+                    <span class="old__price">&#8377; <%= refurbishedLaptops[i].combos[0].regularPrice %> </span>
                   </div>
-                  <a
-                    href="#"
+                  <button
+                    onclick="addToCart('<%=refurbishedLaptops[i]._id%>','<%=refurbishedLaptops[i].combos[0]._id%>')"
                     class="action__btn cart__btn"
                     aria-label="Add To Cart"
                   >
                     <i class="fi fi-rs-shopping-bag-add"></i>
-                  </a>
+                </button>
                 </div>
               </div>
               <% } %>
@@ -1240,11 +1240,21 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
       <p class="copyright">&copy; 2024 Pixel-Point. All right reserved</p>
     </div>
   </footer>
+<!--=============== SWIPER JS ===============-->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- Include jQuery before your script -->
+
+<!--=============== MAIN JS ===============-->
+<!-- Include jQuery before your script -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
   <!--=============== SWIPER JS ===============-->
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
   <!--=============== MAIN JS ===============-->
+  <script src="/scripts/users/homepage.js" ></script>
   <script src="/scripts/users/main.js"></script>
 </body>
 </html>

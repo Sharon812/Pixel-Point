@@ -36,6 +36,9 @@ const loadHomePage = async (req, res) => {
     const refurbishedLaptops = await Products.find({
       isBlocked: false,
       category: refurbishedLaptopsCategory._id,
+    }).populate({
+      path: "brand",
+      model: "Brands",
     });
 
     const laptops = await Products.find({
@@ -51,6 +54,10 @@ const loadHomePage = async (req, res) => {
     const newArrivals = await Products.find({
       isBlocked: false,
     })
+      .populate({
+        path: "brand",
+        model: "Brands",
+      })
       .sort({ createdAt: -1 })
       .limit(6);
 

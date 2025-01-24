@@ -56,17 +56,16 @@ const addToCart = async (req, res) => {
     const { productId, comboId } = req.params;
     const { quantity } = req.body;
     const user = req.session.user;
-
     // Validate inputs
     if (!productId || !comboId || !quantity || quantity <= 0) {
       return res
         .status(400)
         .json({ success: false, message: "Invalid input data" });
     }
-    debugger;
     // Fetch product and user data
     const productData = await Product.findById(productId);
     const userData = await User.findById(user);
+
     if (!productData) {
       return res
         .status(404)
@@ -85,7 +84,6 @@ const addToCart = async (req, res) => {
         .status(404)
         .json({ success: false, message: "Combo not found" });
     }
-
     // Check if the user already has a cart
     let cart = await Cart.findOne({ userId: userData._id });
     if (cart) {
@@ -123,7 +121,10 @@ const addToCart = async (req, res) => {
     }
 
     // Calculate totalPrice based on all items
-    cart.totalPrice = cart.items.reduce((sum, item) => sum + item.price, 0);
+    cart.totalPrice = cart.items.reduce(
+      (sum, item) => sum + item.totalPrice,
+      0
+    );
 
     await cart.save();
 

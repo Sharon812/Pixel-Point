@@ -116,10 +116,3 @@ async function addToCart(productId, comboId) {
     console.error("Error adding to cart:", error);
   }
 }
-
-// Example usage
-// Assuming product and combo IDs are dynamically provided in your EJS template
-// const productId = '<%= product._id %>';
-// const comboId = '<%= product.combos[0]._id %>';
-
-// Add event listener to the Add to Cart button

@@ -280,13 +280,13 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
           <span class="new__price">&#8377; <%= products[i].combos[0].salePrice %> </span>
           <span class="old__price">&#8377; <%= products[i].combos[0].regularPrice %> </span>
         </div>
-        <a
-          href="#"
-          class="action__btn cart__btn"
-          aria-label="Add To Cart"
-        >
-          <i class="fi fi-rs-shopping-bag-add"></i>
-        </a>
+        <button
+        onclick="addToCart('<%=products[i]._id%>','<%=products[i].combos[0]._id%>')"
+        class="action__btn cart__btn"
+        aria-label="Add To Cart"
+      >
+        <i class="fi fi-rs-shopping-bag-add"></i>
+    </button>
       </div>
     </div>
 
