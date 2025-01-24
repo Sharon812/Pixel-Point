@@ -128,113 +128,152 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
 </section>
 
 <!--=============== PRODUCTS ===============-->
-<div class="container-fluid d-flex">
-
-<div class="filters-section">
-  <form action="/shop" method="get" id="filtersForm">
-  <div class="filter-header">
-    
-    <h4>Filters</h4>
-    <button onclick="clearFilters()" class="clear-filters">Clear Filters</button>
-  </div>
-
-  <div class="filter-group search-group">
-    <input type="text" id="search" name="search" placeholder="Search products..." />
-    <button class="btn btn-primary" type="button" onclick="submitFilters()">Search</button>
-  </div>
-
-  <div class="filter-group">
-    <label for="category" >Category</label>
-    <select class="form-select" id="category" name="category" onchange="submitFilters()">
-      <option>All Categories</option>
-      <% categories.forEach(category => { %>
-        <option value="<%= category.name %>" <%= category.name === selectedCategory ? 'selected' : '' %>><%= category.name %></option>
-        <% }) %>
-    </select>
-  </div>
-
-  <div class="filter-group">
-    <label>Brand</label>
-    <select class="form-select" id="brand" name="brand" onchange="submitFilters()">
-      <option value="">All Brands</option>
-      <% brands.forEach(brand => { %>
-      <option value="<%= brand.brandName %>" <%= brand.brandName === selectedBrand ? 'selected' : '' %>><%= brand.brandName %></option>
-      <% }) %>
-    </select>
-  </div>
-
-  <div class="filter-group">
-    <label>Price Range</label>
-    <select class="form-select" id="priceRange" name="priceRange" onchange="submitFilters()">
-      <option value="">Any Price Range</option>
-      <option value="50000" <%= selectedPriceRange == 50000 ? 'selected' : '' %>>Up to ₹50000</option>
-      <option value="70000" <%= selectedPriceRange == 70000 ? 'selected' : '' %>>Up to ₹70000</option>
-      <option value="100000" <%= selectedPriceRange == 100000 ? 'selected' : '' %>>Up to ₹100000</option>
-      <option value="150000" <%= selectedPriceRange == 150000 ? 'selected' : '' %>>Up to ₹0000</option>
-
-    </select>
-  </div>
-
-  <div class="filter-group">
-    <label>RAM</label>
-    <select class="form-select" id="ram" name="ram" onchange="submitFilters()">
-      <option value="">Any RAM</option>
-      <% rams.forEach(ram => { %>
-      <option value="<%= ram %>" <%= selectedRam == ram ? 'selected' : '' %>><%= ram %>GB</option>
-      <% }) %>
-    </select>
-  </div>
-
-  <div class="filter-group">
-    <label>Storage</label>
-    <select class="form-select" id="storage" name="storage" onchange="submitFilters()">
-      <option value="">Any Storage</option>
-      <% storages.forEach(storage => { %>
-      <option value="<%= storage %>" <%= selectedStorage == storage ? 'selected' : '' %>><%= storage %>GB</option>
-      <% }) %>
-    </select>
-  </div>
-
-  <div class="filter-group">
-    <select class="form-select" id="color" name="color" onchange="submitFilters()">
-      <option value="">Any Color</option>
-      <% colors.forEach(color => { %>
-      <option value="<%= color %>" <%= selectedColor === color ? 'selected' : '' %>><%= color %></option>
-      <% }) %>
-    </select>
-  </div>
-
-  <div class="filter-group sort-group">
-    <label>Sort By</label>
-    <div >
-      <div class="d-flex">
-      <input class="form-check-input" type="radio" id="priceLowToHigh" name="sort" value="priceLowToHigh" onchange="submitFilters()" <%= selectedSort === 'priceLowToHigh' ? 'checked' : '' %>
-      for="lowToHigh"
-        ><label for="sort " class="d-inline-block"> Price Low to High</label>
-      </div>
-      <div class="form-check">
-        <input class="form-check-input" type="radio" id="priceHighToLow" name="sort" value="priceHighToLow" onchange="submitFilters()" <%= selectedSort === 'priceHighToLow' ? 'checked' : '' %>>
-        <label class="form-check-label" for="priceHighToLow">Price High to Low</label>
-      </div>
-      <div class="form-check">
-        <input class="form-check-input" type="radio" id="alphabeticalAZ" name="sort" value="alphabeticalAZ" onchange="submitFilters()" <%= selectedSort === 'alphabeticalAZ' ? 'checked' : '' %>>
-        <label class="form-check-label" for="alphabeticalAZ">Alphabetical A-Z</label>
-      </div>
-      <div class="form-check">
-        <input class="form-check-input" type="radio" id="alphabeticalZA" name="sort" value="alphabeticalZA" onchange="submitFilters()" <%= selectedSort === 'alphabeticalZA' ? 'checked' : '' %>>
-        <label class="form-check-label" for="alphabeticalZA">Alphabetical Z-A</label>
-      </div>
-      <div class="form-check">
-        <input class="form-check-input" type="radio" id="newArrivals" name="sort" value="newArrivals" onchange="submitFilters()" <%= selectedSort === 'newArrivals' ? 'checked' : '' %>>
-        <label class="form-check-label" for="newArrivals">New Arrivals</label>
-      </div>
-      <div class="form-check">
-        <input class="form-check-input" type="radio" id="oldArrivals" name="sort" value="oldArrivals" onchange="submitFilters()" <%= selectedSort === 'oldArrivals' ? 'checked' : '' %>>
-        <label class="form-check-label" for="oldArrivals">Old Arrivals</label>
+<div class="mobile-filter-controls">
+  <button class="filter-toggle-btn" onclick="toggleFilters()">
+    <i class="fi fi-rs-filter"></i> Filters
+  </button>
+  
+  <div class="mobile-sort-section">
+    <button class="sort-toggle-btn" onclick="toggleSort()">
+      <i class="fi fi-rs-sort"></i> Sort
+    </button>
+    <div class="mobile-sort-dropdown">
+      <div class="sort-options">
+        <div class="form-check">
+          <input type="radio" id="mobilePriceLowToHigh" name="sort" value="priceLowToHigh" onchange="submitFilters()" <%= selectedSort === 'priceLowToHigh' ? 'checked' : '' %>>
+          <label for="mobilePriceLowToHigh">Price Low to High</label>
+        </div>
+        <div class="form-check">
+          <input type="radio" id="mobilePriceHighToLow" name="sort" value="priceHighToLow" onchange="submitFilters()" <%= selectedSort === 'priceHighToLow' ? 'checked' : '' %>>
+          <label for="mobilePriceHighToLow">Price High to Low</label>
+        </div>
+        <div class="form-check">
+          <input type="radio" id="mobileAlphabeticalAZ" name="sort" value="alphabeticalAZ" onchange="submitFilters()" <%= selectedSort === 'alphabeticalAZ' ? 'checked' : '' %>>
+          <label for="mobileAlphabeticalAZ">A to Z</label>
+        </div>
+        <div class="form-check">
+          <input type="radio" id="mobileAlphabeticalZA" name="sort" value="alphabeticalZA" onchange="submitFilters()" <%= selectedSort === 'alphabeticalZA' ? 'checked' : '' %>>
+          <label for="mobileAlphabeticalZA">Z to A</label>
+        </div>
+        <div class="form-check">
+          <input type="radio" id="mobileNewArrivals" name="sort" value="newArrivals" onchange="submitFilters()" <%= selectedSort === 'newArrivals' ? 'checked' : '' %>>
+          <label for="mobileNewArrivals">New Arrivals</label>
+        </div>
       </div>
     </div>
   </div>
-</form>
+  
+  <button class="clear-filters-btn" onclick="clearFilters()">
+    <i class="fi fi-rs-refresh"></i> Clear
+  </button>
+</div>
+
+<div class="shop-container">
+  <div class="filters-section">
+    <form action="/shop" method="get" id="filtersForm">
+    <div class="filter-header">
+      
+      <h4>Filters</h4>
+      <button onclick="clearFilters()" class="clear-filters">Clear Filters</button>
+    </div>
+
+    <div class="filter-group search-group">
+      <input type="text" id="search" name="search" placeholder="Search products..." />
+      <button class="btn btn-primary" type="button" onclick="submitFilters()">Search</button>
+    </div>
+
+    <div class="filter-group">
+      <label for="category" >Category</label>
+      <select class="form-select" id="category" name="category" onchange="submitFilters()">
+        <option>All Categories</option>
+        <% categories.forEach(category => { %>
+          <option value="<%= category.name %>" <%= category.name === selectedCategory ? 'selected' : '' %>><%= category.name %></option>
+          <% }) %>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label>Brand</label>
+      <select class="form-select" id="brand" name="brand" onchange="submitFilters()">
+        <option value="">All Brands</option>
+        <% brands.forEach(brand => { %>
+        <option value="<%= brand.brandName %>" <%= brand.brandName === selectedBrand ? 'selected' : '' %>><%= brand.brandName %></option>
+        <% }) %>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label>Price Range</label>
+      <select class="form-select" id="priceRange" name="priceRange" onchange="submitFilters()">
+        <option value="">Any Price Range</option>
+        <option value="50000" <%= selectedPriceRange == 50000 ? 'selected' : '' %>>Up to ₹50000</option>
+        <option value="70000" <%= selectedPriceRange == 70000 ? 'selected' : '' %>>Up to ₹70000</option>
+        <option value="100000" <%= selectedPriceRange == 100000 ? 'selected' : '' %>>Up to ₹100000</option>
+        <option value="150000" <%= selectedPriceRange == 150000 ? 'selected' : '' %>>Up to ₹0000</option>
+
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label>RAM</label>
+      <select class="form-select" id="ram" name="ram" onchange="submitFilters()">
+        <option value="">Any RAM</option>
+        <% rams.forEach(ram => { %>
+        <option value="<%= ram %>" <%= selectedRam == ram ? 'selected' : '' %>><%= ram %>GB</option>
+        <% }) %>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label>Storage</label>
+      <select class="form-select" id="storage" name="storage" onchange="submitFilters()">
+        <option value="">Any Storage</option>
+        <% storages.forEach(storage => { %>
+        <option value="<%= storage %>" <%= selectedStorage == storage ? 'selected' : '' %>><%= storage %>GB</option>
+        <% }) %>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <select class="form-select" id="color" name="color" onchange="submitFilters()">
+        <option value="">Any Color</option>
+        <% colors.forEach(color => { %>
+        <option value="<%= color %>" <%= selectedColor === color ? 'selected' : '' %>><%= color %></option>
+        <% }) %>
+      </select>
+    </div>
+
+    <div class="filter-group sort-group">
+      <label>Sort By</label>
+      <div >
+        <div class="d-flex">
+        <input class="form-check-input" type="radio" id="priceLowToHigh" name="sort" value="priceLowToHigh" onchange="submitFilters()" <%= selectedSort === 'priceLowToHigh' ? 'checked' : '' %>
+        for="lowToHigh"
+          ><label for="sort " class="d-inline-block"> Price Low to High</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" id="priceHighToLow" name="sort" value="priceHighToLow" onchange="submitFilters()" <%= selectedSort === 'priceHighToLow' ? 'checked' : '' %>>
+          <label class="form-check-label" for="priceHighToLow">Price High to Low</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" id="alphabeticalAZ" name="sort" value="alphabeticalAZ" onchange="submitFilters()" <%= selectedSort === 'alphabeticalAZ' ? 'checked' : '' %>>
+          <label class="form-check-label" for="alphabeticalAZ">Alphabetical A-Z</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" id="alphabeticalZA" name="sort" value="alphabeticalZA" onchange="submitFilters()" <%= selectedSort === 'alphabeticalZA' ? 'checked' : '' %>>
+          <label class="form-check-label" for="alphabeticalZA">Alphabetical Z-A</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" id="newArrivals" name="sort" value="newArrivals" onchange="submitFilters()" <%= selectedSort === 'newArrivals' ? 'checked' : '' %>>
+          <label class="form-check-label" for="newArrivals">New Arrivals</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" id="oldArrivals" name="sort" value="oldArrivals" onchange="submitFilters()" <%= selectedSort === 'oldArrivals' ? 'checked' : '' %>>
+          <label class="form-check-label" for="oldArrivals">Old Arrivals</label>
+        </div>
+      </div>
+    </div>
+  </form>
 </div>
 <section class="products container section--lg">
   <div class="products__container_shop grid">
@@ -317,6 +356,7 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
 </section>
 
 
+</div>
 </main>
 
 <!--=============== FOOTER ===============-->
@@ -421,3 +461,35 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
 <script src="scripts/users/main.js"></script>
 
 <%- include("../layouts/users/footer.ejs") %>
+
+<script>
+function toggleFilters() {
+  const filtersSection = document.querySelector('.filters-section');
+  filtersSection.classList.toggle('show');
+}
+
+function toggleSort() {
+  const sortDropdown = document.querySelector('.mobile-sort-dropdown');
+  sortDropdown.classList.toggle('show');
+  
+  // Close dropdown when clicking outside
+  document.addEventListener('click', function(event) {
+    const sortSection = document.querySelector('.mobile-sort-section');
+    if (!sortSection.contains(event.target)) {
+      sortDropdown.classList.remove('show');
+    }
+  });
+}
+
+// Close filters when clicking outside on mobile
+document.addEventListener('click', function(event) {
+  const filtersSection = document.querySelector('.filters-section');
+  const filterToggleBtn = document.querySelector('.filter-toggle-btn');
+  
+  if (!filtersSection.contains(event.target) && !filterToggleBtn.contains(event.target)) {
+    filtersSection.classList.remove('show');
+  }
+});
+</script>
+</body>
+</html>
