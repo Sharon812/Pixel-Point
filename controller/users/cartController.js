@@ -11,7 +11,7 @@ const Cart = require("../../models/cartSchema");
 const getCart = async (req, res) => {
   try {
     const user = req.session.user;
-
+    const userData = await User.findById(user);
     // Find the cart and populate product details
     const cartData = await Cart.findOne({ userId: user })
       .populate({
@@ -22,6 +22,12 @@ const getCart = async (req, res) => {
       })
       .lean();
 
+    if (!cartData) {
+      return res.render("cart", {
+        cart: cartData,
+        user: userData,
+      });
+    }
     // Attach the specific combo details to each item
     cartData.items = cartData.items.map((item) => {
       if (item.productId && item.productId.combos) {
@@ -36,6 +42,7 @@ const getCart = async (req, res) => {
 
     res.render("cart", {
       cart: cartData,
+      user: userData,
     });
   } catch (error) {
     console.error("Error fetching cart:", error);

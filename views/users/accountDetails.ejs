@@ -12,7 +12,6 @@
 
 <!--=============== CSS ===============-->
 <link rel="stylesheet" href="/css/users/homepage.css" />
-
 <header class="header">
   <% if(!locals.user){ %>
   <div class="header__top">
@@ -57,13 +56,15 @@
           <a href="/shop" class="nav__link">Shop</a>
         </li>
         <li class="nav__item">
-          <a href="login-register.html" class="nav__link">Brands</a>
+          <a href="" class="nav__link">Brands</a>
         </li>
         <li class="nav__item">
-          <a href="accounts.html" class="nav__link">Laptops</a>
+          <a href="/shop?search=&category=Laptops" class="nav__link">Laptops</a>
         </li>
         <li class="nav__item">
-          <a href="compare.html" class="nav__link">Refubished Laptops</a>
+          <a href="/shop?search=&category=Refurbished+laptops" class="nav__link"
+            >Refubished Laptops</a
+          >
         </li>
       </ul>
       <div class="header__search">
@@ -82,15 +83,17 @@
         <img src="/img/icon-heart.svg" alt="" />
         <!-- <span class="count">3</span> -->
       </a>
-      <a href="cart.html" class="header__action-btn" title="Cart">
+      <a href="/cart" class="header__action-btn" title="Cart">
         <img src="/img/icon-cart.svg" alt="" />
         <!-- <span class="count">3</span> -->
       </a>
       <% if(locals.user){ %>
       <div class="dropdown">
-        <a href="http://"><%= locals.user.name %></a>
+        <a href=""><%= locals.user.name %></a>
         <div class="dropdown-content">
-          <a href="#">Profile</a>
+          <a href="/accountDetails">Profile</a>
+          <a href="/orders">Orders</a>
+          <a href="/address">Addresses</a>
           <a href="/logout">Logout</a>
         </div>
       </div>
@@ -195,27 +198,6 @@
           </div>
         </div>
       </div>
-    </div>
-  </section>
-
-  <!--=============== NEWSLETTER ===============-->
-  <section class="newsletter section">
-    <div class="newsletter__container container grid">
-      <h3 class="newsletter__title flex">
-        <img src="/img/icon-email.svg" alt="" class="newsletter__icon" />
-        Sign in to Newsletter
-      </h3>
-      <p class="newsletter__description">
-        ...and receive $25 coupon for first shopping.
-      </p>
-      <form action="" class="newsletter__form">
-        <input
-          type="text"
-          placeholder="Enter Your Email"
-          class="newsletter__input"
-        />
-        <button type="submit" class="newsletter__btn">Subscribe</button>
-      </form>
     </div>
   </section>
 </main>

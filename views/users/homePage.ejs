@@ -96,9 +96,11 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
         </a>
         <% if(locals.user){ %>
         <div class="dropdown" >
-            <a href="http://"><%= locals.user.name %></a>
+            <a href=""><%= locals.user.name %></a>
             <div class="dropdown-content" >
                 <a href="/accountDetails">Profile</a>
+                <a href="/orders">Orders</a>
+                <a href="/address">Addresses</a>
                 <a href="/logout">Logout</a>
             </div>
         </div>

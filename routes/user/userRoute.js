@@ -38,7 +38,7 @@ userRoute.get(
   passport.authenticate("google", { failureRedirect: "/login" }),
   (req, res) => {
     // Successful login, send user info in session
-    req.session.user = req.user;
+    req.session.user = req.user._id;
     res.redirect("/");
   }
 );

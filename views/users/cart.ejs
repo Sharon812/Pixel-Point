@@ -1,27 +1,20 @@
 <%- include("../layouts/users/header.ejs") %>
-
-<!--=============== FLATICON ===============-->
- <link
- rel="stylesheet"
- href="https://cdn-uicons.flaticon.com/2.0.0/uicons-regular-straight/css/uicons-regular-straight.css"
+<link
+rel="stylesheet"
+href="https://cdn-uicons.flaticon.com/2.0.0/uicons-regular-straight/css/uicons-regular-straight.css"
 />
 
 <!--=============== SWIPER CSS ===============-->
 <link
- rel="stylesheet"
- href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
 />
 
 <!--=============== CSS ===============-->
-<link rel="stylesheet" href="/css/users/cart.css" />
 <link rel="stylesheet" href="/css/users/homepage.css" />
-
-<title> Pixel Point</title>
-</head>
-<body>
-<!--=============== HEADER ===============-->
+<link rel="stylesheet" href="/css/users/cart.css">
 <header class="header">
-    <% if(!locals.user){ %>
+  <% if(!locals.user){ %>
     <div class="header__top">
       <div class="header__container container">
         <div class="header__contact">
@@ -29,16 +22,24 @@
           <span>Our location</span>
         </div>
         <div>
-          <p class="header__alert-news">Best Deals in Lowest Prices</p>
+            <p class="header__alert-news">
+                Best Deals in Lowest Prices
+              </p>
         </div>
-        <div class="gap-10px">
-          <a href="/login" class="header__top-action"> Log In </a>
-          <a href="/signup" class="header__top-action ms-4"> Sign Up </a>
-        </div>
+      <div class="gap-10px" >
+        <a href="/login" class="header__top-action ">
+            Log In
+          </a>
+          <a href="/signup" class="header__top-action ms-4">
+              Sign Up
+            </a>
+      </div>
+       
       </div>
     </div>
     <% } %>
-  
+    
+
     <nav class="nav container-fluid px-2">
       <a href="/" class="nav__logo">
         <img
@@ -50,7 +51,7 @@
       <div class="nav__menu" id="nav-menu">
         <div class="nav__menu-top">
           <a href="/" class="nav__menu-logo">
-            <img src="/img/logo.svg" alt="" />
+            <img src="/img/logo.svg" alt="">
           </a>
           <div class="nav__close" id="nav-close">
             <i class="fi fi-rs-cross-small"></i>
@@ -61,17 +62,18 @@
             <a href="/" class="nav__link active-link">Home</a>
           </li>
           <li class="nav__item">
-            <a href="shop.html" class="nav__link">Shop</a>
+            <a href="/shop" class="nav__link">Shop</a>
           </li>
           <li class="nav__item">
-            <a href="login-register.html" class="nav__link">Brands</a>
+            <a href="" class="nav__link">Brands</a>
           </li>
           <li class="nav__item">
-            <a href="accounts.html" class="nav__link">Laptops</a>
+            <a href="/shop?search=&category=Laptops" class="nav__link">Laptops</a>
           </li>
           <li class="nav__item">
-            <a href="compare.html" class="nav__link">Refubished Laptops</a>
+            <a href="/shop?search=&category=Refurbished+laptops" class="nav__link">Refubished Laptops</a>
           </li>
+         
         </ul>
         <div class="header__search">
           <input
@@ -89,27 +91,29 @@
           <img src="/img/icon-heart.svg" alt="" />
           <!-- <span class="count">3</span> -->
         </a>
-        <a href="cart.html" class="header__action-btn" title="Cart">
+        <a href="/cart" class="header__action-btn" title="Cart">
           <img src="/img/icon-cart.svg" alt="" />
           <!-- <span class="count">3</span> -->
         </a>
         <% if(locals.user){ %>
-        <div class="dropdown">
-          <a href="http://"><%= locals.user.name %></a>
-          <div class="dropdown-content">
-            <a href="#">Profile</a>
-            <a href="/logout">Logout</a>
+          <div class="dropdown" >
+              <a href=""><%= locals.user.name %></a>
+              <div class="dropdown-content" >
+                  <a href="/accountDetails">Profile</a>
+                  <a href="/orders">Orders</a>
+                  <a href="/address">Addresses</a>
+                  <a href="/logout">Logout</a>
+              </div>
           </div>
-        </div>
-        <% } %>
-  
+          <% } %>
+
         <div class="header__action-btn nav__toggle" id="nav-toggle">
-          <img src="/img/menu-burger.svg" alt="" />
+          <img src="/img/menu-burger.svg" alt="">
         </div>
       </div>
+
     </nav>
   </header>
-
 <!--=============== MAIN ===============-->
 <main class="main">
  <!--=============== BREADCRUMB ===============-->

@@ -198,7 +198,7 @@ const resetPassword = async (req, res) => {
 const getAccountDetails = async (req, res) => {
   try {
     const user = req.session.user;
-
+    console.log(user, "user");
     if (user) {
       const userData = await User.findById({ _id: user }).lean();
       return res.render("accountDetails", {
