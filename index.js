@@ -8,6 +8,7 @@ const passport = require("./config/passport");
 const adminSide = require("./routes/admin/adminRoute");
 const userSide = require("./routes/user/userRoute");
 const adminSession = require("./middlewares/adminSessionAuth");
+const userAuth = require("./middlewares/userAuth");
 db();
 
 app.use(express.json());
@@ -48,7 +49,7 @@ app.set("views", [
 app.use("/admin", adminSession, adminSide);
 
 //setting up user routee
-app.use("/", userSide);
+app.use("/", userAuth.blockedUser, userSide);
 
 app.listen(process.env.PORT, () => {
   console.log("server running");
