@@ -133,181 +133,120 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
       <h1 class="section__titlee">Checkout</h1>
       
       <form action="">
-      <div class="checkout__content">
-        <!-- Coupon Section -->
-        <div class="checkout__coupon">
-          <h3 class="section__title">Have a coupon?</h3>
-          <form class="coupon__form">
-            <input type="text" placeholder="Enter your coupon code" class="coupon__input">
-            <button class="coupon__button">Apply Coupon</button>
-          </form>
-        </div>
-        <!-- Cart Details -->
-        <div class="checkout__cart">
-          <h3 class="section__title">Cart Items</h3>
-          <div class="cart__items">
-            <!-- Item 1 -->
-            <% if (cart.items.length > 0) { %>
-              <% cart.items.forEach((item) => { %>
-            <div class="cart__item">
-              <div class="item__image">
-                <img src=" <%= item.productId.productImage[0] %> " alt="MacBook Pro M3">
-              </div>
-              <div class="item__details">
-                <h4 class="item__name"><%= item.productId.productName %> </h4>
-                <div class="item__meta">
-                  <span class="item__size"><%= item.productId.combos[0].color %> </span>
-                  <span class="item__qty">  Qty: <%= item.quantity %></span>
-                </div> 
-                <div class="item__price">₹ <%= item.price %> </div>
-              </div>
-              <button class="remove__item">
-                <i class="fi fi-rs-cross-small"></i>
-              </button>
+        
+        <div class="checkout__content">
+          <!-- Left Side - Cart Details -->
+          <div class="checkout__cart">
+            <h3 class="section__title">Cart Items</h3>
+            <div class="cart__items">
+              <% if (cart.items.length > 0) { %>
+                <% cart.items.forEach((item) => { %>
+                  <div class="cart__item">
+                    <div class="item__image">
+                      <img src="<%= item.productId.productImage[0] %>" alt="<%= item.productId.productName %>">
+                    </div>
+                    <div class="item__content">
+                      <div class="item__details">
+                        <h4 class="item__name"><%= item.productId.productName %></h4>
+                        <div class="item__meta">
+                          <span class="item__color"><%= item.productId.combos[0].color %></span>
+                          <span class="item__divider">•</span>
+                          <span class="item__qty">Qty: <%= item.quantity %></span>
+                        </div>
+                      </div>
+                      <div class="item__price">₹<%= item.price %></div>
+                    </div>
+                    <button class="remove__item" aria-label="Remove item">
+                      <i class="fi fi-rs-cross-small"></i>
+                    </button>
+                  </div>
+                <% }); %>
+              <% } else { %>
+                <div class="empty__cart">
+                  <i class="fi fi-rs-shopping-cart"></i>
+                  <p>Your cart is empty</p>
+                  <a href="/shop" class="btn-shop">Continue Shopping</a>
+                </div>
+              <% } %>
             </div>
-            <% }); %>
-            <% } else { %>
-              <div class="empty__cart">
-                <p>Your cart is empty. Add items to proceed.</p>
-              </div>
-            <% } %>
-          <!-- Price Details -->
-          <div class="price__details">
-            <h4 class="details__title">Price Details</h4>
-            <div class="price__row">
-              <span>Price</span>
-              <span>₹<%= totalPrice %></span>
-            </div>
-            <!-- <div class="price__row">
-              <span>Discount</span>
-              <span class="discount">-₹10,000</span>
-            </div> -->
-            <div class="price__row">
-              <span>Delivery Charges</span>
-              <span class="free">Free</span>
-            </div>
-            <div class="price__row total">
-              <span>Total Amount</span>
-              <span>₹ <%= totalPrice %>  </span>
-            </div>
-          </div>
-          <div class="save__message">
-            You will save ₹10,000 on this order
-          </div>
-        </div>
-        <!-- Billing Details -->
-        <div class="checkout__billing">
-          <div class="billing__header">
-            <div class="location__icon">
-              <i class="fi fi-rs-marker"></i>
-            </div>
-            <h3 class="section__title">Delivery Address</h3>
-          </div>
-          <!-- Saved Address -->
 
-          <% if (address && address.length > 0) { %>
-            <form action="/checkout" method="POST" id="checkout-form">
-              <% address.forEach((address, index) => { %>
-                <div class="saved__address">
-                  <div class="address__info">
-                    <div class="address__header">
-                      <input 
-                        type="radio" 
-                        id="address-<%= index %>" 
-                        name="selectedAddress" 
-                        value="<%= address._id %>" 
-                        <%= index === 0 ? "checked" : "" %> 
-                      />
-                      <label for="address-<%= index %>">
+            <div class="checkout__billing">
+              <div class="billing__header">
+                <div class="location__icon">
+                  <i class="fi fi-rs-marker"></i>
+                </div>
+                <h3 class="section__title">Delivery Address</h3>
+              </div>
+              <% if (address && address.length > 0) { %>
+                <% address.forEach((address, index) => { %>
+                  <div class="saved__address">
+                    <div class="address__info">
+                      <div class="address__header">
+                        <input type="radio" name="selectedAddress" value="<%= address._id %>" <%= index === 0 ? "checked" : "" %>>
                         <h4 class="customer__name"><%= user.name %></h4>
                         <span class="address__type"><%= address.addressType %></span>
-                      </label>
+                      </div>
+                      <p class="address__details">
+                        <%= address.name %>, <%= address.landMark %>,
+                        <%= address.city %>, <%= address.state %> - <%= address.pincode %>
+                      </p>
+                      <p class="contact__number"><%= address.phone %></p>
                     </div>
-                    <p class="address__details">
-                      <%= address.name %>, Azhikkal, Boatpalam,<br>
-                      <%= address.landMark %>, <%= address.city %>,<br>
-                      <%= address.state %> - <%= address.pincode %>
-                    </p>
-                    <p class="contact__number"><%= address.phone %></p>
-                    <p class="contact__number"><%= address.alternatePhone %></p>
+                    <button type="button" class="change__address" onclick="toggleAddressModal()">CHANGE</button>
                   </div>
-                  <button type="button" class="change__address" onclick="toggleAddressModal()">CHANGE</button>
-                </div>
-              <% }); %>
-              <!-- <button type="submit" class="submit__button btn">Proceed with Selected Address</button> -->
-            </form>
-          <% } else { %>
-            <p>No saved addresses found. Please add a new address.</p>
-          <% } %>
-          
-
-
-          <!-- <div class="new__address-form" style="display: none;">
-            <form class="form">
-              <div class="form__row">
-                <div class="form__group">
-                  <input type="text" placeholder="Full Name" class="form__input" value="Sharon" />
-                </div>
-                <div class="form__group">
-                  <input type="tel" placeholder="Phone Number" class="form__input" value="8848237115" />
-                </div>
-              </div>
-              <div class="form__row">
-                <div class="form__group">
-                  <input type="text" placeholder="House No., Building Name" class="form__input" value="Puthiyandi house" />
-                </div>
-                <div class="form__group">
-                  <input type="text" placeholder="Road, Area, Colony" class="form__input" value="Azhikkal, Boatpalam" />
-                </div>
-              </div>
-              <div class="form__row">
-                <div class="form__group">
-                  <input type="text" placeholder="Pincode" class="form__input" value="670009" />
-                </div>
-                <div class="form__group">
-                  <input type="text" placeholder="City" class="form__input" value="Azhikode" />
-                </div>
-              </div>
-              <div class="form__row">
-                <div class="form__group">
-                  <input type="text" placeholder="State" class="form__input" value="Kerala" />
-                </div>
-                <div class="form__group">
-                  <input type="text" placeholder="Landmark (Optional)" class="form__input" value="Near Hashmi Vayanashala" />
-                </div>
-              </div>
-              <div class="address__actions">
-                <button type="button" class="cancel__btn">Cancel</button>
-                <button type="submit" class="save__btn">Save & Deliver Here</button>
-              </div>
-            </form>
-          </div> -->
-
-
-       
-        </div>
-        </div>
-        <!-- Payment Details -->
-        <div class="checkout__payment">
-          <h3 class="section__title">Payment Methods</h3>
-          <div class="payment__methods">
-            <div class="payment__option">
-              <input type="radio" name="payment" id="bank" checked>
-              <label for="bank">Direct Bank Transfer</label>
+                <% }); %>
+              <% } else { %>
+                <p>No saved addresses found. Please add a new address.</p>
+              <% } %>
             </div>
-            <div class="payment__option">
-              <input type="radio" name="payment" id="card">
-              <label for="card">Credit/Debit Card</label>
-            </div>
-            <div class="payment__option">
-              <input type="radio" name="payment" id="cod">
-              <label for="cod">Cash on Delivery</label>
-            </div>
-            <button class="coupon__button place-order-btn" style="width: 100%; margin-top: 1rem;">Place Order</button>
+
           </div>
+
+          <!-- Right Side - Checkout Details -->
+          <div class="checkout__sidebar">
+       
+          
+          <div class="checkout__coupon">
+              <h3 class="section__title">Have a coupon?</h3>
+              <div class="coupon__form">
+                <input type="text" placeholder="Enter your coupon code" class="coupon__input">
+                <button class="coupon__button">Apply Coupon</button>
+              </div>
+            </div>
+
+            <!-- Price Details -->
+            <div class="price__details">
+              <h4 class="details__title">Price Details</h4>
+              <div class="price__row">
+                <span>Price</span>
+                <span>₹<%= totalPrice %></span>
+              </div>
+              <div class="price__row">
+                <span>Delivery Charges</span>
+                <span class="free">Free</span>
+              </div>
+              <div class="price__row total">
+                <span>Total Amount</span>
+                <span>₹ <%= totalPrice %></span>
+              </div>
+            </div>
+
+            <!-- Payment Methods -->
+            <div class="checkout__payment">
+              <h3 class="section__title">Payment Methods</h3>
+              <div class="payment__methods">
+                <div class="payment__option">
+                  <input type="radio" name="payment" id="bank" checked>
+                  <label for="bank">Online Payment</label>
+                </div>
+                <button class="coupon__button place-order-btn" style="width: 100%; margin-top: 1rem;">Place Order</button>
+              </div>
+            </div>
+          </div>
+
+
         </div>
-      </div>
-    </form>
+      </form>
     </div>
   </section>
   <!--=============== FOOTER ===============-->
