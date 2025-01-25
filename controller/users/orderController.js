@@ -20,7 +20,9 @@ const processCheckout = async (req, res) => {
     const cart = await Cart.findOne({ userId }).populate("items.productId");
 
     if (!cart) {
-      return res.status(404).render("cart", { message: "Cart is empty" });
+      return res
+        .status(404)
+        .json({ sucess: false, message: "no cart available" });
     }
 
     // Fetch combo details manually
@@ -32,25 +34,30 @@ const processCheckout = async (req, res) => {
         );
 
         if (!combo) {
-          return res.status(400).render("cart", {
-            message: `Combo not found for product ${product.productName}`,
-          });
+          return res
+            .status(404)
+            .json({ sucess: false, message: "combos not available" });
         }
 
         // Attach combo details to the item
         item.comboDetails = combo;
+        console.log(item.comboDetails, "itemcombodetials");
       }
     }
 
     const address = addresses.flatMap((doc) => doc.address);
     // Filter out items with zero quantity
     const validCartItems = cart.items.filter((item) => item.quantity > 0);
+    console.log(validCartItems, "validcart items");
 
-    // Calculate the cart item count
-    const cartItemCount = validCartItems.filter(
-      (item) => !item.outOfStock
-    ).length;
-
+    // Check stock for each valid item
+    for (const item of validCartItems) {
+      const availableQuantity = item.comboDetails
+        ? item.comboDetails.quantity
+        : item.productId.stock;
+      console.log(availableQuantity, "avalilable quantity");
+      console.log(availableQuantity, "tem quantity");
+    }
     // Calculate total price
     const totalPrice = validCartItems.reduce(
       (sum, item) =>
@@ -60,22 +67,8 @@ const processCheckout = async (req, res) => {
       0
     );
 
-    // Check stock for each valid item
-    for (const item of validCartItems) {
-      const availableQuantity = item.comboDetails
-        ? item.comboDetails.quantity
-        : item.productId.stock;
-
-      if (availableQuantity < item.quantity) {
-        return res.status(400).render("cart", {
-          message: `The product ${item.productId.productName} is out of stock or has insufficient quantity.`,
-        });
-      }
-    }
-
     // Calculate the cart summary
     const cartSummary = {
-      totalItems: cartItemCount,
       totalPrice,
     };
 
@@ -86,7 +79,6 @@ const processCheckout = async (req, res) => {
     res.render("checkOut", {
       cart: { items: validCartItems },
       brand,
-      cartItemCount,
       cartSummary,
       user: userData,
       totalPrice,

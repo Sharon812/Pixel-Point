@@ -37,7 +37,7 @@ async function addToCart(productId, comboId) {
         position: "top-end",
         icon: "error",
         title: "Error!",
-        text: "An error occurred. Please try again.",
+        text: result.message || "An error occurred. Please try again.",
         showConfirmButton: false,
         timer: 3000,
         timerProgressBar: true,
