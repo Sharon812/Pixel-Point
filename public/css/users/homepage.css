@@ -2337,3 +2337,26 @@ table {
   background-color: #dc3545 !important; /* Red background for error */
   color: white !important; /* White text color */
 }
+
+/* Image Zoom Styles */
+.img-zoom-container {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.details__img {
+  width: 100%;
+  height: auto;
+  transition: transform 0.3s ease;
+}
+
+.img-zoom-container:hover .details__img {
+  transform: scale(2); /* Adjust this value to control zoom level */
+  cursor: zoom-in;
+}
+
+/* Remove or comment out the previous zoom styles */
+/* .img-zoom-lens, .img-zoom-result {
+  display: none;
+} */

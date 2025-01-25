@@ -135,11 +135,9 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
   <section class="details section--lg">
     <div class="details__container container grid">
       <div class="details__group">
-        <img
-          src=" <%= product.productImage[0] %> "
-          alt=""
-          class="details__img"
-        />
+        <div class="img-zoom-container">
+          <img src="<%= product.productImage[0] %>" alt="" class="details__img">
+        </div>
         <div class="details__small-images grid">
           <% for(let i = 0; i< product.productImage.length;i++) {%>
           <img

@@ -154,7 +154,7 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                           <span class="item__qty">Qty: <%= item.quantity %></span>
                         </div>
                       </div>
-                      <div class="item__price">₹<%= item.price %></div>
+                      <div class="item__price">₹<%= item.totalPrice %></div>
                     </div>
                     <button class="remove__item" aria-label="Remove item">
                       <i class="fi fi-rs-cross-small"></i>
@@ -236,8 +236,8 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
               <h3 class="section__title">Payment Methods</h3>
               <div class="payment__methods">
                 <div class="payment__option">
-                  <input type="radio" name="payment" id="bank" checked>
-                  <label for="bank">Online Payment</label>
+                  <input type="radio" name="payment" id="Cash on Delivery" checked>
+                  <label for="bank"> Cash on Delivery</label>
                 </div>
                 <button class="coupon__button place-order-btn" style="width: 100%; margin-top: 1rem;">Place Order</button>
               </div>

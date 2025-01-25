@@ -117,3 +117,29 @@ async function addToCart(productId, comboId) {
     console.error("Error adding to cart:", error);
   }
 }
+
+// Image Zoom functionality
+function initializeImageZoom() {
+  const container = document.querySelector(".img-zoom-container");
+  const img = document.querySelector(".details__img");
+
+  if (!container || !img) return;
+
+  container.addEventListener("mousemove", (e) => {
+    const rect = container.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    // Calculate the position as a percentage
+    const xPercent = (x / rect.width) * 100;
+    const yPercent = (y / rect.height) * 100;
+
+    // Move the image in the opposite direction of the mouse
+    img.style.transformOrigin = `${xPercent}% ${yPercent}%`;
+  });
+}
+
+// Initialize zoom when the page loads
+document.addEventListener("DOMContentLoaded", function () {
+  initializeImageZoom();
+});
