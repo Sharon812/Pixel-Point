@@ -105,4 +105,5 @@ userRoute.get("/orderplaced", userAuth.userCheck, orderController.orderPlaced);
 
 //for userorder details
 userRoute.get("/orders", userAuth.userCheck, accountController.getOrders);
+userRoute.get("/orderDetails", accountController.getOrderDetails);
 module.exports = userRoute;

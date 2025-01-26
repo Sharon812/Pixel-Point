@@ -29,7 +29,7 @@ const getOrderDetails = async (req, res) => {
         totalAmount: order.FinalAmount, // Total final amount for the order
       }))
     );
-    res.render("adminOrderDetails", { orders: transformedOrders });
+    res.render("orderDetailss", { orders: transformedOrders });
   } catch (error) {
     console.error("Error fetching orders:", error.message);
     res.status(500).send("Internal Server Error");

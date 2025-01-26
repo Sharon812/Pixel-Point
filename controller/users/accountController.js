@@ -446,16 +446,29 @@ const getOrders = async (req, res) => {
   try {
     const user = req.session.user;
     const userData = await User.findById(user);
-    const orders = await Order.find({ userId: user }).populate(
-      "orderedItems.product"
-    );
+    const orders = await Order.find({ userId: user })
+      .sort({ createdAt: -1 })
+      .populate("orderedItems.product");
     console.log(orders, "orders");
     res.render("orderDetails", {
       user: userData,
       orders: orders,
     });
   } catch (error) {
-    console.log(error);
+    console.log(
+      error,
+      "error at getting order details at accountcontroller.js"
+    );
+    res.redirect("/page-not-found");
+  }
+};
+
+const getOrderDetails = async (req, res) => {
+  try {
+    res.render("viewOrder");
+  } catch (error) {
+    console.log(error, "error at order details");
+    res.redirect("/page-not-found");
   }
 };
 
@@ -474,4 +487,5 @@ module.exports = {
   editAddress,
   deleteAddress,
   getOrders,
+  getOrderDetails,
 };
