@@ -23,6 +23,10 @@
   margin-bottom: 0.5rem;
   flex: 1;
 }
+.status-completed {
+  background-color: #e8f5e9;
+  color: #4caf50;
+}
 
 .order-date {
   color: #666;
@@ -212,4 +216,89 @@
 
 .btn-danger:hover {
   background-color: #c82333;
+}
+
+/* Responsive Styles */
+@media screen and (max-width: 992px) {
+  .order-details-container {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+
+  .order-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .timeline-steps {
+    overflow-x: auto;
+    padding-bottom: 1rem;
+    min-width: 600px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .product-card {
+    flex-direction: row; /* Changed from column to row */
+    gap: 1rem;
+    align-items: flex-start; /* Changed from center */
+    text-align: left; /* Changed from center */
+  }
+
+  .product-image {
+    width: 120px; /* Made slightly smaller */
+    height: 120px;
+    flex-shrink: 0; /* Prevent image from shrinking */
+  }
+
+  .product-details {
+    flex: 1;
+    min-width: 0; /* Prevent content overflow */
+  }
+
+  .product-specs {
+    grid-template-columns: 1fr;
+  }
+
+  .price-details {
+    flex-direction: row; /* Changed from column */
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .summary-section,
+  .shipping-address {
+    margin-top: 1rem;
+  }
+
+  .order-timeline {
+    overflow-x: auto;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .order-details-container {
+    padding: 1rem;
+    margin: 0.5rem;
+  }
+
+  .order-header h2 {
+    font-size: 1.4rem;
+  }
+
+  .product-image {
+    width: 100px; /* Even smaller for mobile */
+    height: 100px;
+  }
+
+  .summary-row {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
+
+  .btn-danger {
+    width: 100%;
+  }
 }

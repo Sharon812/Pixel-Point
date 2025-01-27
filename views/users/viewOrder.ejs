@@ -103,28 +103,34 @@
 </header>
 <div class="order-details-container">
   <div class="order-header">
-    <h2>Order #ORD123456789</h2>
-    <div class="order-date">Ordered on January 25, 2025</div>
-    <span class="badge bg-warning">Processing</span>
+    <h2>Order # <%= orderData.orderId %></h2>
+    <div class="order-date px-3">
+      Ordered on <%= orderData.createdAt.toLocaleDateString() %>
+    </div>
+    <% if(orderDetails[0].status == "Delivered") {%>
+    <span class="badge status-completed"> <%= orderDetails[0].status %> </span>
+    <% } else{%>
+    <span class="badge bg-warning"><%= orderDetails[0].status %> </span>
+    <% } %>
   </div>
 
   <div class="product-grid">
     <div class="product-card">
       <img
-        src="https://example.com/iphone-15.jpg"
-        alt="iPhone 15 Pro"
+        src="<%= orderDetails[0].product.productImage[0] %>"
+        alt="<%= orderDetails[0].product.productName %> "
         class="product-image"
       />
       <div class="product-details">
-        <h3>iPhone 15 Pro Max</h3>
+        <h3><%= orderDetails[0].productName %></h3>
         <div class="product-specs">
-          <div>RAM: 8GB</div>
-          <div>Storage: 256GB</div>
-          <div>Color: Space Black</div>
+          <div>RAM: <%= orderDetails[0].RAM %> GB</div>
+          <div>Storage: <%= orderDetails[0].Storage %> GB</div>
+          <div>Color: <%= orderDetails[0].color %></div>
         </div>
         <div class="price-details">
-          <div class="price">₹129,900</div>
-          <div class="quantity">Qty: 1</div>
+          <div class="price">₹ <%= orderDetails[0].price %></div>
+          <div class="quantity">Qty: <%=orderDetails[0].quantity%></div>
         </div>
       </div>
     </div>
@@ -133,11 +139,11 @@
   <div class="summary-section">
     <div class="summary-row">
       <span>Product Price</span>
-      <span>₹129,900</span>
+      <span>₹<%= orderDetails[0].price %></span>
     </div>
     <div class="summary-row">
-      <span>Discount</span>
-      <span class="discount-badge">-₹5,000</span>
+      <span>Quantity</span>
+      <span><%= orderDetails[0].quantity %></span>
     </div>
     <div class="summary-row">
       <span>Coupon Applied (NEW2024)</span>
@@ -145,18 +151,20 @@
     </div>
     <div class="summary-row">
       <strong>Final Amount</strong>
-      <span class="total-amount">₹122,900</span>
+      <span class="total-amount">₹ <%= orderDetails[0].totalPrice %></span>
     </div>
   </div>
 
   <div class="shipping-address">
     <h3>Shipping Address</h3>
+    <span class="status-completed"> <%= address.addressType %></span>
+
     <p>
-      John Doe<br />
-      123 Tech Street<br />
-      Bangalore, Karnataka<br />
-      India, 560001<br />
-      Phone: +91 98765 43210
+      <%= address.name %><br />
+      <%= address.landMark %><br />
+      <%= address.city %> , <%=address.state %><br />
+      India, <%= address.pincode %><br />
+      Phone: <%= address.phone %> <br />
     </p>
   </div>
 
@@ -167,36 +175,116 @@
 
   <div class="order-timeline mt-4">
     <h3>Order Timeline</h3>
+    <% if(orderDetails[0].status == "Pending") {%>
+
     <div class="timeline-steps">
       <div class="timeline-step active">
         <div class="timeline-content">
           <div class="inner-circle"></div>
           <p class="h6 mt-3 mb-1">Order Placed</p>
-          <p class="h6 text-muted mb-0 mb-lg-0">25 Jan, 2025</p>
         </div>
       </div>
-      <div class="timeline-step active">
-        <div class="timeline-content">
+      <div class="timeline-step">
+        <div class="time line-content">
           <div class="inner-circle"></div>
           <p class="h6 mt-3 mb-1">Processing</p>
-          <p class="h6 text-muted mb-0 mb-lg-0">26 Jan, 2025</p>
         </div>
       </div>
       <div class="timeline-step">
         <div class="timeline-content">
           <div class="inner-circle"></div>
           <p class="h6 mt-3 mb-1">Shipped</p>
-          <p class="h6 text-muted mb-0 mb-lg-0">Pending</p>
         </div>
       </div>
       <div class="timeline-step">
         <div class="timeline-content">
           <div class="inner-circle"></div>
           <p class="h6 mt-3 mb-1">Delivered</p>
-          <p class="h6 text-muted mb-0 mb-lg-0">Pending</p>
         </div>
       </div>
     </div>
+    <% }else if(orderDetails[0].status == "Processing") {%>
+    <div class="timeline-steps">
+      <div class="timeline-step active">
+        <div class="timeline-content">
+          <div class="inner-circle"></div>
+          <p class="h6 mt-3 mb-1">Order Placed</p>
+        </div>
+      </div>
+      <div class="timeline-step">
+        <div class="time line-content active">
+          <div class="inner-circle"></div>
+          <p class="h6 mt-3 mb-1">Processing</p>
+        </div>
+      </div>
+      <div class="timeline-step">
+        <div class="timeline-content">
+          <div class="inner-circle"></div>
+          <p class="h6 mt-3 mb-1">Shipped</p>
+        </div>
+      </div>
+      <div class="timeline-step">
+        <div class="timeline-content">
+          <div class="inner-circle"></div>
+          <p class="h6 mt-3 mb-1">Delivered</p>
+        </div>
+      </div>
+    </div>
+    <%}else if (orderDetails[0].status == "Shipped") {%>
+    <div class="timeline-steps">
+      <div class="timeline-step active">
+        <div class="timeline-content">
+          <div class="inner-circle"></div>
+          <p class="h6 mt-3 mb-1">Order Placed</p>
+        </div>
+      </div>
+      <div class="timeline-step active">
+        <div class="time line-content">
+          <div class="inner-circle"></div>
+          <p class="h6 mt-3 mb-1">Processing</p>
+        </div>
+      </div>
+      <div class="timeline-step active">
+        <div class="timeline-content">
+          <div class="inner-circle"></div>
+          <p class="h6 mt-3 mb-1">Shipped</p>
+        </div>
+      </div>
+      <div class="timeline-step">
+        <div class="timeline-content">
+          <div class="inner-circle"></div>
+          <p class="h6 mt-3 mb-1">Delivered</p>
+        </div>
+      </div>
+    </div>
+    <%} else if(orderDetails[0].status == "Delivered") {%>
+    <div class="timeline-steps">
+      <div class="timeline-step active">
+        <div class="timeline-content">
+          <div class="inner-circle"></div>
+          <p class="h6 mt-3 mb-1">Order Placed</p>
+        </div>
+      </div>
+      <div class="timeline-step active">
+        <div class="time line-content">
+          <div class="inner-circle"></div>
+          <p class="h6 mt-3 mb-1">Processing</p>
+        </div>
+      </div>
+      <div class="timeline-step active">
+        <div class="timeline-content">
+          <div class="inner-circle"></div>
+          <p class="h6 mt-3 mb-1">Shipped</p>
+        </div>
+      </div>
+      <div class="timeline-step active">
+        <div class="timeline-content">
+          <div class="inner-circle"></div>
+          <p class="h6 mt-3 mb-1">Delivered</p>
+        </div>
+      </div>
+    </div>
+    <% } %>
   </div>
 
   <div class="order-actions mt-4">

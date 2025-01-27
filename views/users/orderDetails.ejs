@@ -184,7 +184,7 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                           <span class="order-value">&#8377;<%=item.totalPrice %> </span>
                         </div>
                         <div class="order-actions">
-                          <a href="/productDetails/<%= item.product._id %>" class="view-order-btn">View Order</a>
+                          <a href="/orderDetails/?orderId=<%= item._id %>" class="view-order-btn">View Order</a>
                           <% if(item.status !== "Delivered") {%>
                           <button class="cancel-order-btn">Cancel Order</button>
                         </div>

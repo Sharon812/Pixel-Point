@@ -465,7 +465,62 @@ const getOrders = async (req, res) => {
 
 const getOrderDetails = async (req, res) => {
   try {
-    res.render("viewOrder");
+    const { orderId } = req.query;
+
+    const user = req.session.user;
+    const userData = await User.findById(user);
+    const orders = await Order.find({ userId: user }).populate(
+      "orderedItems.product"
+    );
+
+    if (!orders || orders.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Order details not found",
+      });
+    }
+
+    const orderWithItem = orders.find((order) =>
+      order.orderedItems.some((item) => item._id.toString() === orderId)
+    );
+
+    if (!orderWithItem) {
+      return res.status(404).json({
+        success: false,
+        message: "Order item not found",
+      });
+    }
+
+    const orderDetails = orderWithItem.orderedItems.filter(
+      (item) => item._id.toString() === orderId
+    );
+
+    const addressDocuments = await Address.find({ userId: user });
+
+    if (!addressDocuments || addressDocuments.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No addresses found for this user",
+      });
+    }
+
+    const specificAddress = addressDocuments
+      .flatMap((doc) => doc.address) // Combine all address arrays
+      .find((addr) => addr._id.toString() === orderWithItem.address.toString());
+
+    if (!specificAddress) {
+      return res.status(404).json({
+        success: false,
+        message: "Specific address not found",
+      });
+    }
+
+    res.render("viewOrder", {
+      orderDetails: orderDetails,
+      orderData: orderWithItem,
+      user: userData,
+      address: specificAddress,
+    });
   } catch (error) {
     console.log(error, "error at order details");
     res.redirect("/page-not-found");
