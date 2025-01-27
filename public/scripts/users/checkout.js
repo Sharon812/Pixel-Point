@@ -52,8 +52,19 @@ document.addEventListener("DOMContentLoaded", () => {
         // Redirect to order success page
         window.location.href = "/orderplaced";
       } else {
-        // Show error message
-        alert(result.message || "Failed to place the order. Please try again.");
+        Swal.fire({
+          toast: true,
+          position: "top-end",
+          icon: "error",
+          text: result.message || "An error occurred. Please try again.",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          customClass: {
+            popup: "colored-toast error-toast",
+            icon: "error-icon",
+          },
+        });
       }
     } catch (error) {
       console.error("Error placing order:", error);

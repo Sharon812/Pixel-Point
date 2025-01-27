@@ -143,6 +143,9 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                 <h3 class="cart__item-title">
                   <%= item.productId.productName || "Unknown Product" %>
                 </h3>
+                <% if(item.combo.quantity <= 0) {%>
+                <span  class="text-danger h5">Item is out of stock</span>
+                <% } %>
                 <div class="cart__item-meta">
                   <span>Ram/storage: <%= item.combo.ram %>GB/<%= item.combo.storage %>GB</span>
                   <span class="cart__item-stock">In Stock</span>
@@ -224,7 +227,9 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
              <td class="cart__total-price">&#8377; <%= cart.totalPrice %> </td>
            </tr>
          </table>
-         <a href="/checkout" class="btn">Proceed to Checkout</a>
+       
+         <a href="/checkout" disabled="disabled" class="btn">Proceed to Checkout</a>
+       
        </div>
      </div>
      <% } else { %>
