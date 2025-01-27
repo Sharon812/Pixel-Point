@@ -1,0 +1,255 @@
+:root {
+  --primary-color: #0052cc;
+  --secondary-color: #858796;
+  --success-color: #1cc88a;
+  --info-color: #36b9cc;
+  --warning-color: #f6c23e;
+  --danger-color: #e74a3b;
+}
+
+body {
+  background-color: #f8f9fc;
+  overflow-x: hidden;
+}
+
+.admin-dashboard {
+  min-height: 100vh;
+}
+
+/* Top Navigation */
+.navbar {
+  height: 60px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  background-color: #0052cc !important;
+}
+
+.navbar-toggler {
+  padding: 8px 12px;
+  border: none;
+  color: white;
+}
+
+.navbar-toggler:focus {
+  box-shadow: none;
+}
+
+.navbar-toggler i {
+  font-size: 1.4rem;
+}
+
+/* Sidebar */
+.sidebar {
+  min-height: 100vh;
+  background: #0052cc;
+  padding: 1.5rem;
+  width: 250px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 1030;
+  transition: transform 0.3s ease-in-out;
+}
+
+.sidebar h2 {
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.sidebar a {
+  display: block;
+  color: rgba(255, 255, 255, 0.85);
+  padding: 0.8rem 1rem;
+  margin-bottom: 0.5rem;
+  border-radius: 0.35rem;
+  text-decoration: none;
+  transition: all 0.3s;
+}
+
+.sidebar a:hover, .sidebar a.active {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: white;
+}
+
+/* Main Content */
+.main-content {
+  padding: 1.5rem;
+  margin-left: 250px;
+  width: calc(100% - 250px);
+  transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out;
+}
+
+/* Responsive Styles */
+@media (max-width: 991.98px) {
+  .sidebar {
+    transform: translateX(-100%);
+    margin-top: 60px;
+    min-height: calc(100vh - 60px);
+  }
+
+  .sidebar.show {
+    transform: translateX(0);
+  }
+
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+    padding-top: 75px;
+  }
+
+  .btn-close {
+    opacity: 1;
+    filter: invert(1) grayscale(100%) brightness(200%);
+  }
+}
+
+/* Additional mobile adjustments */
+@media (max-width: 767.98px) {
+  .stat-card {
+    margin-bottom: 1rem;
+  }
+
+  .chart-container {
+    margin-bottom: 1rem;
+  }
+}
+
+.stat-card {
+  border: none;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.15rem 1.75rem rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+}
+
+.stat-card .icon {
+  font-size: 2rem;
+  opacity: 0.4;
+}
+
+.chart-container {
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.15rem 1.75rem rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.orders-chart-wrapper {
+  height: 400px;
+  position: relative;
+}
+
+.revenue-chart-wrapper {
+  height: 300px;
+  position: relative;
+}
+
+.orders-chart-wrapper canvas,
+.revenue-chart-wrapper canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+@media (max-width: 991.98px) {
+  .orders-chart-wrapper {
+    height: 350px;
+  }
+  
+  .revenue-chart-wrapper {
+    height: 250px;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .orders-chart-wrapper {
+    height: 300px;
+  }
+  
+  .revenue-chart-wrapper {
+    height: 200px;
+  }
+}
+
+.recent-orders {
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.15rem 1.75rem rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  overflow: hidden;
+}
+
+.table {
+  margin-bottom: 0;
+}
+
+.table th {
+  font-weight: 600;
+  background-color: #f8f9fc;
+  white-space: nowrap;
+}
+
+.table td {
+  vertical-align: middle;
+}
+
+.status-badge {
+  padding: 0.5rem 1rem;
+  border-radius: 2rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Responsive table adjustments */
+.table-responsive {
+  margin: 0 -1.5rem;
+  padding: 0 1.5rem;
+  width: calc(100% + 3rem);
+}
+
+@media (max-width: 991.98px) {
+  .revenue-chart {
+    min-height: 350px;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .chart-container {
+    margin-bottom: 1rem;
+  }
+
+  .revenue-chart {
+    min-height: 300px;
+  }
+
+  .table td {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .status-badge {
+    padding: 0.35rem 0.75rem;
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .revenue-chart {
+    min-height: 250px;
+  }
+
+  .table-responsive {
+    margin: 0 -1rem;
+    padding: 0 1rem;
+    width: calc(100% + 2rem);
+  }
+
+  .table td {
+    padding: 0.5rem;
+    font-size: 0.85rem;
+  }
+}
