@@ -276,18 +276,22 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                   <span class="old__price">&#8377; <%= newArrivals[i].combos[0].regularPrice %> </span>
                 </div>
                <% if(newArrivals[i].combos[0].quantity > 0) {%>
-                <button
-                onclick="addToCart('<%=newArrivals[i]._id%>','<%=newArrivals[i].combos[0]._id%>')"
-                class="action__btn cart__btn"
-                aria-label="Add To Cart"
-              >
-                <i class="fi fi-rs-shopping-bag-add"></i>
-            </button>
-            <% } else{ %>
-              <div class="details__action" id="actionButtons">
-                <button class="btn btn-danger" disabled>Out of Stock</button>
-              </div>
-            <% } %>
+                <div class="product__buttons">
+                  <button
+                    onclick="addToCart('<%=newArrivals[i]._id%>','<%=newArrivals[i].combos[0]._id%>')"
+                    class="product__btn add-to-cart-btn"
+                  >
+                    Add to Cart
+                  </button>
+                  <a href="/productDetails/<%= newArrivals[i]._id %>" class="product__btn buy-now-btn">
+                    Buy Now
+                  </a>
+                </div>
+                <% } else{ %>
+                  <div class="product__buttons">
+                    <button class="product__btn" disabled>Out of Stock</button>
+                  </div>
+                <% } %>
               </div>
             </div>
             <% } %>
@@ -347,18 +351,22 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                     <span class="old__price">&#8377; <%= laptops[i].combos[0].regularPrice %> </span>
                   </div>
                   <% if(laptops[i].combos[0].quantity > 0) {%>
-                    <button
-                    onclick="addToCart('<%=laptops[i]._id%>','<%=laptops[i].combos[0]._id%>')"
-                    class="action__btn cart__btn"
-                    aria-label="Add To Cart"
-                  >
-                    <i class="fi fi-rs-shopping-bag-add"></i>
-                </button>
-                <% } else{ %>
-                  <div class="details__action" id="actionButtons">
-                    <button class="btn btn-danger" disabled>Out of Stock</button>
-                  </div>
-                <% } %>
+                    <div class="product__buttons">
+                      <button
+                        onclick="addToCart('<%=laptops[i]._id%>','<%=laptops[i].combos[0]._id%>')"
+                        class="product__btn add-to-cart-btn"
+                      >
+                        Add to Cart
+                      </button>
+                      <a href="/productDetails/<%= laptops[i]._id %>" class="product__btn buy-now-btn">
+                        Buy Now
+                      </a>
+                    </div>
+                    <% } else{ %>
+                      <div class="product__buttons">
+                        <button class="product__btn" disabled>Out of Stock</button>
+                      </div>
+                    <% } %>
                 </div>
               </div>
               <% } %>
@@ -420,20 +428,25 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                     <span class="old__price">&#8377; <%= refurbishedLaptops[i].combos[0].regularPrice %> </span>
                   </div>
                   <% if(refurbishedLaptops[i].combos[0].quantity > 0) {%>
-                    <button
-                    onclick="addToCart('<%=refurbishedLaptops[i]._id%>','<%=newArrivals[i].combos[0]._id%>')"
-                    class="action__btn cart__btn"
-                    aria-label="Add To Cart"
-                  >
-                    <i class="fi fi-rs-shopping-bag-add"></i>
-                </button>
-                <% } else{ %>
-                  <div class="details__action" id="actionButtons">
-                    <button class="btn btn-danger" disabled>Out of Stock</button>
-                  </div>
-                <% } %>
+                    <div class="product__buttons">
+                      <button
+                        onclick="addToCart('<%=refurbishedLaptops[i]._id%>','<%=refurbishedLaptops[i].combos[0]._id%>')"
+                        class="product__btn add-to-cart-btn"
+                      >
+                        Add to Cart
+                      </button>
+                      <a href="/productDetails/<%= refurbishedLaptops[i]._id %>" class="product__btn buy-now-btn">
+                        Buy Now
+                      </a>
+                    </div>
+                    <% } else{ %>
+                      <div class="product__buttons">
+                        <button class="product__btn" disabled>Out of Stock</button>
+                      </div>
+                    <% } %>
                 </div>
               </div>
+              
               <% } %>
           </div>
         </div>

@@ -320,19 +320,22 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
           <span class="old__price">&#8377; <%= products[i].combos[0].regularPrice %> </span>
         </div>
         <% if(products[i].combos[0].quantity > 0 ) {%>
-
-        <button
-        onclick="addToCart('<%=products[i]._id%>','<%=products[i].combos[0]._id%>')"
-        class="action__btn cart__btn"
-        aria-label="Add To Cart"
-      >
-        <i class="fi fi-rs-shopping-bag-add"></i>
-    </button>
-    <% } else{ %>
-      <div class="details__action" id="actionButtons">
-        <button class="btn btn-danger" disabled>Out of Stock</button>
-      </div>
-      <% } %>
+        <div class="product__buttons">
+          <button
+            onclick="addToCart('<%=products[i]._id%>','<%=products[i].combos[0]._id%>')"
+            class="product__btn add-to-cart-btn"
+          >
+            Add to Cart
+          </button>
+          <a href="/productDetails/<%= products[i]._id %>" class="product__btn buy-now-btn">
+            Buy Now
+          </a>
+        </div>
+        <% } else{ %>
+          <div class="product__buttons">
+            <button class="product__btn" disabled>Out of Stock</button>
+          </div>
+        <% } %>
       </div>
     </div>
 
