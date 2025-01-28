@@ -285,8 +285,12 @@ const decreaseQuantity = async (req, res) => {
     //   cart.items = cart.items.filter((item) => item.comboId != comboId);
     // } else {
     //   product.totalPrice = product.quantity * combo.salePrice;
+    product.totalPrice = product.quantity * combo.salePrice;
 
-    cart.totalPrice = cart.items.reduce((sum, item) => sum + item.price, 0);
+    cart.totalPrice = cart.items.reduce(
+      (sum, item) => sum + item.totalPrice,
+      0
+    );
 
     await cart.save();
 

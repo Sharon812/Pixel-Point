@@ -26,10 +26,6 @@
 }
 
 /* Breadcrumb */
-.breadcrumb {
-  margin-bottom: 2rem;
-  padding: 1rem 0;
-}
 
 .breadcrumb__list {
   display: flex;

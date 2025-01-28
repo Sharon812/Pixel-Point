@@ -138,20 +138,27 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
           <% cart.items.forEach(item => { %>
             <!-- Cart Item -->
             <div class="cart__item">
-              <img src=" <%= item.productId.productImage[0] %> " alt="Product Image" class="cart__item-img" />
+              <div class="cart__item-img-container">
+                <img
+                  src="<%= item.productId.productImage[0] %>"
+                  alt="Product Image"
+                  class="cart__item-img"
+                />
+                <span class="cart__item-stock-desktop">In Stock</span>
+              </div>
               <div class="cart__item-details">
                 <h3 class="cart__item-title">
                   <%= item.productId.productName || "Unknown Product" %>
                 </h3>
                 <% if(item.combo.quantity <= 0) {%>
-                <span  class="text-danger h5">Item is out of stock</span>
+                <span class="text-danger h5">Item is out of stock</span>
                 <% } %>
                 <div class="cart__item-meta">
-                  <span>Ram/storage: <%= item.combo.ram %>GB/<%= item.combo.storage %>GB</span>
-                  <span class="cart__item-stock">In Stock</span>
-                </div>
-                <div>
-                  <span>Color: <%= item.combo.color[0] %></span>
+                  <span class="cart__item-stock-mobile">In Stock</span>
+                  <div class="cart__item-specs">
+                    <span class="cart__item-storage">Ram/storage: <%= item.combo.ram %>GB/<%= item.combo.storage %>GB</span>
+                    <span class="cart__item-color">Color: <%= item.combo.color[0] %></span>
+                  </div>
                 </div>
                 <div class="cart__item-prices">
                   <p class="cart__item-price">&#8377;<%= item.totalPrice %></p>
@@ -197,19 +204,6 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
        
      <!-- Cart Summary -->
      <div class="cart__summary">
-       <!-- Coupon Section -->
-       <div class="cart__coupon">
-         <h3 class="section__title">Apply Coupon</h3>
-         <form class="coupon__form">
-           <input
-             type="text"
-             class="form__input"
-             placeholder="Enter coupon code..."
-           />
-           <button class="btn">Apply</button>
-         </form>
-       </div>
-
        <!-- Cart Total -->
        <div class="cart__total">
          <h3 class="section__title">Cart Total</h3>
