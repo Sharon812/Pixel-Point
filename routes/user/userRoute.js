@@ -102,6 +102,7 @@ userRoute.get("/shop", shopController.loadShopPage);
 userRoute.get("/checkout", userAuth.userCheck, orderController.processCheckout);
 userRoute.post("/checkout", orderController.placeOrder);
 userRoute.get("/orderplaced", userAuth.userCheck, orderController.orderPlaced);
+userRoute.post("/verify-payment", orderController.verifyPayment);
 
 //for userorder details
 userRoute.get("/orders", userAuth.userCheck, accountController.getOrders);

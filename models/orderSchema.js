@@ -68,6 +68,11 @@ const orderSchema = new Schema(
     paymentMethod: {
       type: "string",
     },
+    paymentStatus: {
+      type: String,
+      required: true,
+      ennu: ["Pending Payment", "Confirmed"],
+    },
     totalPrice: {
       type: Number,
       required: true,

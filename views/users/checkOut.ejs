@@ -237,7 +237,11 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                   <input type="radio" name="payment" id="Cash on Delivery" checked>
                   <label for="bank"> Cash on Delivery</label>
                 </div>
-                <button class="coupon__button place-order-btn" style="width: 100%; margin-top: 1rem;">Place Order</button>
+                <div class="payment__option">
+                  <input type="radio" name="payment" id="razorpay" >
+                  <label for="bank"> Razorpay</label>
+                </div>
+                <button type="submit" class="coupon__button place-order-btn" id="placeorder" style="width: 100%; margin-top: 1rem;">Place Order</button>
               </div>
             </div>
           </div>
@@ -339,7 +343,8 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   
   <!-- Include jQuery before your script -->
-  
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
     <!--=============== MAIN JS ===============-->
     <!-- Include jQuery before your script -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
