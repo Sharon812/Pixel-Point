@@ -80,8 +80,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 icon: "error",
                 text: error.message || "Payment verification failed",
                 showConfirmButton: false,
-                timer: 3000,
+                timer: 1200,
                 timerProgressBar: true,
+              }).then(() => {
+                window.location.href = "/cart";
               });
             }
           },
@@ -111,11 +113,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const rzp = new Razorpay(razorpayOptions);
         rzp.open();
+      } else {
+        // Handle COD or other payment methods
+        window.location.href = "/orderplaced";
       }
-      //  else {
-      //   // Handle COD or other payment methods
-      //   window.location.href = "/orderplaced";
-      // }
     } catch (error) {
       console.error("Order Error:", error);
       Swal.fire({

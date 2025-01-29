@@ -162,13 +162,14 @@ const placeOrder = async (req, res) => {
       orderedItems: orderItems,
       totalPrice: totalAmount,
       FinalAmount: totalAmount,
-      paymentStatus: paymentMethod === "cod" ? "Confirmed" : "Pending Payment",
+      paymentStatus:
+        paymentMethod === "Cash on Delivery" ? "Confirmed" : "Pending Payment",
     });
 
     await newOrder.save();
 
     // Handle COD immediately
-    if (paymentMethod === "cod") {
+    if (paymentMethod === "Cash on Delivery") {
       await updateInventory(orderItems, userId);
       return res.json({
         success: true,
