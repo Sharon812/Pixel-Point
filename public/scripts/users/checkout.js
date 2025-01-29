@@ -13,10 +13,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const checkoutForm = document.querySelector("#checkout-form");
 
   placeOrderButton.addEventListener("click", async (event) => {
-    event.preventDefault(); // Prevent the default form submission behavior
+    event.preventDefault();
 
     try {
-      // Get selected address and payment method
       const selectedAddress = document.querySelector(
         'input[name="selectedAddress"]:checked'
       )?.value;
@@ -25,52 +24,113 @@ document.addEventListener("DOMContentLoaded", () => {
         'input[name="payment"]:checked'
       )?.id;
 
-      // Validate input
       if (!selectedAddress || !paymentMethod) {
-        return alert("Please select a delivery address and a payment method.");
+        return alert("Please select a delivery address and payment method.");
       }
 
-      // Prepare request payload
-      const payload = {
-        selectedAddress,
-        paymentMethod,
-      };
-
-      // Make a POST request to the server
+      const payload = { selectedAddress, paymentMethod };
       const response = await fetch("/checkout", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
-      // Handle the server response
       const result = await response.json();
-
-      if (response.ok || result.success) {
-        // Redirect to order success page
-        window.location.href = "/orderplaced";
-      } else {
-        Swal.fire({
-          toast: true,
-          position: "top-end",
-          icon: "error",
-          text: result.message || "An error occurred. Please try again.",
-          showConfirmButton: false,
-          timer: 3000,
-          timerProgressBar: true,
-          customClass: {
-            popup: "colored-toast error-toast",
-            icon: "error-icon",
-          },
-        });
+      console.log(result);
+      console.log(result.Final);
+      if (!response.ok) {
+        throw new Error(result.message || "Order placement failed");
       }
+
+      // Handle Razorpay payment flow
+      if (paymentMethod === "razorpay" && result.razorpayOrder) {
+        const razorpayOptions = {
+          key: "rzp_test_VwIcEmBewhtiOH", // Replace with actual key
+          amount: result.razorpayOrder.amount,
+          currency: "INR",
+          name: "Pixel-Point",
+          order_id: result.razorpayOrder.id,
+          handler: async (razorpayResponse) => {
+            try {
+              // Verify payment with backend
+              const verificationResponse = await fetch("/verify-payment", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  razorpay_payment_id: razorpayResponse.razorpay_payment_id,
+                  razorpay_order_id: razorpayResponse.razorpay_order_id,
+                  razorpay_signature: razorpayResponse.razorpay_signature,
+                  orderId: result.order._id,
+                }),
+              });
+              const verificationResult = await verificationResponse.json();
+
+              if (!verificationResponse.ok) {
+                throw new Error(
+                  verificationResult.message || "Payment verification failed"
+                );
+              }
+
+              // Redirect on successful verification
+              window.location.href = "/orderplaced";
+            } catch (error) {
+              Swal.fire({
+                toast: true,
+                position: "top-end",
+                icon: "error",
+                text: error.message || "Payment verification failed",
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+              });
+            }
+          },
+          modal: {
+            ondismiss: () => {
+              Swal.fire({
+                toast: true,
+                position: "top-end",
+                icon: "warning",
+                text: "Payment cancelled",
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+              });
+            },
+          },
+          prefill: {
+            name: "Customer Name", // Add dynamic data if available
+            email: "customer@example.com",
+            contact: "9123456789",
+          },
+          theme: {
+            color: "#F37254",
+          },
+        };
+        console.log(razorpayOptions);
+
+        const rzp = new Razorpay(razorpayOptions);
+        rzp.open();
+      }
+      //  else {
+      //   // Handle COD or other payment methods
+      //   window.location.href = "/orderplaced";
+      // }
     } catch (error) {
-      console.error("Error placing order:", error);
-      alert(
-        "An error occurred while placing the order. Please try again later."
-      );
+      console.error("Order Error:", error);
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "error",
+        text: error.message || "Order processing failed",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        customClass: {
+          popup: "colored-toast error-toast",
+          icon: "error-icon",
+        },
+      });
     }
   });
 });

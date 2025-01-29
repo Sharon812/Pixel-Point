@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const env = require("dotenv").config();
 const bycrypt = require("bcrypt");
 const crypto = require("crypto");
+const Razorpay = require("razorpay");
 const Address = require("../../models/addressSchema");
 const Product = require("../../models/productSchema");
 const Cart = require("../../models/cartSchema");
@@ -41,22 +42,18 @@ const processCheckout = async (req, res) => {
 
         // Attach combo details to the item
         item.comboDetails = combo;
-        console.log(item.comboDetails, "itemcombodetials");
       }
     }
 
     const address = addresses.flatMap((doc) => doc.address);
     // Filter out items with zero quantity
     const validCartItems = cart.items.filter((item) => item.quantity > 0);
-    console.log(validCartItems, "validcart items");
 
     // Check stock for each valid item
     for (const item of validCartItems) {
       const availableQuantity = item.comboDetails
         ? item.comboDetails.quantity
         : item.productId.stock;
-      console.log(availableQuantity, "avalilable quantity");
-      console.log(availableQuantity, "tem quantity");
     }
     // Calculate total price
     const totalPrice = validCartItems.reduce(
@@ -90,48 +87,53 @@ const processCheckout = async (req, res) => {
   }
 };
 
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_ID_KEY, // Store in .env
+  key_secret: process.env.RAZORPAY_SECRET_KEY,
+});
+
 const placeOrder = async (req, res) => {
   try {
     const userId = req.session.user;
     const { selectedAddress, paymentMethod } = req.body;
 
+    // Validate input
     if (!selectedAddress || !paymentMethod) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Missing order details" });
+      return res.status(400).json({
+        success: false,
+        message: "Missing order details",
+      });
     }
 
-    const cart = await Cart.findOne({ userId: userId })
+    // Get cart items
+    const cart = await Cart.findOne({ userId })
       .populate({
         path: "items.productId",
-        populate: {
-          path: "combos",
-          model: "Combo", // Adjust the model name if different
-        },
+        populate: { path: "combos", model: "Combo" },
       })
       .lean();
 
-    if (!cart || cart.items.length === 0) {
-      return res.status(400).json({ success: false, message: "Cart is empty" });
+    // Validate cart
+    if (!cart?.items?.length) {
+      return res.status(400).json({
+        success: false,
+        message: "Cart is empty",
+      });
     }
 
-    const validCartItems = cart.items.filter((item) => item.quantity > 0);
-    if (validCartItems.length === 0) {
-      return res
-        .status(400)
-        .json({ success: false, message: "No valid items in cart" });
-    }
-
+    // Process order items
     const orderItems = await Promise.all(
-      validCartItems.map(async (item) => {
+      cart.items.map(async (item) => {
         const selectedCombo = item.productId.combos.find(
           (combo) => combo._id.toString() === item.comboId.toString()
         );
+
         if (!selectedCombo) {
           throw new Error(
             `Combo not found for product: ${item.productId.productName}`
           );
         }
+
         return {
           product: item.productId._id,
           productName: item.productId.productName,
@@ -146,63 +148,137 @@ const placeOrder = async (req, res) => {
       })
     );
 
+    // Calculate totals
     const totalAmount = orderItems.reduce(
       (acc, item) => acc + item.totalPrice,
       0
     );
 
+    // Create order document
     const newOrder = new Order({
-      userId,
+      userId: userId,
       address: selectedAddress,
-      paymentMethod: paymentMethod,
+      paymentMethod,
       orderedItems: orderItems,
       totalPrice: totalAmount,
       FinalAmount: totalAmount,
+      paymentStatus: paymentMethod === "cod" ? "Confirmed" : "Pending Payment",
     });
 
     await newOrder.save();
 
-    // Update product quantities in parallel
-    await Promise.all(
-      validCartItems.map(async (item) => {
-        const product = await Product.findById(item.productId._id);
-        if (product) {
-          const comboIndex = product.combos.findIndex(
-            (combo) => combo._id.toString() === item.comboId.toString()
-          );
-          if (comboIndex !== -1) {
-            const selectedCombo = product.combos[comboIndex];
-            if (selectedCombo.quantity < item.quantity) {
-              throw new Error(
-                `Insufficient stock for product: ${product.productName}`
-              );
-            }
-            product.combos[comboIndex].quantity -= item.quantity;
-            if (product.combos[comboIndex].quantity === 0) {
-              product.combos[comboIndex].status = "Out of Stock";
-            }
-            await product.save();
-          } else {
-            throw new Error(
-              `Invalid combo selection for product: ${product.productName}`
-            );
-          }
-        } else {
-          throw new Error(`Product not found for ID: ${item.productId._id}`);
-        }
-      })
-    );
+    // Handle COD immediately
+    if (paymentMethod === "cod") {
+      await updateInventory(orderItems, userId);
+      return res.json({
+        success: true,
+        message: "COD order placed successfully",
+        order: newOrder,
+      });
+    }
 
-    // Clear the cart
-    await Cart.findOneAndUpdate({ userId }, { $set: { items: [] } });
-    res
-      .status(200)
-      .json({ success: true, message: "order placed successfully" });
-  } catch (error) {
-    console.error("Error placing order:", error.message);
-    res.status(500).json({
+    // Handle Razorpay payment
+    if (paymentMethod === "razorpay") {
+      const razorpayOrder = await razorpay.orders.create({
+        amount: totalAmount * 100, // Convert to paise
+        currency: "INR",
+        receipt: newOrder._id.toString(),
+        payment_capture: 1,
+      });
+      console.log(razorpayOrder, "raxorpayorder");
+
+      return res.json({
+        success: true,
+        message: "Razorpay order created",
+        razorpayOrder: razorpayOrder,
+        order: newOrder,
+      });
+    }
+
+    // Handle invalid payment method
+    return res.status(400).json({
       success: false,
-      message: error.message || "Internal server error",
+      message: "Invalid payment method",
+    });
+  } catch (error) {
+    console.error("Order placement error:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Order placement failed",
+    });
+  }
+};
+
+// Separate inventory update function
+const updateInventory = async (orderItems, userId) => {
+  await Promise.all(
+    orderItems.map(async (item) => {
+      const product = await Product.findById(item.product);
+      const comboIndex = product.combos.findIndex(
+        (combo) =>
+          combo.ram === item.RAM &&
+          combo.storage === item.Storage &&
+          combo.color.includes(item.color)
+      );
+
+      if (comboIndex === -1) throw new Error("Combo not found");
+
+      if (product.combos[comboIndex].quantity < item.quantity) {
+        throw new Error(`Insufficient stock for ${product.productName}`);
+      }
+
+      product.combos[comboIndex].quantity -= item.quantity;
+      if (product.combos[comboIndex].quantity === 0) {
+        product.combos[comboIndex].status = "Out of Stock";
+      }
+
+      await product.save();
+
+      await Cart.findOneAndUpdate({ userId }, { $set: { items: [] } });
+    })
+  );
+};
+
+// Razorpay payment verification endpoint
+const verifyPayment = async (req, res) => {
+  try {
+    const userId = req.session.user;
+    const {
+      razorpay_payment_id,
+      razorpay_order_id,
+      razorpay_signature,
+      orderId,
+    } = req.body;
+    console.log(req.body, "hello");
+    // Verify payment signature
+    const generatedSignature = crypto
+      .createHmac("sha256", process.env.RAZORPAY_SECRET_KEY)
+      .update(razorpay_order_id + "|" + razorpay_payment_id)
+      .digest("hex");
+
+    if (generatedSignature !== razorpay_signature) {
+      return res.status(400).json({
+        success: false,
+        message: "Payment verification failed",
+      });
+    }
+
+    // Update order status and inventory
+    const order = await Order.findById(orderId);
+    order.paymentStatus = "Confirmed";
+    await order.save();
+
+    await updateInventory(order.orderedItems, userId);
+
+    return res.status(200).json({
+      success: true,
+      message: "Payment verified and order confirmed",
+    });
+  } catch (error) {
+    console.error("Payment verification error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Payment verification failed",
     });
   }
 };
@@ -217,4 +293,5 @@ module.exports = {
   processCheckout,
   placeOrder,
   orderPlaced,
+  verifyPayment,
 };
