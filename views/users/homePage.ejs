@@ -256,16 +256,7 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                 <i class="fi fi-rs-heart"></i>
               </button>
               <% } %>
-
-                <div class="product__actions">
-                  <a href="#" class="action__btn" aria-label="Quick View">
-                    <i class="fi fi-rs-eye"></i>
-                  </a>
-                  <a href="#" class="action__btn" aria-label="Compare">
-                    <i class="fi fi-rs-shuffle"></i>
-                  </a>
-                </div>
-                <div class="product__badge light-blue">-22%</div>
+                <div class="product__badge "> <%= newArrivals[i].category.name %> </div>
               </div>
               <div class="product__content">
                 <span class="product__category"><%= newArrivals[i].brand.brandName %></span>
@@ -325,19 +316,20 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                       class="product__img hover"
                     />
                   </a>
-                  <button class="wishlist__btn <%= laptops[i].isInWishlist ? 'active' : '' %>" 
-                    onclick="toggleWishlist('<%=laptops[i]._id%>','<%=laptops[i].combos[0]._id  %>')"
+                  <% if (wishlistProducts.includes(laptops[i]._id.toString())) { %>
+                    <button class="wishlist__btn active"
+                      onclick="removeFromWishlist('<%=laptops[i]._id %>')"
+                      aria-label="Add to Wishlist">
+                      <i class="fi fi-rs-heart"></i>
+                    </button>
+                  <% }else{ %>
+                    <button class="wishlist__btn "
+                    onclick="toggleWishlist('<%=laptops[i]._id %>')"
                     aria-label="Add to Wishlist">
                     <i class="fi fi-rs-heart"></i>
                   </button>
-                  <div class="product__actions">
-                    <a href="#" class="action__btn" aria-label="Quick View">
-                      <i class="fi fi-rs-eye"></i>
-                    </a>
-                    <a href="#" class="action__btn" aria-label="Compare">
-                      <i class="fi fi-rs-shuffle"></i>
-                    </a>
-                  </div>
+                  <% } %>
+        
                   <div class="product__badge light-blue">-22%</div>
                 </div>
                 <div class="product__content">
@@ -405,14 +397,20 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                     aria-label="Add to Wishlist">
                     <i class="fi fi-rs-heart"></i>
                   </button>
-                  <div class="product__actions">
-                    <a href="#" class="action__btn" aria-label="Quick View">
-                      <i class="fi fi-rs-eye"></i>
-                    </a>
-                    <a href="#" class="action__btn" aria-label="Compare">
-                      <i class="fi fi-rs-shuffle"></i>
-                    </a>
-                  </div>
+                  <% if (wishlistProducts.includes(refurbishedLaptops[i]._id.toString())) { %>
+                    <button class="wishlist__btn active"
+                      onclick="removeFromWishlist('<%=refurbishedLaptops[i]._id %>')"
+                      aria-label="Add to Wishlist">
+                      <i class="fi fi-rs-heart"></i>
+                    </button>
+                  <% }else{ %>
+                    <button class="wishlist__btn "
+                    onclick="toggleWishlist('<%=refurbishedLaptops[i]._id %>')"
+                    aria-label="Add to Wishlist">
+                    <i class="fi fi-rs-heart"></i>
+                  </button>
+                  <% } %>
+                
                   <div class="product__badge light-blue">-22%</div>
                 </div>
                 <div class="product__content">

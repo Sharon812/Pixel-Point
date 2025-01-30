@@ -700,6 +700,7 @@ table {
   -moz-border-radius: 2.5rem;
   -ms-border-radius: 2.5rem;
   -o-border-radius: 2.5rem;
+  background-color: #2563eb;
 }
 
 .product__badge.light-pink {
@@ -825,7 +826,7 @@ table {
   .product__buttons {
     gap: 0.35rem;
   }
-  
+
   .product__btn {
     padding: 0.6rem 0.8rem;
     font-size: calc(var(--small-font-size) - 0.05rem);
@@ -837,7 +838,7 @@ table {
     flex-direction: column;
     gap: 0.5rem;
   }
-  
+
   .product__btn {
     width: 100%;
     padding: 0.75rem 1rem;
@@ -848,7 +849,7 @@ table {
   .product__buttons {
     margin-top: 0.75rem;
   }
-  
+
   .product__btn {
     padding: 0.6rem 0.75rem;
     font-size: calc(var(--small-font-size) - 0.1rem);

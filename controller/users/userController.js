@@ -67,6 +67,7 @@ const loadHomePage = async (req, res) => {
         path: "brand",
         model: "Brands",
       })
+      .populate("category")
       .sort({ createdAt: -1 })
       .limit(6);
 

@@ -293,14 +293,19 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
           class="product__img hover"
           />
         </a>
-        <div class="product__actions">
-          <a href="#" class="action__btn" aria-label="Quick View">
-            <i class="fi fi-rs-eye"></i>
-          </a>
-          <a href="#" class="action__btn" aria-label="Add to Wishlist">
+        <% if (wishlistProducts.includes(products[i]._id.toString())) { %>
+          <button class="wishlist__btn active"
+            onclick="removeFromWishlist('<%=products[i]._id %>')"
+            aria-label="Add to Wishlist">
             <i class="fi fi-rs-heart"></i>
-          </a>
-        </div>
+          </button>
+        <% }else{ %>
+          <button class="wishlist__btn "
+          onclick="toggleWishlist('<%=products[i]._id %>')"
+          aria-label="Add to Wishlist">
+          <i class="fi fi-rs-heart"></i>
+        </button>
+        <% } %>
         <div class="product__badge "> <%= products[i].category.name %> </div>
       </div>
       <div class="product__content">

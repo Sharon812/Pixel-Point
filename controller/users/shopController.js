@@ -9,6 +9,7 @@ const Product = require("../../models/productSchema");
 const Cart = require("../../models/cartSchema");
 const Brand = require("../../models/brandSchema");
 const Category = require("../../models/categorySchema");
+const Wishlist = require("../../models/wishlistSchema");
 
 const loadShopPage = async (req, res) => {
   try {
@@ -127,10 +128,18 @@ const loadShopPage = async (req, res) => {
     let userData = null;
     let cartItemCount = 0;
 
+    let wishlistProducts = [];
+
     if (user) {
       const userId = user;
+      const wishlist = await Wishlist.findOne({ userId: user }).select(
+        "product.productId"
+      );
+      wishlistProducts = wishlist
+        ? wishlist.product.map((item) => item.productId.toString())
+        : [];
       const userCart = await Cart.findOne({
-        userId: new mongoose.Types.ObjectId(userId),
+        userId: userId,
       });
       cartItemCount = userCart ? userCart.items.length : 0;
       userData = await User.findById(userId);
@@ -162,6 +171,7 @@ const loadShopPage = async (req, res) => {
       storages,
       currentPage: page,
       totalPages,
+      wishlistProducts,
     });
   } catch (error) {
     console.error("Error loading shop page:", error);
