@@ -4,151 +4,178 @@
   href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
   rel="stylesheet"
 />
+<!-- Font Awesome -->
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+/>
 <link
   rel="stylesheet"
   href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"
 />
-
+<!-- Custom CSS -->
 <link rel="stylesheet" href="/css/admin/adminUser.css" />
 
-<div class="d-flex">
-  <div class="sidebar">
-    <h2 class="text-white">Admin Dashboard</h2>
-    <a href="/admin">Dashboard</a>
-    <a
-      id="live-dashboard-button"
-      href="/admin/users"
-      style="
-        background-color: #007bff;
-        color: white;
-        padding: 10px 15px;
-        border-radius: 5px;
-        text-decoration: none;
-      "
-      >Users</a
-    >
-    <a href="/admin/category">categories</a>
-    <a href="/admin/brands">Brands</a>
-    <a href="/admin/addProducts">Add Products</a>
-    <a href="/admin/products">Products</a>
-    <a href="#">Settings</a>
-    <a href="/admin/logout">Logout</a>
-  </div>
-  <div class="main-content flex-grow-1">
-    <div class="container">
-      <h1 class="my-4">User Management</h1>
-      <!-- Search Bar -->
-      <div class="row mb-4">
-        <div class="col-md-6">
-          <form action="/admin/users" method="get ">
-            <div class="input-group">
-              <input
-                type="text"
-                class="form-control"
-                placeholder="Search users..."
-                id="searchInput"
-                name="search"
-              />
-              <button class="btn btn-primary" type="submit">Search</button>
-            </div>
-          </form>
-        </div>
-      </div>
-      <!--breadcrumps -->
-      <div class="breadcrumb-container">
-        <nav aria-label="breadcrumb">
-          <ol class="breadcrumb">
-            <li class="breadcrumb-item">
-              <a href="/admin">Dashboard</a>
-            </li>
-            <li class="breadcrumb-item active" aria-current="page">
-              User Management
-            </li>
-          </ol>
-        </nav>
-      </div>
+<div class="admin-dashboard">
+  <!-- Top Navigation Bar -->
+  <nav class="navbar fixed-top d-lg-none bg-primary">
+    <div class="container-fluid">
+      <button class="navbar-toggler" type="button" id="sidebarToggle" aria-label="Toggle navigation">
+        <i class="fas fa-bars text-white"></i>
+      </button>
+      <span class="navbar-brand text-white">Pixel-Point</span>
+    </div>
+  </nav>
 
-      <!-- User Table -->
-      <div class="card">
-        <div class="card-body">
-          <div class="table-responsive">
-            <table class="table table-hover">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Phone</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <% for(let i=0; i < data.length; i++) { %>
-                <tr>
-                  <td><%= data[i].name %></td>
-                  <td><%= data[i].email %></td>
-                  <td><%= data[i].phone %></td>
-                  <td>
-                    <div>
+  <div class="d-flex">
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-white mb-0 d-none d-lg-block">Pixel-Point</h2>
+        <button
+          class="btn-close d-lg-none text-white"
+          id="sidebarClose"
+        ></button>
+      </div>
+      <a href="/admin"><i class="fas fa-chart-line me-2"></i>Dashboard</a>
+      <a href="/admin/users" class="active"
+        ><i class="fas fa-users me-2"></i>Users</a
+      >
+      <a href="/admin/category"><i class="fas fa-tags me-2"></i>Categories</a>
+      <a href="/admin/brands"><i class="fas fa-building me-2"></i>Brands</a>
+      <a href="/admin/addProducts"
+        ><i class="fas fa-plus-circle me-2"></i>Add Products</a
+      >
+      <a href="/admin/products"><i class="fas fa-box me-2"></i>Products</a>
+      <a href="/admin/orders"><i class="fa-solid fa-book me-2"></i>Orders</a>
+      <a href="#"><i class="fas fa-cog me-2"></i>Settings</a>
+      <a href="/admin/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content flex-grow-1">
+      <div class="container-fluid px-lg-4">
+        <!-- Page Header -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
+          <div class="mb-3 mb-md-0">
+            <h1 class="h3 text-gray-800">User Management</h1>
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+                <li class="breadcrumb-item active" aria-current="page">
+                  User Management
+                </li>
+              </ol>
+            </nav>
+          </div>
+          <div class="date text-secondary">
+            <i class="far fa-calendar-alt me-2"></i>
+            <span id="currentDate"></span>
+          </div>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="card shadow-sm mb-4">
+          <div class="card-body">
+            <form
+              action="/admin/users"
+              method="get"
+              class="row g-3 align-items-center"
+            >
+              <div class="col-12 col-md-8 col-lg-6">
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-0">
+                    <i class="fas fa-search text-primary"></i>
+                  </span>
+                  <input
+                    type="text"
+                    class="form-control border-0 bg-light"
+                    placeholder="Search users..."
+                    id="searchInput"
+                    name="search"
+                  />
+                  <button class="btn btn-primary" type="submit">Search</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- User Table -->
+        <div class="card shadow-sm">
+          <div class="card-body p-0 p-md-3">
+            <div class="table-responsive">
+              <table class="table table-hover align-middle">
+                <thead class="table-light">
+                  <tr>
+                    <th class="d-none d-md-table-cell">User Info</th>
+                    <th class="d-md-none">User</th>
+                    <th class="d-none d-md-table-cell">Email</th>
+                    <th class="d-none d-lg-table-cell">Phone</th>
+                    <th>Status</th>
+                    <th class="text-end text-md-start">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% for(let i=0; i < data.length; i++) { %>
+                  <tr>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <div class="avatar-sm bg-light rounded-circle me-2 d-none d-md-flex">
+                          <i class="fas fa-user text-primary"></i>
+                        </div>
+                        <div>
+                          <div class="fw-medium"><%= data[i].name %></div>
+                          <div class="text-muted small d-md-none"><%= data[i].email %></div>
+                          <div class="text-muted small d-md-none d-lg-none"><%= data[i].phone %></div>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="d-none d-md-table-cell"><%= data[i].email %></td>
+                    <td class="d-none d-lg-table-cell"><%= data[i].phone %></td>
+                    <td>
                       <% if (data[i].isBlocked===false) { %>
-                      <button
-                        onclick="blockUser('<%= data[i]._id %>')"
-                        class="btn btn-warning btn-sm"
-                        style="width: 80px"
-                      >
-                        Block
-                      </button>
+                        <span class="badge bg-success">Active</span>
                       <% } else { %>
-                      <button
-                        onclick="unblockUser( '<%= data[i]._id %>')"
-                        class="btn btn-success btn-sm"
-                        style="width: 80px"
-                      >
-                        Unblock
-                      </button>
+                        <span class="badge bg-danger">Blocked</span>
                       <% } %>
-                    </div>
-                  </td>
-                </tr>
-                <% }; %>
-              </tbody>
-            </table>
+                    </td>
+                    <td class="text-end text-md-start">
+                      <% if (data[i].isBlocked===false) { %>
+                        <button
+                          onclick="blockUser('<%= data[i]._id %>')"
+                          class="btn btn-outline-danger btn-sm"
+                        >
+                          <i class="fas fa-ban me-1 d-none d-sm-inline"></i>Block
+                        </button>
+                      <% } else { %>
+                        <button
+                          onclick="unblockUser('<%= data[i]._id %>')"
+                          class="btn btn-outline-success btn-sm"
+                        >
+                          <i class="fas fa-check me-1 d-none d-sm-inline"></i>Unblock
+                        </button>
+                      <% } %>
+                    </td>
+                  </tr>
+                  <% } %>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
     </div>
-
-    <nav aria-label="Page navigation">
-      <ul class="pagination justify-content-center">
-        <% if (currentPage> 1) { %>
-        <li class="page-item">
-          <a class="page-link" href="?page=<%= currentPage - 1 %>">Previous</a>
-        </li>
-        <% } %> <% for (let i=1; i <=totalPages; i++) { %>
-        <li class="page-item <%= (i === currentPage) ? 'active' : '' %>">
-          <a class="page-link" href="?page=<%= i %>"> <%= i %> </a>
-        </li>
-        <% } %> <% if (currentPage < totalPages) { %>
-        <li class="page-item">
-          <a class="page-link" href="?page=<%= currentPage + 1 %>">Next</a>
-        </li>
-        <% } %>
-      </ul>
-    </nav>
   </div>
 </div>
-
-<footer>
-  <div class="container text-center"></div>
-</footer>
-
-<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-<!-- SweetAlert2 CDN -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@7.12.15/dist/sweetalert2.all.min.js"></script>
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<!--sweet alert-->
+<!-- Toastify -->
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+<!-- Custom JS -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 <script src="/scripts/admin/costumer.js"></script>
 <% include('../layouts/admin/footer.ejs') %>
