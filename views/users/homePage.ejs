@@ -86,7 +86,7 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
         </div>
       </div>
       <div class="header__user-actions">
-        <a href="wishlist.html" class="header__action-btn" title="Wishlist">
+        <a href="/wishlist" class="header__action-btn" title="Wishlist">
           <img src="/img/icon-heart.svg" alt="" />
           <!-- <span class="count">3</span> -->
         </a>
@@ -242,16 +242,24 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                     class="product__img hover"
                   />
                 </a>
+
+                <% if (wishlistProducts.includes(newArrivals[i]._id.toString())) { %>
+                <button class="wishlist__btn active"
+                  onclick="removeFromWishlist('<%=newArrivals[i]._id %>')"
+                  aria-label="Add to Wishlist">
+                  <i class="fi fi-rs-heart"></i>
+                </button>
+              <% }else{ %>
+                <button class="wishlist__btn "
+                onclick="toggleWishlist('<%=newArrivals[i]._id %>')"
+                aria-label="Add to Wishlist">
+                <i class="fi fi-rs-heart"></i>
+              </button>
+              <% } %>
+
                 <div class="product__actions">
                   <a href="#" class="action__btn" aria-label="Quick View">
                     <i class="fi fi-rs-eye"></i>
-                  </a>
-                  <a
-                    href="#"
-                    class="action__btn"
-                    aria-label="Add to Wishlist"
-                  >
-                    <i class="fi fi-rs-heart"></i>
                   </a>
                   <a href="#" class="action__btn" aria-label="Compare">
                     <i class="fi fi-rs-shuffle"></i>
@@ -317,16 +325,14 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                       class="product__img hover"
                     />
                   </a>
+                  <button class="wishlist__btn <%= laptops[i].isInWishlist ? 'active' : '' %>" 
+                    onclick="toggleWishlist('<%=laptops[i]._id%>','<%=laptops[i].combos[0]._id  %>')"
+                    aria-label="Add to Wishlist">
+                    <i class="fi fi-rs-heart"></i>
+                  </button>
                   <div class="product__actions">
                     <a href="#" class="action__btn" aria-label="Quick View">
                       <i class="fi fi-rs-eye"></i>
-                    </a>
-                    <a
-                      href="#"
-                      class="action__btn"
-                      aria-label="Add to Wishlist"
-                    >
-                      <i class="fi fi-rs-heart"></i>
                     </a>
                     <a href="#" class="action__btn" aria-label="Compare">
                       <i class="fi fi-rs-shuffle"></i>
@@ -394,16 +400,14 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                       class="product__img hover"
                     />
                   </a>
+                  <button class="wishlist__btn <%= refurbishedLaptops[i].isInWishlist ? 'active' : '' %>" 
+                    onclick="toggleWishlist('<%=refurbishedLaptops[i]._id%>','<%=refurbishedLaptops[i].combos[0]._id  %>')"
+                    aria-label="Add to Wishlist">
+                    <i class="fi fi-rs-heart"></i>
+                  </button>
                   <div class="product__actions">
                     <a href="#" class="action__btn" aria-label="Quick View">
                       <i class="fi fi-rs-eye"></i>
-                    </a>
-                    <a
-                      href="#"
-                      class="action__btn"
-                      aria-label="Add to Wishlist"
-                    >
-                      <i class="fi fi-rs-heart"></i>
                     </a>
                     <a href="#" class="action__btn" aria-label="Compare">
                       <i class="fi fi-rs-shuffle"></i>
@@ -1287,6 +1291,7 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
   <!--=============== MAIN JS ===============-->
   <script src="/scripts/users/homepage.js" ></script>
   <script src="/scripts/users/main.js"></script>
+   
 </body>
 </html>
 

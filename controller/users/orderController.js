@@ -104,6 +104,7 @@ const placeOrder = async (req, res) => {
         message: "Missing order details",
       });
     }
+    console.log(paymentMethod, "paymentmethod");
 
     // Get cart items
     const cart = await Cart.findOne({ userId })
@@ -165,7 +166,7 @@ const placeOrder = async (req, res) => {
       paymentStatus:
         paymentMethod === "Cash on Delivery" ? "Confirmed" : "Pending Payment",
     });
-
+    console.log(newOrder, "neworder");
     await newOrder.save();
 
     // Handle COD immediately
@@ -177,7 +178,7 @@ const placeOrder = async (req, res) => {
         order: newOrder,
       });
     }
-
+    console.log(paymentMethod, "paymentmethod");
     // Handle Razorpay payment
     if (paymentMethod === "razorpay") {
       const razorpayOrder = await razorpay.orders.create({

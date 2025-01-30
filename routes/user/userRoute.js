@@ -8,6 +8,7 @@ const accountController = require("../../controller/users/accountController");
 const cartController = require("../../controller/users/cartController");
 const shopController = require("../../controller/users/shopController");
 const orderController = require("../../controller/users/orderController");
+const wishlistController = require("../../controller/users/wishlistController");
 const userAuth = require("../../middlewares/userAuth");
 
 //page not found route
@@ -107,4 +108,9 @@ userRoute.post("/verify-payment", orderController.verifyPayment);
 //for userorder details
 userRoute.get("/orders", userAuth.userCheck, accountController.getOrders);
 userRoute.get("/orderDetails", accountController.getOrderDetails);
+
+//for wishlist
+userRoute.get("/wishlist", wishlistController.getWishlist);
+userRoute.post("/addToWishlist", wishlistController.addToWishlist);
+userRoute.post("/removeFromWishlist", wishlistController.removeFromWishlist);
 module.exports = userRoute;

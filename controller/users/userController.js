@@ -1,6 +1,7 @@
 const User = require("../../models/userSchema");
 const Category = require("../../models/categorySchema");
 const Products = require("../../models/productSchema");
+const Wishlist = require("../../models/wishlistSchema");
 const brand = require("../../models/brandSchema");
 const nodemailer = require("nodemailer");
 const env = require("dotenv").config();
@@ -21,9 +22,17 @@ const loadHomePage = async (req, res) => {
   try {
     const user = req.session.user;
 
-    const categoryList = await Category.find({ isListed: true });
+    let wishlistProducts = [];
 
-    const Brands = await brand.find({ isBlocked: false });
+    if (user) {
+      userData = await User.findById(user);
+      const wishlist = await Wishlist.findOne({ userId: user }).select(
+        "product.productId"
+      );
+      wishlistProducts = wishlist
+        ? wishlist.product.map((item) => item.productId.toString())
+        : [];
+    }
 
     const refurbishedLaptopsCategory = await Category.findOne({
       name: "Refurbished laptops",
@@ -62,22 +71,23 @@ const loadHomePage = async (req, res) => {
       .limit(6);
 
     // Render the home page
+
     if (user) {
-      console.log(user);
       const userData = await User.findOne({ _id: user });
-      console.log(userData);
 
       return res.render("homePage", {
         user: userData,
         refurbishedLaptops,
         laptops,
         newArrivals,
+        wishlistProducts,
       });
     } else {
       return res.render("homePage", {
         refurbishedLaptops,
         laptops,
         newArrivals,
+        wishlistProducts,
       });
     }
   } catch (error) {
