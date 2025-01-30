@@ -1,0 +1,313 @@
+:root {
+  --primary-blue: #2563eb;
+  --light-blue: #3b82f6;
+  --lighter-blue: #eff6ff;
+  --white: #ffffff;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+}
+
+.wallet-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.balance-card {
+  background: var(--white);
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  margin-bottom: 2rem;
+}
+
+.balance-card h2 {
+  color: var(--gray-700);
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.balance-amount {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--primary-blue);
+  margin-bottom: 1.5rem;
+}
+
+.currency {
+  font-size: 2rem;
+  margin-right: 0.25rem;
+}
+
+.add-money-btn {
+  background: var(--primary-blue);
+  color: var(--white);
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  transition: background-color 0.2s;
+}
+
+.add-money-btn:hover {
+  background: var(--light-blue);
+}
+
+.plus-icon {
+  margin-right: 0.5rem;
+  font-size: 1.25rem;
+}
+
+.transactions-section {
+  background: var(--white);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+.transactions-section h3 {
+  color: var(--gray-700);
+  font-size: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.transaction-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.transaction-type-filter {
+  display: flex;
+  gap: 0.5rem;
+  background: var(--gray-100);
+  padding: 0.25rem;
+  border-radius: 8px;
+}
+
+.type-btn {
+  background: transparent;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--gray-700);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.type-btn:hover {
+  background: var(--white);
+  color: var(--primary-blue);
+}
+
+.type-btn.active {
+  background: var(--white);
+  color: var(--primary-blue);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.transaction-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid var(--gray-200);
+  gap: 1rem;
+}
+
+.transaction-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.transaction-type {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.transaction-type.credit {
+  background-color: rgba(22, 163, 74, 0.1);
+  color: #16a34a;
+}
+
+.transaction-type.debit {
+  background-color: rgba(220, 38, 38, 0.1);
+  color: #dc2626;
+}
+
+.type-icon {
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.transaction-title {
+  color: var(--gray-700);
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.transaction-date {
+  color: var(--gray-500);
+  font-size: 0.875rem;
+}
+
+.transaction-amount {
+  font-weight: 600;
+  min-width: 100px;
+  text-align: right;
+}
+
+.transaction-amount.debit {
+  color: #dc2626;
+}
+
+.transaction-amount.credit {
+  color: #16a34a;
+}
+
+/* Modal Styles */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: var(--white);
+  border-radius: 16px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+.modal-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--gray-200);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h3 {
+  color: var(--gray-700);
+  font-size: 1.25rem;
+  margin: 0;
+}
+
+.close-modal {
+  font-size: 1.5rem;
+  color: var(--gray-500);
+  cursor: pointer;
+  line-height: 1;
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.input-group {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.currency-symbol {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--gray-500);
+  font-size: 1.25rem;
+}
+
+.amount-input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  font-size: 1.25rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.amount-input:focus {
+  border-color: var(--primary-blue);
+}
+
+.amount-buttons {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.quick-amount {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--gray-700);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.quick-amount:hover {
+  background: var(--lighter-blue);
+  border-color: var(--primary-blue);
+  color: var(--primary-blue);
+}
+
+.proceed-btn {
+  width: 100%;
+  padding: 0.75rem;
+  background: var(--primary-blue);
+  color: var(--white);
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.proceed-btn:hover {
+  background: var(--light-blue);
+}
+
+@media (max-width: 640px) {
+  body {
+    padding: 1rem;
+  }
+
+  .balance-amount {
+    font-size: 2.5rem;
+  }
+
+  .currency {
+    font-size: 1.75rem;
+  }
+}

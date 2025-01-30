@@ -113,4 +113,7 @@ userRoute.get("/orderDetails", accountController.getOrderDetails);
 userRoute.get("/wishlist", wishlistController.getWishlist);
 userRoute.post("/addToWishlist", wishlistController.addToWishlist);
 userRoute.post("/removeFromWishlist", wishlistController.removeFromWishlist);
+
+//for wallet
+userRoute.get("/wallet", accountController.wallet);
 module.exports = userRoute;

@@ -527,6 +527,12 @@ const getOrderDetails = async (req, res) => {
   }
 };
 
+const wallet = async (req, res) => {
+  try {
+    res.render("wallet");
+  } catch (error) {}
+};
+
 module.exports = {
   getForgotPassword,
   forgotPasswordOtp,
@@ -543,4 +549,5 @@ module.exports = {
   deleteAddress,
   getOrders,
   getOrderDetails,
+  wallet,
 };
