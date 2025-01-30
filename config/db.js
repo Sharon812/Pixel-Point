@@ -3,7 +3,10 @@ const env = require("dotenv").config();
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI);
+    const clientOptions = {
+      serverApi: { version: "1", strict: false, deprecationErrors: true },
+    };
+    await mongoose.connect(process.env.MONGODB_URI, clientOptions);
     console.log("Database connected");
   } catch (error) {
     console.log("Database connection error", error.message);
