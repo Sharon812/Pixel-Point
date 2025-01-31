@@ -108,7 +108,16 @@ userRoute.post("/verify-payment", orderController.verifyPayment);
 
 //for userorder details
 userRoute.get("/orders", userAuth.userCheck, accountController.getOrders);
-userRoute.get("/orderDetails", accountController.getOrderDetails);
+userRoute.get(
+  "/orderDetails",
+  userAuth.userCheck,
+  accountController.getOrderDetails
+);
+userRoute.patch(
+  "/cancelOrder",
+  userAuth.userCheck,
+  accountController.cancelOrder
+);
 
 //for wishlist
 userRoute.get("/wishlist", wishlistController.getWishlist);

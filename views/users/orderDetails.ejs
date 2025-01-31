@@ -173,7 +173,7 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                           </div>
                         <div class="order-info">
                           <span class="order-label">Status</span>
-                          <% if(item.status === "Pending" ||item.status === "Processing"||item.status === "Shipped") {%>
+                          <% if(item.status === "Pending" ||item.status === "Processing"||item.status === "Shipped" || item.status === "Cancelled"|| item.status === "Returned" ) {%>
                           <span class="order-status status-processing"> <%= item.status %> </span>
                           <% } else{ %>
                             <span class="order-status status-completed"> <%= item.status %> </span>
@@ -183,14 +183,18 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                           <span class="order-label">Total</span>
                           <span class="order-value">&#8377;<%=item.totalPrice %> </span>
                         </div>
+                        <% if(item.status !== "Cancelled" && item.status !== "Returned") {%>
                         <div class="order-actions">
                           <a href="/orderDetails/?orderId=<%= item._id %>" class="view-order-btn">View Order</a>
-                          <% if(item.status !== "Delivered") {%>
-                          <button class="cancel-order-btn">Cancel Order</button>
+                          <% if(item.status !== "Delivered" && item.status !== "Shipped") {%>
+                          <button class="cancel-order-btn" onclick="openCancelModal('<%= item._id %>', false)">Cancel Order</button>
                         </div>
                         <% } else {%>
-                         <button class="cancel-order-btn">Return</button>
-<% } %>
+                         <button class="cancel-order-btn" onclick="openCancelModal('<%= item._id %>', true)">Return</button>
+                        <% } %>
+                     <% } else{ %>
+                      <button class="cancel-order-btn" disabled> <%= item.status %> </button>
+                    <% } %>
                       </div>
                     </div>
                   </div>
@@ -199,6 +203,97 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                   <% }); %>
                 </div>
                 
+                <!-- Cancel/Return Order Modal -->
+                <div class="cancel-modal" id="cancelModal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 class="modal-title" id="modalTitle">Cancel Order</h3>
+                            <p class="modal-subtitle" id="modalSubtitle">Please provide a reason for cancellation</p>
+                        </div>
+                        <div class="modal-body">
+                            <input class="reason-textarea" id="cancelReason" placeholder="Enter your reason here...">
+                        </div>
+                        <div class="modal-actions">
+                            <button class="modal-btn cancel-btn" onclick="closeCancelModal()">Close</button>
+                            <button class="modal-btn confirm-btn" id="confirmButton" onclick="confirmCancelOrder()">Confirm</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add JavaScript for modal functionality -->
+                <script>
+                    let currentOrderId = null;
+                    let isReturn = false;
+
+                    function openCancelModal(orderId) {
+                        currentOrderId = orderId;
+                        isReturn = returnOrder;
+                        const modal = document.getElementById('cancelModal');
+                        const title = document.getElementById('modalTitle');
+                        const subtitle = document.getElementById('modalSubtitle');
+                        const confirmBtn = document.getElementById('confirmButton');
+                        const description = document.getElementById("cancelReason").value
+                        
+                        if (isReturn) {
+                            title.textContent = 'Return Order';
+                            subtitle.textContent = 'Please provide a reason for return';
+                            confirmBtn.textContent = 'Return';
+                        } else {
+                            title.textContent = 'Cancel Order';
+                            subtitle.textContent = 'Please provide a reason for cancellation';
+                            confirmBtn.textContent = 'Cancel Order';
+                        }
+                        
+                        modal.classList.add('show');
+                    }
+
+                    function closeCancelModal() {
+                        const modal = document.getElementById('cancelModal');
+                        modal.classList.remove('show');
+                        document.getElementById('cancelReason').value = '';
+                    }
+
+                    function confirmCancelOrder() {
+                        const reason = document.getElementById('cancelReason').value;
+                        if (!reason.trim()) {
+                            alert('Please provide a reason');
+                            return;
+                        }
+
+                        // Send request to server
+                        const response = await fetch("/cancel-order", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ itemId, orderId, description })
+      });
+
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                alert(isReturn ? 'Order return initiated successfully' : 'Order cancelled successfully');
+                                location.reload();
+                            } else {
+                                alert(data.message || 'An error occurred');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('An error occurred. Please try again.');
+                        })
+                        .finally(() => {
+                            closeCancelModal();
+                        });
+                    }
+
+                    // Close modal when clicking outside
+                    document.querySelector('.cancel-modal').addEventListener('click', function(e) {
+                        if (e.target === this) {
+                            closeCancelModal();
+                        }
+                    });
+                </script>
                 <% } else { %>
                     <p>No orders yet</p>
                 <% } %>

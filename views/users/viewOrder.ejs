@@ -288,11 +288,111 @@
   </div>
 
   <div class="order-actions mt-4">
-    <button class="btn-danger" id="cancelOrderBtn" style="display: block">
-      Cancel Order
-    </button>
+    <% if(orderDetails[0].status !== "Delivered") { %>
+      <button class="btn-danger" onclick="openCancelModal('<%= orderDetails[0]._id %>', false)">
+        Cancel Order
+      </button>
+    <% } else { %>
+      <button class="btn-primary" onclick="openCancelModal('<%= orderDetails[0]._id %>', true)">
+        Return Order
+      </button>
+    <% } %>
   </div>
 </div>
+
+<!-- Cancel/Return Order Modal -->
+<div class="cancel-modal" id="cancelModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title" id="modalTitle">Cancel Order</h3>
+            <p class="modal-subtitle" id="modalSubtitle">Please provide a reason for cancellation</p>
+        </div>
+        <div class="modal-body">
+            <textarea class="reason-textarea" id="cancelReason" placeholder="Enter your reason here..."></textarea>
+        </div>
+        <div class="modal-actions">
+            <button class="modal-btn cancel-btn" onclick="closeCancelModal()">Close</button>
+            <button class="modal-btn confirm-btn" id="confirmButton" onclick="confirmCancelOrder()">Confirm</button>
+        </div>
+    </div>
+</div>
+
+<!-- Add JavaScript for modal functionality -->
+<script>
+    let currentOrderId = null;
+    let isReturn = false;
+
+    function openCancelModal(orderId, returnOrder) {
+        currentOrderId = orderId;
+        isReturn = returnOrder;
+        const modal = document.getElementById('cancelModal');
+        const title = document.getElementById('modalTitle');
+        const subtitle = document.getElementById('modalSubtitle');
+        const confirmBtn = document.getElementById('confirmButton');
+        
+        if (isReturn) {
+            title.textContent = 'Return Order';
+            subtitle.textContent = 'Please provide a reason for return';
+            confirmBtn.textContent = 'Return';
+        } else {
+            title.textContent = 'Cancel Order';
+            subtitle.textContent = 'Please provide a reason for cancellation';
+            confirmBtn.textContent = 'Cancel Order';
+        }
+        
+        modal.classList.add('show');
+    }
+
+    function closeCancelModal() {
+        const modal = document.getElementById('cancelModal');
+        modal.classList.remove('show');
+        document.getElementById('cancelReason').value = '';
+    }
+
+    function confirmCancelOrder() {
+        const reason = document.getElementById('cancelReason').value;
+        if (!reason.trim()) {
+            alert('Please provide a reason');
+            return;
+        }
+
+        // Send request to server
+        const endpoint = isReturn ? '/returnOrder' : '/cancelOrder';
+        fetch(endpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                orderId: currentOrderId,
+                reason: reason
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(isReturn ? 'Order return initiated successfully' : 'Order cancelled successfully');
+                location.reload();
+            } else {
+                alert(data.message || 'An error occurred');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+        })
+        .finally(() => {
+            closeCancelModal();
+        });
+    }
+
+    // Close modal when clicking outside
+    document.querySelector('.cancel-modal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeCancelModal();
+        }
+    });
+</script>
 
 <footer class="footer container">
   <div class="footer__container grid">

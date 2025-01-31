@@ -527,10 +527,33 @@ const getOrderDetails = async (req, res) => {
   }
 };
 
-const wallet = async (req, res) => {
+const cancelOrder = async (req, res) => {
   try {
-    res.render("wallet");
-  } catch (error) {}
+    const { itemId, orderId, description } = req.body;
+
+    // Find and update the order
+    const order = await Order.findOneAndUpdate(
+      { _id: orderId, "items._id": itemId }, // Find order where item exists
+      {
+        $set: {
+          "items.$.status": "Cancelled",
+          "items.$.description": description, // Add/update the description field
+        },
+      },
+      { new: true } // Return the updated document
+    );
+
+    if (!order) {
+      return res.status(404).json({ message: "Order or item not found" });
+    }
+
+    return res
+      .status(200)
+      .json({ message: "Order item cancelled successfully", order });
+  } catch (error) {
+    console.error(error, "error at cancelling order");
+    return res.status(500).json({ message: "Internal server error" });
+  }
 };
 
 module.exports = {
@@ -549,5 +572,5 @@ module.exports = {
   deleteAddress,
   getOrders,
   getOrderDetails,
-  wallet,
+  cancelOrder,
 };
