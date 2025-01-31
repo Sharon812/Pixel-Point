@@ -418,7 +418,7 @@ table {
 /* Active link */
 .active-link,
 .nav__link:hover {
-  color: var(--first-color);
+  color: #2563eb;
 }
 
 /*=============== HOME ===============*/
