@@ -1,12 +1,7 @@
 function handleFormSubmit(event) {
-  event.preventDefault();
-
-  if (!validateForm()) {
-    return;
-  }
-  const name = document.getElementsByName("name")[0].value;
-  const description = document.getElementById("description").value;
-
+  event.preventDefault()
+  const name = document.getElementById("categoryName").value;
+  const description = document.getElementById("categoryDescription").value;
   fetch("/admin/addCategory", {
     method: "POST",
     headers: {
@@ -48,26 +43,26 @@ function handleFormSubmit(event) {
       }
     });
 
-  function validateForm() {
-    clearErrorMessages();
-    const name = document.getElementsByName("name")[0].value.trim();
-    const description = document.getElementById("description").value.trim();
-    isValid = true;
+  // function validateForm() {
+    // clearErrorMessages();
+    // const name = document.categoryName("categoryDescription")[0].value.trim();
+    // const description = document.categoryName("categoryDescription").value.trim();
+    // isValid = true;
 
-    if (name == "") {
-      displayErrorMessage("name-error", "Please enter a name");
-      isValid = false;
-    } else if (!/^[a-zA-Z\s]+$/.test(name)) {
-      displayErrorMessage("name-error", "Name field only contains alphabets");
-      isValid = false;
-    }
+    // if (name == "") {
+      // displayErrorMessage("name-error", "Please enter a name");
+      // isValid = false;
+    // } else if (!/^[a-zA-Z\s]+$/.test(name)) {
+      // displayErrorMessage("name-error", "Name field only contains alphabets");
+      // isValid = false;
+    // }
 
-    if (description == "") {
-      displayErrorMessage("description-error", "Please enter a description");
-      isValid = false;
-    }
-    return isValid;
-  }
+    // if (description == "") {
+      // displayErrorMessage("description-error", "Please enter a description");
+      // isValid = false;
+    // }
+    // return isValid;
+  // }
 
   function displayErrorMessage(elementId, message) {
     let errorElement = document.getElementById(elementId);
@@ -128,3 +123,52 @@ function deleteCategory(categoryId) {
       });
     });
 }
+
+
+// Sidebar Toggle Functions
+document.addEventListener('DOMContentLoaded', function() {
+  const sidebar = document.getElementById('sidebar');
+  const sidebarToggle = document.getElementById('sidebarToggle');
+  const sidebarClose = document.getElementById('sidebarClose');
+
+  function toggleSidebar() {
+    sidebar.classList.toggle('show');
+  }
+
+  function closeSidebar() {
+    sidebar.classList.remove('show');
+  }
+
+  if (sidebarToggle) {
+    sidebarToggle.addEventListener('click', toggleSidebar);
+  }
+
+  if (sidebarClose) {
+    sidebarClose.addEventListener('click', closeSidebar);
+  }
+
+  // Close sidebar when clicking outside
+  document.addEventListener('click', function(event) {
+    const isClickInsideSidebar = sidebar.contains(event.target);
+    const isClickOnToggle = sidebarToggle.contains(event.target);
+    
+    if (!isClickInsideSidebar && !isClickOnToggle && sidebar.classList.contains('show')) {
+      closeSidebar();
+    }
+  });
+
+  // Close sidebar on window resize if in mobile view
+  window.addEventListener('resize', function() {
+    if (window.innerWidth >= 992 && sidebar.classList.contains('show')) {
+      closeSidebar();
+    }
+  });
+});
+
+// Display current date
+document.addEventListener('DOMContentLoaded', function() {
+  const dateElement = document.getElementById('currentDate');
+  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  const currentDate = new Date().toLocaleDateString('en-US', options);
+  dateElement.textContent = currentDate;
+});
