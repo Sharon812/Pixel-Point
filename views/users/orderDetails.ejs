@@ -193,6 +193,8 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                          <button class="cancel-order-btn" onclick="openCancelModal('<%= item._id %>', true)">Return</button>
                         <% } %>
                      <% } else{ %>
+                      <a  href="/orderDetails/?orderId=<%= item._id %>" class="view-order-btn text-center">View Order</a>
+
                       <button class="cancel-order-btn" disabled> <%= item.status %> </button>
                     <% } %>
                       </div>
@@ -219,8 +221,6 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                         </div>
                     </div>
                 </div>
-
-                <!-- Add JavaScript for modal functionality -->
        
                 <% } else { %>
                     <p>No orders yet</p>

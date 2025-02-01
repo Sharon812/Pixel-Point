@@ -530,7 +530,7 @@ const getOrderDetails = async (req, res) => {
 const cancelOrder = async (req, res) => {
   try {
     const { itemId, orderId, reason } = req.body;
-
+    console.log(req.body, "reqbody");
     const order = await Order.findOneAndUpdate(
       { _id: orderId, "orderedItems._id": itemId },
       {
@@ -541,7 +541,7 @@ const cancelOrder = async (req, res) => {
       },
       { new: true }
     );
-
+    console.log(order, "order");
     if (!order) {
       return res
         .status(404)
