@@ -529,27 +529,28 @@ const getOrderDetails = async (req, res) => {
 
 const cancelOrder = async (req, res) => {
   try {
-    const { itemId, orderId, description } = req.body;
+    const { itemId, orderId, reason } = req.body;
 
-    // Find and update the order
     const order = await Order.findOneAndUpdate(
-      { _id: orderId, "items._id": itemId }, // Find order where item exists
+      { _id: orderId, "orderedItems._id": itemId },
       {
         $set: {
-          "items.$.status": "Cancelled",
-          "items.$.description": description, // Add/update the description field
+          "orderedItems.$.status": "Cancelled",
+          "orderedItems.$.cancellationReason": reason,
         },
       },
-      { new: true } // Return the updated document
+      { new: true }
     );
 
     if (!order) {
-      return res.status(404).json({ message: "Order or item not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Order or item not found" });
     }
 
     return res
       .status(200)
-      .json({ message: "Order item cancelled successfully", order });
+      .json({ success: true, message: "Order item cancelled successfully" });
   } catch (error) {
     console.error(error, "error at cancelling order");
     return res.status(500).json({ message: "Internal server error" });
