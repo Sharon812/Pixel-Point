@@ -19,7 +19,7 @@ router.post("/login", adminController.loginverification);
 // for dashboard
 router.get("/", adminController.loaddashboard);
 
-//for logout
+//for logout 
 router.get("/logout", adminController.logout);
 
 //for user list page
@@ -61,5 +61,11 @@ router.get("/blockBrand", brandController.blockBrand);
 //for orders
 router.get("/orders", orderController.getOrderDetails);
 router.post("/orders/update-status", orderController.updateStatus);
+
+// Sales Report Routes
+router.get('/sales-report/daily',adminController.generateDailyReport);
+router.get('/sales-report/weekly',  adminController.generateWeeklyReport);
+router.get('/sales-report/yearly',  adminController.generateYearlyReport);
+router.get('/sales-report/custom',adminController.generateCustomReport);
 
 module.exports = router;
