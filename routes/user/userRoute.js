@@ -10,6 +10,7 @@ const shopController = require("../../controller/users/shopController");
 const orderController = require("../../controller/users/orderController");
 const walletController = require("../../controller/users/walletController");
 const wishlistController = require("../../controller/users/wishlistController");
+const couponController = require("../../controller/users/couponController");
 const userAuth = require("../../middlewares/userAuth");
 
 //page not found route
@@ -103,6 +104,12 @@ userRoute.get("/shop", shopController.loadShopPage);
 //for checkout
 userRoute.get("/checkout", userAuth.userCheck, orderController.processCheckout);
 userRoute.post("/checkout", orderController.placeOrder);
+
+// Coupon routes for checkout
+userRoute.get("/checkout/coupons", userAuth.userCheck, couponController.getAvailableCoupons);
+userRoute.post("/checkout/apply-coupon", userAuth.userCheck, couponController.applyCoupon);
+
+//for order placed
 userRoute.get("/orderplaced", userAuth.userCheck, orderController.orderPlaced);
 userRoute.post("/verify-payment", orderController.verifyPayment);
 
@@ -128,4 +135,5 @@ userRoute.post("/removeFromWishlist", wishlistController.removeFromWishlist);
 userRoute.get("/wallet", walletController.getWallet);
 userRoute.post("/add-money", walletController.addMoneyToWallet);
 userRoute.post("/verify-addmoney-payment", walletController.verifyPayment);
+
 module.exports = userRoute;

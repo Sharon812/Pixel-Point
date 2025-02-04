@@ -69,10 +69,6 @@ const processCheckout = async (req, res) => {
       totalPrice,
     };
 
-    // const defaultAddress = addresses[0].address[0]; // Extract the first address
-    // const otherAddresses = addresses.address.slice(1); // Remaining addresses
-    // console.log(otherAddresses, "defgai");
-    // Pass data to the view
     res.render("checkOut", {
       cart: { items: validCartItems },
       brand,

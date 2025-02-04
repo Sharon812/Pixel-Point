@@ -3,10 +3,10 @@ function toggleAddressModal() {
   modal.classList.toggle("hidden");
 }
 
-function selectAddress(addressId) {
-  // Perform an action to select the address (e.g., update it via an API call)
-  console.log(`Selected Address ID: ${addressId}`);
-}
+// function selectAddress(addressId) {
+//   // Perform an action to select the address (e.g., update it via an API call)
+//   console.log(`Selected Address ID: ${addressId}`);
+// }
 
 document.addEventListener("DOMContentLoaded", () => {
   const placeOrderButton = document.querySelector(".place-order-btn");
@@ -44,9 +44,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Handle Razorpay payment flow
       if (paymentMethod === "razorpay" && result.razorpayOrder) {
+        const checkoutData = sessionStorage.getItem("checkoutTotal");
+        const parsedData = JSON.parse(checkoutData);
+        console.log(parsedData.discountedTotal, "toyal");
         const razorpayOptions = {
           key: "rzp_test_VwIcEmBewhtiOH", // Replace with actual key
-          amount: result.razorpayOrder.amount,
+          amount: parsedData.discountedTotal * 100,
           currency: "INR",
           name: "Pixel-Point",
           order_id: result.razorpayOrder.id,

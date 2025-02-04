@@ -205,27 +205,273 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
        
           
           <div class="checkout__coupon">
-              <h3 class="section__title">Have a coupon?</h3>
-              <div class="coupon__form">
-                <input type="text" placeholder="Enter your coupon code" class="coupon__input">
-                <button class="coupon__button">Apply Coupon</button>
-              </div>
-            </div>
+               <h3 class="section__title">Have a coupon?</h3>
+               <button type="button" class="show-coupons-btn" onclick="showAvailableCoupons()">Show Coupons</button>
+
+               <div class="coupon__form">
+                 <input type="text" placeholder="Enter your coupon code" class="coupon__input" id="couponInput">
+                 <button type="button" class="coupon__button" onclick="applyCoupon(event)">Apply Coupon</button>
+               </div>
+           </div>
+
+           <!-- Coupon Modal -->
+           <div id="couponModal" class="modal">
+             <div class="modal-content">
+               <span class="close" onclick="closeCouponModal()">&times;</span>
+               <h2>Available Coupons</h2>
+               <div id="couponList">
+                 <!-- Coupons will be loaded here -->
+               </div>
+             </div>
+           </div>
+
+           <style>
+             .modal {
+               display: none;
+               position: fixed;
+               z-index: 1000;
+               left: 0;
+               top: 0;
+               width: 100%;
+               height: 100%;
+               background-color: rgba(0,0,0,0.4);
+             }
+             
+             .modal-content {
+               background-color: #fefefe;
+               margin: 15% auto;
+               padding: 20px;
+               border: 1px solid #888;
+               width: 80%;
+               max-width: 500px;
+               border-radius: 8px;
+             }
+             
+             .close {
+               color: #aaa;
+               float: right;
+               font-size: 28px;
+               font-weight: bold;
+               cursor: pointer;
+             }
+             
+             .show-coupons-btn {
+               background-color: #4CAF50;
+               color: white;
+               padding: 8px 15px;
+               border: none;
+               border-radius: 4px;
+               cursor: pointer;
+               margin-right: 10px;
+             }
+             
+             .coupon-item {
+               padding: 10px;
+               border: 1px solid #ddd;
+               margin: 10px 0;
+               border-radius: 4px;
+               cursor: pointer;
+             }
+             
+             .coupon-item:hover {
+               background-color: #f5f5f5;
+             }
+           </style>
+
+           <script>
+             let originalPrice = <%= totalPrice %>;
+             let appliedDiscount = 0;
+             let appliedCouponCode = '';
+             let discountedTotal = originalPrice;
+
+             function showAvailableCoupons() {
+               const modal = document.getElementById('couponModal');
+               const couponList = document.getElementById('couponList');
+               
+               fetch('/checkout/coupons')
+                 .then(response => response.json())
+                 .then(coupons => {
+                   couponList.innerHTML = '';
+                   coupons.forEach(coupon => {
+                     const couponElement = document.createElement('div');
+                     couponElement.className = 'coupon-item';
+                     couponElement.innerHTML = `
+                       <strong>${coupon.name}</strong><br>
+                       Minimum Purchase: ₹${coupon.minimumPrice}<br>
+                       Discount: ₹${coupon.offerPrice}<br>
+                       Valid till: ${new Date(coupon.expireOn).toLocaleDateString("en-GB")}
+                     `;
+                     couponElement.onclick = () => {
+                       document.getElementById('couponInput').value = coupon.name;
+                       closeCouponModal();
+                     };
+                     couponList.appendChild(couponElement);
+                   });
+                 })
+                 .catch(error => {
+                   console.error('Error fetching coupons:', error);
+                   couponList.innerHTML = '<p>Error loading coupons. Please try again.</p>';
+                 });
+               
+               modal.style.display = 'block';
+             }
+
+             function closeCouponModal() {
+               document.getElementById('couponModal').style.display = 'none';
+             }
+
+             function applyCoupon(event) {
+               event.preventDefault(); // Prevent form submission
+               const couponCode = document.getElementById('couponInput').value.trim();
+               if (!couponCode) {
+                 Swal.fire({
+                   icon: 'warning',
+                   text: 'Please enter a coupon code',
+                 });
+                 return;
+               }
+
+               // If same coupon is being applied again, ignore
+               if (appliedCouponCode === couponCode && appliedDiscount > 0) {
+                 Swal.fire({
+                   icon: 'info',
+                   text: 'This coupon is already applied',
+                 });
+                 return;
+               }
+
+               fetch('/checkout/apply-coupon', {
+                 method: 'POST',
+                 headers: {
+                   'Content-Type': 'application/json',
+                 },
+                 body: JSON.stringify({
+                   code: couponCode,
+                   cartTotal: originalPrice
+                 })
+               })
+               .then(response => response.json())
+               .then(data => {
+                 if (data.status === 'success') {
+                   appliedDiscount = data.discount;
+                   appliedCouponCode = couponCode;
+                   updatePriceDisplay();
+                   // Store applied coupon in session storage
+                   sessionStorage.setItem('appliedCoupon', JSON.stringify({
+                     code: couponCode,
+                     discount: data.discount,
+                     totalPrice: data.totalPrice,
+                   }));
+                   Swal.fire({
+                     icon: 'success',
+                     text: data.message,
+                   });
+                 } else {
+                   appliedDiscount = 0;
+                   appliedCouponCode = '';
+                   updatePriceDisplay();
+                   sessionStorage.removeItem('appliedCoupon');
+                   Swal.fire({
+                     icon: 'error',
+                     text: data.message,
+                   });
+                 }
+               })
+               .catch(error => {
+                 console.error('Error applying coupon:', error);
+                 Swal.fire({
+                   icon: 'error',
+                   text: 'Failed to apply coupon. Please try again.',
+                 });
+               });
+             }
+
+             function updatePriceDisplay() {
+               const discountRow = document.getElementById('couponDiscountRow');
+               const discountAmount = document.getElementById('couponDiscountAmount');
+               const finalAmount = document.getElementById('finalAmount');
+
+               if (appliedDiscount > 0) {
+                 discountRow.style.display = 'flex';
+                 discountAmount.textContent = `-₹${appliedDiscount}`;
+                 discountedTotal = originalPrice - appliedDiscount;
+                 finalAmount.textContent = `₹${discountedTotal}`;
+               } else {
+                 discountRow.style.display = 'none';
+                 discountedTotal = originalPrice;
+                 finalAmount.textContent = `₹${originalPrice}`;
+               }
+
+               // Store the discounted total in session storage
+               sessionStorage.setItem('checkoutTotal', JSON.stringify({
+                 originalPrice: originalPrice,
+                 discountedTotal: discountedTotal,
+                 discount: appliedDiscount
+               }));
+             }
+
+             // Restore applied coupon on page load
+             window.addEventListener('load', function() {
+               const savedCoupon = sessionStorage.getItem('appliedCoupon');
+               const savedTotal = sessionStorage.getItem('checkoutTotal');
+               if (savedCoupon) {
+                 const { code, discount } = JSON.parse(savedCoupon);
+                 document.getElementById('couponInput').value = code;
+                 appliedCouponCode = code;
+                 appliedDiscount = discount;
+                 if (savedTotal) {
+                   const { discountedTotal: savedDiscountedTotal } = JSON.parse(savedTotal);
+                   discountedTotal = savedDiscountedTotal;
+                 }
+                 updatePriceDisplay();
+               }
+             });
+
+             // Close modal when clicking outside
+             window.onclick = function(event) {
+               const modal = document.getElementById('couponModal');
+               if (event.target == modal) {
+                 modal.style.display = 'none';
+               }
+             }
+           </script>
+
+           <style>
+             .price__item {
+               display: flex;
+               justify-content: space-between;
+               margin-bottom: 1rem;
+               padding: 0.5rem 0;
+               border-bottom: 1px solid #eee;
+             }
+
+             .price__item.total {
+               font-weight: bold;
+               border-bottom: none;
+               font-size: 1.1em;
+             }
+
+             #couponDiscountRow {
+               color: #4CAF50;
+             }
+           </style>
 
             <!-- Price Details -->
             <div class="price__details">
-              <h4 class="details__title">Price Details</h4>
-              <div class="price__row">
-                <span>Price</span>
-                <span>₹<%= totalPrice %></span>
-              </div>
-              <div class="price__row">
-                <span>Delivery Charges</span>
-                <span class="free">Free</span>
-              </div>
-              <div class="price__row total">
-                <span>Total Amount</span>
-                <span>₹ <%= totalPrice %></span>
+              <h3 class="section__title">Price Details</h3>
+              <div class="price__breakdown">
+                <div class="price__item">
+                  <span>Price</span>
+                  <span>₹<%= totalPrice %></span>
+                </div>
+                <div class="price__item" id="couponDiscountRow" style="display: none;">
+                  <span>Coupon Discount</span>
+                  <span id="couponDiscountAmount">-₹0</span>
+                </div>
+                <div class="price__item total">
+                  <span>Total Amount</span>
+                  <span id="finalAmount">₹ <%= totalPrice %></span>
+                </div>
               </div>
             </div>
 
