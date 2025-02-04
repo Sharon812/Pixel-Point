@@ -4,7 +4,7 @@
 rel="stylesheet"
 href="https://cdn-uicons.flaticon.com/2.0.0/uicons-regular-straight/css/uicons-regular-straight.css"
 />
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <!--=============== SWIPER CSS ===============-->
 <link
 rel="stylesheet"
@@ -279,7 +279,7 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
            </style>
 
            <script>
-             let originalPrice = <%= totalPrice %>;
+             let originalPrice = '<%= totalPrice %>';
              let appliedDiscount = 0;
              let appliedCouponCode = '';
              let discountedTotal = originalPrice;
@@ -435,27 +435,6 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                }
              }
            </script>
-
-           <style>
-             .price__item {
-               display: flex;
-               justify-content: space-between;
-               margin-bottom: 1rem;
-               padding: 0.5rem 0;
-               border-bottom: 1px solid #eee;
-             }
-
-             .price__item.total {
-               font-weight: bold;
-               border-bottom: none;
-               font-size: 1.1em;
-             }
-
-             #couponDiscountRow {
-               color: #4CAF50;
-             }
-           </style>
-
             <!-- Price Details -->
             <div class="price__details">
               <h3 class="section__title">Price Details</h3>
@@ -466,7 +445,12 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                 </div>
                 <div class="price__item" id="couponDiscountRow" style="display: none;">
                   <span>Coupon Discount</span>
-                  <span id="couponDiscountAmount">-₹0</span>
+                  <div class="discount-container">
+                    <span id="couponDiscountAmount">-₹0</span>
+                    <button type="button" class="remove-coupon-btn" onclick="removeCoupon()">
+                      <i class="fa-regular fa-circle-xmark"></i>
+                    </button>
+                  </div>
                 </div>
                 <div class="price__item total">
                   <span>Total Amount</span>
@@ -474,6 +458,32 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                 </div>
               </div>
             </div>
+            <script>
+              function removeCoupon() {
+                // Reset coupon related variables
+                appliedDiscount = 0;
+                appliedCouponCode = '';
+                document.getElementById('couponInput').value = '';
+                
+                // Update the display
+                updatePriceDisplay();
+                
+                // Remove from session storage
+                sessionStorage.removeItem('appliedCoupon');
+                sessionStorage.removeItem('checkoutTotal');
+
+                // Show success message
+                Swal.fire({
+                  icon: 'success',
+                  text: 'Coupon removed successfully',
+                  toast: true,
+                  position: 'top-end',
+                  showConfirmButton: false,
+                  timer: 3000,
+                  timerProgressBar: true
+                });
+              }
+            </script>
 
             <!-- Payment Methods -->
             <div class="checkout__payment">

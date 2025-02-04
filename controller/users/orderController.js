@@ -151,6 +151,9 @@ const placeOrder = async (req, res) => {
       0
     );
 
+    const finalAmount = req.body.discountedTotal || totalAmount;
+    const discount = totalAmount - finalAmount;
+
     // Create order document
     const newOrder = new Order({
       userId: userId,
@@ -158,7 +161,8 @@ const placeOrder = async (req, res) => {
       paymentMethod,
       orderedItems: orderItems,
       totalPrice: totalAmount,
-      FinalAmount: totalAmount,
+      discount: discount,
+      FinalAmount: finalAmount,
       paymentStatus:
         paymentMethod === "Cash on Delivery" ? "Confirmed" : "Pending Payment",
     });
@@ -168,28 +172,34 @@ const placeOrder = async (req, res) => {
     // Handle COD immediately
     if (paymentMethod === "Cash on Delivery") {
       await updateInventory(orderItems, userId);
+      // Clear user's cart after successful order
+      await Cart.findOneAndUpdate(
+        { userId },
+        { $set: { items: [] } }
+      );
       return res.json({
         success: true,
         message: "COD order placed successfully",
         order: newOrder,
       });
     }
-    console.log(paymentMethod, "paymentmethod");
+
     // Handle Razorpay payment
     if (paymentMethod === "razorpay") {
       const razorpayOrder = await razorpay.orders.create({
-        amount: totalAmount * 100, // Convert to paise
+        amount: Math.round(finalAmount * 100), // Convert to paise and ensure it's rounded
         currency: "INR",
         receipt: newOrder._id.toString(),
         payment_capture: 1,
       });
-      console.log(razorpayOrder, "raxorpayorder");
+      console.log(razorpayOrder, "razorpayorder");
 
       return res.json({
         success: true,
         message: "Razorpay order created",
         razorpayOrder: razorpayOrder,
         order: newOrder,
+        finalAmount: finalAmount
       });
     }
 
@@ -240,43 +250,58 @@ const updateInventory = async (orderItems, userId) => {
 // Razorpay payment verification endpoint
 const verifyPayment = async (req, res) => {
   try {
-    const userId = req.session.user;
     const {
-      razorpay_payment_id,
       razorpay_order_id,
+      razorpay_payment_id,
       razorpay_signature,
-      orderId,
+      order_id,
     } = req.body;
-    console.log(req.body, "hello");
-    // Verify payment signature
-    const generatedSignature = crypto
+
+    // Verify signature
+    const sign = razorpay_order_id + "|" + razorpay_payment_id;
+    const expectedSign = crypto
       .createHmac("sha256", process.env.RAZORPAY_SECRET_KEY)
-      .update(razorpay_order_id + "|" + razorpay_payment_id)
+      .update(sign.toString())
       .digest("hex");
 
-    if (generatedSignature !== razorpay_signature) {
+    if (razorpay_signature === expectedSign) {
+      // Update order status
+      const order = await Order.findById(order_id);
+      if (!order) {
+        return res.status(404).json({
+          success: false,
+          message: "Order not found",
+        });
+      }
+
+      // Update order payment status
+      order.paymentStatus = "Confirmed";
+      await order.save();
+
+      // Clear user's cart after successful payment
+      await Cart.findOneAndUpdate(
+        { userId: order.userId },
+        { $set: { items: [] } }
+      );
+
+      // Update inventory
+      await updateInventory(order.orderedItems, order.userId);
+
+      return res.json({
+        success: true,
+        message: "Payment verified successfully",
+      });
+    } else {
       return res.status(400).json({
         success: false,
-        message: "Payment verification failed",
+        message: "Invalid signature",
       });
     }
-
-    // Update order status and inventory
-    const order = await Order.findById(orderId);
-    order.paymentStatus = "Confirmed";
-    await order.save();
-
-    await updateInventory(order.orderedItems, userId);
-
-    return res.status(200).json({
-      success: true,
-      message: "Payment verified and order confirmed",
-    });
   } catch (error) {
     console.error("Payment verification error:", error);
-    return res.status(500).json({
+    res.status(500).json({
       success: false,
-      message: "Payment verification failed",
+      message: "Error verifying payment",
     });
   }
 };
