@@ -686,3 +686,47 @@
     padding: 1rem;
   }
 }
+
+.price__item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+.price__item.total {
+  font-weight: bold;
+  border-bottom: none;
+  font-size: 1.1em;
+}
+
+#couponDiscountRow {
+  color: #4caf50;
+}
+
+.discount-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.remove-coupon-btn {
+  background: none;
+  border: none;
+  color: #ff4444;
+  cursor: pointer;
+  padding: 0;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.remove-coupon-btn:hover {
+  background-color: #ffeeee;
+}

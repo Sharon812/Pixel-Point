@@ -63,6 +63,9 @@ const orderSchema = new Schema(
             "Returned",
           ],
         },
+        cancellationReason: {
+          type: String,
+        },
       },
     ],
     paymentMethod: {

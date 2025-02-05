@@ -7,6 +7,7 @@ const catController = require("../../controller/admin/categoryController");
 const productCont = require("../../controller/admin/productController");
 const brandController = require("../../controller/admin/brandController");
 const orderController = require("../../controller/admin/orderController");
+const couponController = require("../../controller/admin/coupounController");
 //for multer//not
 const multer = require("multer");
 const storage = require("../../helpers/multer");
@@ -62,4 +63,18 @@ router.get("/blockBrand", brandController.blockBrand);
 router.get("/orders", orderController.getOrderDetails);
 router.post("/orders/update-status", orderController.updateStatus);
 
+// Sales Report Routes
+router.get("/sales-report/daily", adminController.generateDailyReport);
+router.get("/sales-report/weekly", adminController.generateWeeklyReport);
+router.get("/sales-report/yearly", adminController.generateYearlyReport);
+router.get("/sales-report/custom", adminController.generateCustomReport);
+
+//for coupons
+router.get("/coupons", couponController.getCoupons);
+router.post("/addcoupons", couponController.addCoupon);
+router.patch(
+  "/update-coupon-status/:couponId",
+  couponController.updateCouponStatus
+);
+router.patch("/delete-coupon/:couponId", couponController.deleteCoupon);
 module.exports = router;

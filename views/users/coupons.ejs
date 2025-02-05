@@ -1,0 +1,301 @@
+<%- include('../layouts/users/header.ejs') %>
+<!-- Bootstrap CSS -->
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+  rel="stylesheet"
+/>
+<!-- Font Awesome -->
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+/>
+<!-- Custom CSS -->
+<link rel="stylesheet" href="/css/admin/coupons.css" />
+
+<div class="admin-dashboard">
+  <!-- Top Navigation Bar -->
+  <nav class="navbar fixed-top d-lg-none bg-primary">
+    <div class="container-fluid">
+      <button
+        class="navbar-toggler"
+        type="button"
+        id="sidebarToggle"
+        aria-label="Toggle navigation"
+      >
+        <i class="fas fa-bars text-white"></i>
+      </button>
+      <span class="navbar-brand text-white">Pixel-Point</span>
+    </div>
+  </nav>
+
+  <div class="d-flex">
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-white mb-0 d-none d-lg-block">Pixel-Point</h2>
+        <button
+          class="btn-close d-lg-none text-white"
+          id="sidebarClose"
+        ></button>
+      </div>
+      <a href="/dashboard"><i class="fas fa-chart-line me-2"></i>Dashboard</a>
+      <a href="/profile"><i class="fas fa-user me-2"></i>Profile</a>
+      <a href="/orders"><i class="fas fa-shopping-bag me-2"></i>Orders</a>
+      <a href="/wishlist"><i class="fas fa-heart me-2"></i>Wishlist</a>
+      <a href="/coupons" class="active"
+        ><i class="fas fa-tags me-2"></i>Coupons</a
+      >
+      <a href="/addresses"
+        ><i class="fas fa-map-marker-alt me-2"></i>Addresses</a
+      >
+      <a href="/settings"><i class="fas fa-cog me-2"></i>Settings</a>
+      <a href="/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content flex-grow-1">
+      <div class="container-fluid px-lg-4">
+        <!-- Page Header -->
+        <div
+          class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4"
+        >
+          <div class="mb-3 mb-md-0">
+            <h1 class="h3 mb-0 text-gray-800">Coupons</h1>
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                  <a href="/dashboard">Dashboard</a>
+                </li>
+                <li class="breadcrumb-item active">Coupons</li>
+              </ol>
+            </nav>
+          </div>
+          <div>
+            <button
+              class="btn btn-primary"
+              data-bs-toggle="modal"
+              data-bs-target="#addCouponModal"
+            >
+              <i class="fas fa-plus me-2"></i>Add New Coupon
+            </button>
+          </div>
+        </div>
+
+        <!-- Coupons Table Card -->
+        <div class="card shadow">
+          <div
+            class="card-header py-3 d-flex justify-content-between align-items-center"
+          >
+            <h6 class="m-0 font-weight-bold text-primary">Available Coupons</h6>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>CODE</th>
+                    <th>OFFER AMOUNT</th>
+                    <th>MIN. PURCHASE</th>
+                    <th>START DATE</th>
+                    <th>EXPIRY DATE</th>
+                    <th>USES LEFT</th>
+                    <th>MAX USES/USER</th>
+                    <th>STATUS</th>
+                    <th>ACTIONS</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% if(coupons) {%> <% coupons.forEach(coupon => { %>
+                  <tr>
+                    <td><%= coupon.name %></td>
+                    <td>₹<%= coupon.offerPrice %></td>
+                    <td>₹<%= coupon.minimumPrice %></td>
+                    <td><%= coupon.startOn.toLocaleDateString("en-GB") %></td>
+                    <td><%= coupon.expireOn.toLocaleDateString("en-GB") %></td>
+                    <td><%= coupon.maxUses %></td>
+                    <td><%= coupon.maxUsesPerUser %></td>
+                    <td>
+                      <% if(coupon.isListed == 1) {%>
+                      <span class="badge bg-success">ACTIVE</span>
+                      <% }else{ %>
+                      <span class="badge bg-danger">INACTIVE</span>
+
+                      <% } %>
+                    </td>
+                    <td data*>
+                      <button
+                        data-id="<%=coupon._id%>"
+                        class="btn btn-warning btn-sm toggle-status"
+                      >
+                        <i class="fas fa-power-off"></i>
+                      </button>
+                      <button
+                        data-id="<%=coupon._id%>"
+                        class="btn btn-danger btn-sm delete-coupon"
+                        data-id="1"
+                      >
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
+                  <% }) %> <% } else{%>
+                  <p class="text-center">No Coupons Available. Add Coupons</p>
+                  <% } %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Coupon Modal -->
+<div
+  class="modal fade"
+  id="addCouponModal"
+  tabindex="-1"
+  aria-labelledby="addCouponModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addCouponModalLabel">Add New Coupon</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <form id="addCouponForm">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="couponCode" class="form-label">Coupon Code</label>
+            <input
+              type="text"
+              class="form-control"
+              id="couponCode"
+              name="code"
+              required
+              pattern="[A-Z0-9]+"
+              title="Only uppercase letters and numbers allowed"
+            />
+            <div class="form-text">
+              Use uppercase letters and numbers only (e.g., SUMMER50)
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="offerAmount" class="form-label">Offer Amount (₹)</label>
+            <input
+              type="number"
+              class="form-control"
+              id="offerAmount"
+              name="offerAmount"
+              min="1"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="minPurchase" class="form-label"
+              >Minimum Purchase Amount (₹)</label
+            >
+            <input
+              type="number"
+              class="form-control"
+              id="minPurchase"
+              name="minPurchase"
+              min="1"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="startDate" class="form-label">Start Date</label>
+            <input
+              type="date"
+              class="form-control"
+              id="startDate"
+              name="startDate"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="expiryDate" class="form-label">Expiry Date</label>
+            <input
+              type="date"
+              class="form-control"
+              id="expiryDate"
+              name="expiryDate"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="usesLeft" class="form-label"
+              >Total Number of Uses</label
+            >
+            <input
+              type="number"
+              class="form-control"
+              id="usesLeft"
+              name="usesLeft"
+              min="1"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="maxUsesPerUser" class="form-label"
+              >Maximum Uses Per User</label
+            >
+            <input
+              type="number"
+              class="form-control"
+              id="maxUsesPerUser"
+              name="maxUsesPerUser"
+              min="1"
+              max="10"
+              required
+            />
+            <div class="form-text">
+              Maximum number of times a single user can use this coupon (1-10)
+            </div>
+          </div>
+          <div class="mb-3">
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="isActive"
+                name="isActive"
+                checked
+              />
+              <label class="form-check-label" for="isActive">
+                Active Status
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-primary">Add Coupon</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- Custom JS -->
+<script src="/js/coupons.js"></script>
+
+<%- include('../layouts/users/footer.ejs') %>
