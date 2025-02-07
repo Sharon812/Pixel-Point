@@ -104,8 +104,9 @@
                       <%= category.categoryOffer %>%
                     </td>
                     <td class="d-none d-md-table-cell">
-                      <%= category.offerEndDate ? new Date(category.offerEndDate).toLocaleDateString("en-GB") : "" %>
-              
+                      <%= category.offerEndDate ? new
+                      Date(category.offerEndDate).toLocaleDateString("en-GB") :
+                      "" %>
                     </td>
 
                     <td class="d-md-none">
@@ -118,7 +119,9 @@
                           <%= category.categoryOffer %>%
                         </div>
                         <div class="text-muted small">
-                          <%= category.offerEndDate ? new Date(category.offerEndDate).toLocaleDateString("en-GB") : "" %>
+                          <%= category.offerEndDate ? new
+                          Date(category.offerEndDate).toLocaleDateString("en-GB")
+                          : "" %>
                         </div>
                       </div>
                     </td>
@@ -149,7 +152,10 @@
                         >
                           <i class="fas fa-plus me-1 d-none d-sm-inline"></i>Add
                         </button>
-                        <button class="btn btn-danger btn-sm flex-grow-1">
+                        <button
+                          onclick="removeOffer('<%= category._id%>')"
+                          class="btn btn-danger btn-sm flex-grow-1"
+                        >
                           <i class="fas fa-times me-1 d-none d-sm-inline"></i
                           >Remove
                         </button>

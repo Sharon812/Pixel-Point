@@ -80,5 +80,6 @@ router.patch("/delete-coupon/:couponId", couponController.deleteCoupon);
 
 //for category offer
 router.patch("/add-category-offer", catController.addCateogoryOffer);
+router.patch("/remove-offer", catController.removeOffer);
 
 module.exports = router;
