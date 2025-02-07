@@ -47,6 +47,10 @@ const productSchema = new Schema(
           type: [String],
           required: true,
         },
+        discountedPrice: {
+          type: Number,
+          default: null,
+        },
         status: {
           type: String,
           enum: ["Available", "Out of Stock", "Discontinued"],

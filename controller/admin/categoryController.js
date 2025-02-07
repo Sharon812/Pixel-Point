@@ -1,4 +1,5 @@
 const Category = require("../../models/categorySchema");
+const Product = require("../../models/productSchema");
 
 //function to display category details
 const categoryInfo = async (req, res) => {
@@ -97,10 +98,52 @@ const editCategory = async (req, res) => {
   }
 };
 
+const addCateogoryOffer = async (req, res) => {
+  try {
+
+    const {categoryId,offerPercentage,endDate} = req.body;
+console.log("body",categoryId,offerPercentage,endDate)
+    if(!categoryId && !offerPercentage && !endDate){
+      return res.status(400).json({ error: "Please fill all the fields" });
+    }
+    
+    const category = await Category.findById(categoryId);
+    if(!category){
+      return res.status(400).json({ error: "Category not found" });
+    }
+    console.log("category",category)
+    category.categoryOffer = offerPercentage;
+    category.offerEndDate = endDate;
+    await category.save();
+    await calculateDiscountedPrice(categoryId, offerPercentage);
+       res.status(200).json({success:true, response: "added successfully" });
+  } catch (error) {
+    console.log(error, "error at add category offer");
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+}
+const calculateDiscountedPrice = async (categoryId, offerPercentage) => {
+  try {
+    const products = await Product.find({ category: categoryId });
+    console.log("Products:", products);
+    const updatedProducts = products.map(async (product) => {
+      product.combos.forEach((combo) => {
+        combo.discountedPrice = Math.round( combo.salePrice - (combo.salePrice * offerPercentage) / 100);
+      });
+      return product.save(); // Save the updated product
+    });
+    await Promise.all(updatedProducts);
+    console.log("Discounted prices updated successfully");
+  } catch (error) {
+    console.error("Error updating discounted prices:", error);
+  }
+};
+
 module.exports = {
   categoryInfo,
   addCategory,
   deleteCategory,
   geteditCategory,
   editCategory,
+  addCateogoryOffer
 };

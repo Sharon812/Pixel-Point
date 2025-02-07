@@ -77,4 +77,8 @@ router.patch(
   couponController.updateCouponStatus
 );
 router.patch("/delete-coupon/:couponId", couponController.deleteCoupon);
+
+//for category offer
+router.patch("/add-category-offer", catController.addCateogoryOffer);
+
 module.exports = router;
