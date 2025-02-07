@@ -14,13 +14,23 @@ function selectCombo(button) {
     .then((response) => response.json())
     .then((data) => {
       if (data.success) {
+        console.log(data.combo.discountPrice);
+        if (data.combo.discountPrice) {
+          document.getElementById(
+            "currentPrice"
+          ).innerHTML = `<span> ₹${data.combo.discountPrice.toLocaleString()} </span> `;
+          document.getElementById(
+            "regularPrice"
+          ).innerHTML = `<del>₹${data.combo.salePrice.toLocaleString()}</del>`;
+        } else {
+          document.getElementById(
+            "currentPrice"
+          ).innerHTML = `<span> ₹${data.combo.salePrice.toLocaleString()} </span> `;
+          document.getElementById(
+            "regularPrice"
+          ).innerHTML = `<del>₹${data.combo.regularPrice.toLocaleString()}</del>`;
+        }
         // Update the price information
-        document.getElementById(
-          "currentPrice"
-        ).innerHTML = `<span> ₹${data.combo.salePrice.toLocaleString()} </span> `;
-        document.getElementById(
-          "regularPrice"
-        ).innerHTML = `<del>₹${data.combo.regularPrice.toLocaleString()}</del>`;
 
         // Update the quantity status and action buttons
         const quantityStatus = document.getElementById("quantityStatus");

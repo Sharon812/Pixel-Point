@@ -61,10 +61,10 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
         </div>
         <ul class="nav__list">
           <li class="nav__item">
-            <a href="/" class="nav__link active-link">Home</a>
+            <a href="/" class="nav__link ">Home</a>
           </li>
           <li class="nav__item">
-            <a href="/shop" class="nav__link">Shop</a>
+            <a href="/shop" class="nav__link active-link">Shop</a>
           </li>
           <li class="nav__item">
             <a href="" class="nav__link">Brands</a>
@@ -320,10 +320,33 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
           <i class="fi fi-rs-star"></i>
           <i class="fi fi-rs-star"></i>
         </div>
-        <div class="product__price flex">
-          <span class="new__price">&#8377; <%= products[i].combos[0].salePrice %> </span>
-          <span class="old__price">&#8377; <%= products[i].combos[0].regularPrice %> </span>
-        </div>
+        <%if (products[i].combos[0].discountedPrice) {%>
+          <div class="product__price flex">
+            <span class="new__price">&#8377; <%= products[i].combos[0].discountedPrice %> </span>
+            <span class="old__price">&#8377; <%= products[i].combos[0].salePrice %> </span>
+            <% 
+              const regularPrice = products[i].combos[0].salePrice;
+              const discountPrice = products[i].combos[0].discountedPrice;
+              const discount = Math.round(((regularPrice - discountPrice) / regularPrice) * 100);
+            %>
+            <span class="offer-badge" style="background: #113c7c; color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-left: 8px;">
+              -<%= discount %>%
+            </span>
+          </div>
+        <%}else{%>
+          <div class="product__price flex">
+            <span class="new__price">&#8377; <%= products[i].combos[0].salePrice %> </span>
+            <span class="old__price">&#8377; <%= products[i].combos[0].regularPrice %> </span>
+            <% 
+              const regularPrice = products[i].combos[0].regularPrice;
+              const salePrice = products[i].combos[0].salePrice;
+              const discount = Math.round(((regularPrice - salePrice) / regularPrice) * 100);
+            %>
+            <span class="offer-badge" style="background: #113c7c; color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-left: 8px;">
+              -<%= discount %>%
+            </span>
+          </div>
+          <%}%>
         <% if(products[i].combos[0].quantity > 0 ) {%>
         <div class="product__buttons">
           <button

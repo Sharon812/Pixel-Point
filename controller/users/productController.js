@@ -53,17 +53,14 @@ const loadComboDetails = async (req, res) => {
   try {
     const { id } = req.params;
     const { ram, storage, color, comboId } = req.query;
-    console.log("combs", comboId);
 
     const product = await Products.findById(id);
-    console.log(product);
     const selectedCombo = product.combos.find(
       (combo) =>
         combo.ram === ram &&
         combo.storage === storage &&
         combo.color.includes(color)
     );
-    console.log("selectedcombo", selectedCombo);
     if (!selectedCombo) {
       return res
         .status(404)
@@ -77,6 +74,7 @@ const loadComboDetails = async (req, res) => {
         regularPrice: selectedCombo.regularPrice,
         quantity: selectedCombo.quantity,
         combosId: selectedCombo._id,
+        discountPrice: selectedCombo.discountedPrice ?? null,
       },
     });
   } catch (error) {

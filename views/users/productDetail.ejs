@@ -153,15 +153,41 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
         <p class="details__brand">
           Brand: <span> <%= product.brand.brandName %> </span>
         </p>
+        <% if(product.combos[0].discountedPrice) {%>
         <div class="details__price flex">
           <span id="currentPrice" class="new__price">
-            ₹<%= product.combos[0].salePrice.toLocaleString() %></span
+            ₹<%= product.combos[0].discountedPrice.toLocaleString() %></span
           >
           <span class="old__price" id="regularPrice">
-            ₹<%= product.combos[0].regularPrice.toLocaleString() %>
+            ₹<%= product.combos[0].salePrice.toLocaleString() %>
           </span>
-          <span class="save__price">25% Off</span>
-        </div>
+          <% 
+          const regularPrice = product.combos[0].salePrice;
+          const salePrice = product.combos[0].discountedPrice;
+          const discount = Math.round(((regularPrice - salePrice) / regularPrice) * 100);
+        %>
+          <span class="offer-badge" style="background: #113c7c; color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-left: 8px;">
+           <%= discount %>% off
+          </span>
+          </div>
+          <% }else{ %>
+            <div class="details__price flex">
+              <span id="currentPrice" class="new__price">
+                ₹<%= product.combos[0].salePrice.toLocaleString() %></span
+              >
+              <span class="old__price" id="regularPrice">
+                ₹<%= product.combos[0].regularPrice.toLocaleString() %>
+              </span>
+              <% 
+              const regularPrice = product.combos[0].regularPrice;
+              const salePrice = product.combos[0].salePrice;
+              const discount = Math.round(((regularPrice - salePrice) / regularPrice) * 100);
+            %>
+              <span class="offer-badge" style="background: #113c7c; color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-left: 8px;">
+               <%= discount %>% off
+              </span>
+              </div>
+            <% } %>
         <p class="short__description"><%= product.description %></p>
         <ul class="products__list">
           <li class="list__item flex">
