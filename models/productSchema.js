@@ -47,7 +47,7 @@ const productSchema = new Schema(
           type: [String],
           required: true,
         },
-        discountedPrice: {
+        salePriceBeforeDiscount: {
           type: Number,
           default: null,
         },

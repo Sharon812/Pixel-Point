@@ -125,10 +125,12 @@ const calculateDiscountedPrice = async (categoryId, offerPercentage) => {
   try {
     const products = await Product.find({ category: categoryId });
     console.log("Products:", products);
-    const updatedProducts = products.map(async (product) => {
+    const updatedProducts = products.map((product) => {
       product.combos.forEach((combo) => {
-        combo.discountedPrice = Math.round(
-          combo.salePrice - (combo.salePrice * offerPercentage) / 100
+        combo.salePriceBeforeDiscount = combo.salePrice;
+        combo.salePrice = Math.round(
+          combo.salePriceBeforeDiscount -
+            (combo.salePriceBeforeDiscount * offerPercentage) / 100
         );
       });
       return product.save();
@@ -162,7 +164,8 @@ const removeOffer = async (req, res) => {
     });
     const updatedProducts = products.map(async (product) => {
       product.combos.forEach((combo) => {
-        combo.discountedPrice = null;
+        combo.salePrice = combo.salePriceBeforeDiscount;
+        combo.salePriceBeforeDiscount = null;
       });
       return product.save();
     });
