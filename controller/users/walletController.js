@@ -1,12 +1,8 @@
 const User = require("../../models/userSchema");
-const nodemailer = require("nodemailer");
 const mongoose = require("mongoose");
 const env = require("dotenv").config();
 const bycrypt = require("bcrypt");
 const crypto = require("crypto");
-const Address = require("../../models/addressSchema");
-const Cart = require("../../models/cartSchema");
-const Order = require("../../models/orderSchema");
 const Wallet = require("../../models/walletSchema");
 const Razorpay = require("razorpay");
 
@@ -29,25 +25,30 @@ const getWallet = async (req, res) => {
     let totalPages = 0;
 
     if (walletData && walletData.transactions.length > 0) {
-      walletData.transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
-      
+      walletData.transactions.sort(
+        (a, b) => new Date(b.date) - new Date(a.date)
+      );
+
       totalPages = Math.ceil(walletData.transactions.length / limit);
-      
+
       const startIndex = (page - 1) * limit;
       const endIndex = startIndex + limit;
-      paginatedTransactions = walletData.transactions.slice(startIndex, endIndex);
+      paginatedTransactions = walletData.transactions.slice(
+        startIndex,
+        endIndex
+      );
     }
 
     res.render("wallet", {
       walletData: {
         balance: walletData ? walletData.balance : 0,
-        transactions: paginatedTransactions
+        transactions: paginatedTransactions,
       },
       pagination: {
         currentPage: page,
         totalPages: totalPages,
         hasNextPage: page < totalPages,
-        hasPrevPage: page > 1
+        hasPrevPage: page > 1,
       },
       user: userData,
     });
@@ -69,9 +70,6 @@ const addMoneyToWallet = async (req, res) => {
       receipt: `receipt_${Date.now()}`,
       payment_capture: 1,
     });
-
-    console.log(order);
-
     res.status(200).json({
       success: true,
       order,
@@ -93,24 +91,20 @@ const verifyPayment = async (req, res) => {
     const user = req.session.user;
     const userId = req.session.user;
 
-    // Generate signature using Razorpay's algorithm
     const body = razorpay_order_id + "|" + razorpay_payment_id;
     const expectedSignature = crypto
       .createHmac("sha256", process.env.RAZORPAY_SECRET_KEY)
       .update(body.toString())
       .digest("hex");
 
-    // Compare signatures
     if (expectedSignature !== razorpay_signature) {
       return res
         .status(400)
         .json({ success: false, message: "Payment verification failed" });
     }
 
-    // Payment is verified, update wallet balance
     let wallet = await Wallet.findOne({ user: userId });
     if (!wallet) {
-      // Create wallet if it doesn't exist
       wallet = await Wallet.create({
         user: userId,
         balance: amount,
@@ -118,18 +112,17 @@ const verifyPayment = async (req, res) => {
           {
             type: "credit",
             amount: amount,
-            date: new Date(), // Save the current date and time
+            date: new Date(),
             description: "Money added to wallet",
           },
         ],
       });
     } else {
-      // Update balance
       wallet.balance += amount;
       wallet.transactions.push({
         type: "credit",
         amount: amount,
-        date: new Date(), // Save the current date and time
+        date: new Date(),
         description: "Money added to wallet",
       });
       await wallet.save();

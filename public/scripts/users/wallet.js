@@ -19,16 +19,14 @@ async function validateAndSubmit(event) {
     return;
   }
 
-  if (amount > 10000) {
+  if (parseInt(amount) > 100000) {
     errorMessage.textContent = "Max limit 1,00,000/-";
     errorMessage.style.display = "block";
     return;
   }
-
   const walletBalance = walletData.walletBalance;
-
-  if (walletBalance + parseInt(amount) > 200000) {
-    errorMessage.textContent = "Total wallet balance cannot exceed 1 lakh.";
+  if (parseInt(walletBalance) + parseInt(amount) >= 200000) {
+    errorMessage.textContent = "Total wallet balance cannot exceed 2 lakh.";
     errorMessage.style.display = "block";
     return;
   }
@@ -48,38 +46,14 @@ async function validateAndSubmit(event) {
     console.log("result", result);
 
     if (result.success) {
-      // Fetch user details (name and email) dynamically
-      //   const userDetailsResponse = await fetch("/verify-addmoney-payment", {
-      //     method: "POST",
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //     },
-      //     body: JSON.stringify({
-      //       razorpay_payment_id: razorpayResponse.razorpay_payment_id,
-      //       razorpay_order_id: razorpayResponse.razorpay_order_id,
-      //       razorpay_signature: razorpayResponse.razorpay_signature,
-      //     }),
-      //   });
-
-      //   const userDetails = await userDetailsResponse.json();
-      //   console.log("userdetails", userDetails);
-      //   if (!userDetails.success) {
-      //     alert("Failed to fetch user details.");
-      //     return;
-      //   }
-
-      //   const { name, email } = userDetails;
-
-      // Razorpay order created successfully, open the Razorpay popup
       const options = {
-        key: "rzp_test_VwIcEmBewhtiOH", // Replace with your Razorpay API key
-        amount: result.order.amount, // Amount in paise
+        key: "rzp_test_VwIcEmBewhtiOH",
+        amount: result.order.amount,
         currency: "INR",
         name: "Pixel-Point",
         description: "Add Money to Wallet",
-        order_id: result.order.id, // Razorpay Order ID
+        order_id: result.order.id,
         handler: async function (response) {
-          // On successful payment, send verification data to the backend
           const verificationResponse = await fetch("/verify-addmoney-payment", {
             method: "POST",
             headers: {
@@ -119,7 +93,8 @@ async function validateAndSubmit(event) {
     alert("An error occurred. Please try again.");
   }
 }
-// Add Money Modal functionality
+
+//for ad modal
 const modal = document.getElementById("addMoneyModal");
 const addMoneyBtn = document.getElementById("addMoneyBtn");
 const closeBtn = document.querySelector(".close-modal");
@@ -137,14 +112,12 @@ closeBtn.addEventListener("click", () => {
   modal.style.display = "none";
 });
 
-// Close modal when clicking outside
 window.addEventListener("click", (e) => {
   if (e.target === modal) {
     modal.style.display = "none";
   }
 });
 
-// Quick amount buttons
 quickAmountBtns.forEach((btn) => {
   btn.addEventListener("click", () => {
     const amount = btn.dataset.amount;
@@ -152,7 +125,6 @@ quickAmountBtns.forEach((btn) => {
   });
 });
 
-// Existing filter functionality
 const filterButtons = document.querySelectorAll(".type-btn");
 const transactions = document.querySelectorAll(".transaction-item");
 

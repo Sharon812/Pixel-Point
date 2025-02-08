@@ -245,6 +245,7 @@
   border-radius: 1rem;
   padding: 2rem;
   box-shadow: var(--shadow-md);
+  height: fit-content;
 }
 
 .cart__items {

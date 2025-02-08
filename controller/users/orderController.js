@@ -2,7 +2,6 @@ const User = require("../../models/userSchema");
 const nodemailer = require("nodemailer");
 const mongoose = require("mongoose");
 const env = require("dotenv").config();
-const bycrypt = require("bcrypt");
 const crypto = require("crypto");
 const Razorpay = require("razorpay");
 const Address = require("../../models/addressSchema");
@@ -11,6 +10,7 @@ const Cart = require("../../models/cartSchema");
 const Brand = require("../../models/brandSchema");
 const Category = require("../../models/categorySchema");
 const Order = require("../../models/orderSchema");
+const Wallet = require("../../models/walletSchema");
 
 const processCheckout = async (req, res) => {
   try {
@@ -26,7 +26,6 @@ const processCheckout = async (req, res) => {
         .json({ sucess: false, message: "no cart available" });
     }
 
-    // Fetch combo details manually
     for (const item of cart.items) {
       if (item.comboId) {
         const product = await Product.findById(item.productId);
@@ -40,22 +39,18 @@ const processCheckout = async (req, res) => {
             .json({ sucess: false, message: "combos not available" });
         }
 
-        // Attach combo details to the item
         item.comboDetails = combo;
       }
     }
 
     const address = addresses.flatMap((doc) => doc.address);
-    // Filter out items with zero quantity
     const validCartItems = cart.items.filter((item) => item.quantity > 0);
 
-    // Check stock for each valid item
     for (const item of validCartItems) {
       const availableQuantity = item.comboDetails
         ? item.comboDetails.quantity
         : item.productId.stock;
     }
-    // Calculate total price
     const totalPrice = validCartItems.reduce(
       (sum, item) =>
         sum +
@@ -64,7 +59,6 @@ const processCheckout = async (req, res) => {
       0
     );
 
-    // Calculate the cart summary
     const cartSummary = {
       totalPrice,
     };
@@ -84,25 +78,23 @@ const processCheckout = async (req, res) => {
 };
 
 const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_ID_KEY, // Store in .env
+  key_id: process.env.RAZORPAY_ID_KEY,
   key_secret: process.env.RAZORPAY_SECRET_KEY,
 });
 
+//for placing order
 const placeOrder = async (req, res) => {
   try {
     const userId = req.session.user;
     const { selectedAddress, paymentMethod } = req.body;
 
-    // Validate input
     if (!selectedAddress || !paymentMethod) {
       return res.status(400).json({
         success: false,
         message: "Missing order details",
       });
     }
-    console.log(paymentMethod, "paymentmethod");
 
-    // Get cart items
     const cart = await Cart.findOne({ userId })
       .populate({
         path: "items.productId",
@@ -110,7 +102,6 @@ const placeOrder = async (req, res) => {
       })
       .lean();
 
-    // Validate cart
     if (!cart?.items?.length) {
       return res.status(400).json({
         success: false,
@@ -118,7 +109,6 @@ const placeOrder = async (req, res) => {
       });
     }
 
-    // Process order items
     const orderItems = await Promise.all(
       cart.items.map(async (item) => {
         const selectedCombo = item.productId.combos.find(
@@ -145,7 +135,6 @@ const placeOrder = async (req, res) => {
       })
     );
 
-    // Calculate totals
     const totalAmount = orderItems.reduce(
       (acc, item) => acc + item.totalPrice,
       0
@@ -154,7 +143,6 @@ const placeOrder = async (req, res) => {
     const finalAmount = req.body.discountedTotal || totalAmount;
     const discount = totalAmount - finalAmount;
 
-    // Create order document
     const newOrder = new Order({
       userId: userId,
       address: selectedAddress,
@@ -169,14 +157,9 @@ const placeOrder = async (req, res) => {
     console.log(newOrder, "neworder");
     await newOrder.save();
 
-    // Handle COD immediately
     if (paymentMethod === "Cash on Delivery") {
       await updateInventory(orderItems, userId);
-      // Clear user's cart after successful order
-      await Cart.findOneAndUpdate(
-        { userId },
-        { $set: { items: [] } }
-      );
+      await Cart.findOneAndUpdate({ userId }, { $set: { items: [] } });
       return res.json({
         success: true,
         message: "COD order placed successfully",
@@ -184,10 +167,35 @@ const placeOrder = async (req, res) => {
       });
     }
 
-    // Handle Razorpay payment
+    if (paymentMethod === "wallet") {
+      const wallet = await Wallet.findOne({ user: userId });
+      if (!wallet) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Insufficient Amount in wallet" });
+      }
+
+      if (wallet.balance < finalAmount) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Insufficient Balance" });
+      }
+      wallet.balance = wallet.balance - finalAmount;
+      wallet.transactions.push({
+        type: "debit",
+        amount: finalAmount,
+        date: new Date(),
+        description: `${finalAmount} debited for purchasing `,
+      });
+      await wallet.save();
+      await updateInventory(orderItems, userId);
+
+      return res.status(200).json({ success: true, message: "Order Placed" });
+    }
+
     if (paymentMethod === "razorpay") {
       const razorpayOrder = await razorpay.orders.create({
-        amount: Math.round(finalAmount * 100), // Convert to paise and ensure it's rounded
+        amount: Math.round(finalAmount * 100),
         currency: "INR",
         receipt: newOrder._id.toString(),
         payment_capture: 1,
@@ -199,11 +207,10 @@ const placeOrder = async (req, res) => {
         message: "Razorpay order created",
         razorpayOrder: razorpayOrder,
         order: newOrder,
-        finalAmount: finalAmount
+        finalAmount: finalAmount,
       });
     }
 
-    // Handle invalid payment method
     return res.status(400).json({
       success: false,
       message: "Invalid payment method",
@@ -217,7 +224,6 @@ const placeOrder = async (req, res) => {
   }
 };
 
-// Separate inventory update function
 const updateInventory = async (orderItems, userId) => {
   await Promise.all(
     orderItems.map(async (item) => {
@@ -247,7 +253,6 @@ const updateInventory = async (orderItems, userId) => {
   );
 };
 
-// Razorpay payment verification endpoint
 const verifyPayment = async (req, res) => {
   try {
     const {
@@ -257,7 +262,6 @@ const verifyPayment = async (req, res) => {
       order_id,
     } = req.body;
 
-    // Verify signature
     const sign = razorpay_order_id + "|" + razorpay_payment_id;
     const expectedSign = crypto
       .createHmac("sha256", process.env.RAZORPAY_SECRET_KEY)
@@ -265,7 +269,6 @@ const verifyPayment = async (req, res) => {
       .digest("hex");
 
     if (razorpay_signature === expectedSign) {
-      // Update order status
       const order = await Order.findById(order_id);
       if (!order) {
         return res.status(404).json({
@@ -274,17 +277,13 @@ const verifyPayment = async (req, res) => {
         });
       }
 
-      // Update order payment status
       order.paymentStatus = "Confirmed";
       await order.save();
 
-      // Clear user's cart after successful payment
       await Cart.findOneAndUpdate(
         { userId: order.userId },
         { $set: { items: [] } }
       );
-
-      // Update inventory
       await updateInventory(order.orderedItems, order.userId);
 
       return res.json({
@@ -309,7 +308,10 @@ const verifyPayment = async (req, res) => {
 const orderPlaced = async (req, res) => {
   try {
     res.render("orderPlaced");
-  } catch (error) {}
+  } catch (error) {
+    console.log(error, "errror at rendering order placed page");
+    res.redirect("/page-not-found");
+  }
 };
 
 module.exports = {

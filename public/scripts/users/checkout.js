@@ -3,11 +3,6 @@ function toggleAddressModal() {
   modal.classList.toggle("hidden");
 }
 
-// function selectAddress(addressId) {
-//   // Perform an action to select the address (e.g., update it via an API call)
-//   console.log(`Selected Address ID: ${addressId}`);
-// }
-
 document.addEventListener("DOMContentLoaded", () => {
   const placeOrderButton = document.querySelector(".place-order-btn");
   const checkoutForm = document.querySelector("#checkout-form");
@@ -28,7 +23,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return alert("Please select a delivery address and payment method.");
       }
 
-      // Get discounted total from session storage if available
       let discountedTotal = null;
       const checkoutData = sessionStorage.getItem("checkoutTotal");
       if (checkoutData) {
@@ -39,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const payload = {
         selectedAddress,
         paymentMethod,
-        discountedTotal, // Include discounted total in the payload
+        discountedTotal,
       };
 
       const response = await fetch("/checkout", {
@@ -55,17 +49,15 @@ document.addEventListener("DOMContentLoaded", () => {
         throw new Error(result.message || "Order placement failed");
       }
 
-      // Handle Razorpay payment flow
       if (paymentMethod === "razorpay" && result.razorpayOrder) {
         const razorpayOptions = {
-          key: "rzp_test_VwIcEmBewhtiOH", // Replace with actual key
+          key: "rzp_test_VwIcEmBewhtiOH",
           amount: result.razorpayOrder.amount,
           currency: result.razorpayOrder.currency,
           name: "Pixel Point",
           description: "Purchase from Pixel Point",
           order_id: result.razorpayOrder.id,
           handler: function (razorpayResponse) {
-            // After successful payment
             fetch("/verify-payment", {
               method: "POST",
               headers: {
@@ -81,7 +73,6 @@ document.addEventListener("DOMContentLoaded", () => {
               .then((res) => res.json())
               .then((verificationResult) => {
                 if (verificationResult.success) {
-                  // Clear session storage after successful payment
                   sessionStorage.removeItem("checkoutTotal");
                   sessionStorage.removeItem("appliedCoupon");
                   window.location.href = "/orderplaced";
@@ -104,7 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
             },
           },
           prefill: {
-            name: "Customer Name", // Add dynamic data if available
+            name: "Customer Name",
             email: "customer@example.com",
             contact: "9123456789",
           },
@@ -116,7 +107,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const razorpayInstance = new Razorpay(razorpayOptions);
         razorpayInstance.open();
       } else if (result.success) {
-        // Handle COD or other payment methods
         window.location.href = "/orderplaced";
       }
     } catch (error) {
