@@ -34,7 +34,7 @@ async function addToCart(productId, comboId) {
 
     const result = await response.json();
 
-    if (response.ok) {
+    if (response.ok && result.success) {
       Swal.fire({
         toast: true,
         position: "top-end",

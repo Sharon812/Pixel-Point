@@ -7,6 +7,7 @@ const crypto = require("crypto");
 const Address = require("../../models/addressSchema");
 const Product = require("../../models/productSchema");
 const Cart = require("../../models/cartSchema");
+const { response } = require("express");
 
 const getCart = async (req, res) => {
   try {
@@ -49,7 +50,6 @@ const getCart = async (req, res) => {
 
 const addToCart = async (req, res) => {
   try {
-    console.log("Entered");
     const { productId, comboId } = req.params;
     const { quantity } = req.body;
     const user = req.session.user;
@@ -69,9 +69,7 @@ const addToCart = async (req, res) => {
         .json({ success: false, message: "Product not available" });
     }
     if (!userData) {
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found" });
+      return res.status(404).json({ success: false, message: "Login First" });
     }
 
     const combo = productData.combos.id(comboId);
@@ -80,8 +78,12 @@ const addToCart = async (req, res) => {
         .status(404)
         .json({ success: false, message: "Combo not found" });
     }
+    let cart = await Cart.findOne({ userId: user });
 
-    let cart = await Cart.findOne({ userId: userData._id });
+    const itemCount = cart.items.length;
+    if (itemCount >= 5) {
+      return res.json({ success: false, message: "Max limit reached" });
+    }
 
     if (cart) {
       const existingItem = cart.items.find(
@@ -97,7 +99,6 @@ const addToCart = async (req, res) => {
       }
 
       if (existingItem) {
-        console.log(existingItem.quantity, "inside if looop");
         existingItem.quantity += quantity;
         existingItem.totalPrice = combo.salePrice * existingItem.quantity;
       } else {
@@ -195,7 +196,6 @@ const addquantity = async (req, res) => {
         .json({ success: false, message: "Cart not found" });
     }
 
-    // Find the product in the cart
     const product = cart.items.find((item) => item.comboId == comboId);
 
     if (!product) {
@@ -203,7 +203,12 @@ const addquantity = async (req, res) => {
         .status(404)
         .json({ success: false, message: "Product not found in cart" });
     }
-
+    if (product.quantity >= 5) {
+      return res.json({
+        success: false,
+        message: "can add only 5 items",
+      });
+    }
     const productWithCombo = await Product.findOne(
       { "combos._id": comboId },
       { "combos.$": 1 }

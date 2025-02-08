@@ -72,28 +72,23 @@ function selectCombo(button) {
     });
 }
 
-// Add to Cart Function with Fetch and SweetAlert Toasts
 async function addToCart(productId, comboId) {
-  console.log(productId);
   const quantityInput = document.querySelector(".quantity");
-  const quantity = quantityInput ? parseInt(quantityInput.value, 10) : 1; // Default to 1 if input is not found or invalid
-  // Construct the route dynamically using template literals
+  const quantity = quantityInput ? parseInt(quantityInput.value, 10) : 1;
   const route = `/addCart/${productId}/combo/${comboId}`;
 
   try {
-    // Send a fetch request to the server
     const response = await fetch(route, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ quantity }), // Include the user-selected quantity in the body
+      body: JSON.stringify({ quantity }),
     });
 
-    // Parse the response JSON
     const result = await response.json();
 
-    if (response.ok) {
+    if (response.ok && result.success) {
       // Success toast
       Swal.fire({
         toast: true,

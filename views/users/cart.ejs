@@ -177,15 +177,10 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                     <% } %>
                   <input type="number" value="<%= item.quantity %>" min="1" class="cart__quantity-input" />
 
-                  <% if(item.quantity <5 && item.quantity < item.combo.quantity) {%>
                   <button onclick="updateQuantity( '<%=item.combo._id%>' )" class="cart__quantity-btn plus" >
                     <i class="fi fi-rs-plus-small"></i>
                   </button>
-                  <% }else{ %>
-                    <button onclick="updateQuantity( '<%=item.combo._id%>' )" class="cart__quantity-btn plus" disabled>
-                      <i class="fi fi-rs-plus-small"></i>
-                    </button>
-                   <% } %>
+                 
                 </div>
                 <button 
                 onclick="deleteCartItem('<%=cart._id%>','<%=item._id%>')"

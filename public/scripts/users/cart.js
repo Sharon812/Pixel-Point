@@ -76,11 +76,18 @@ async function updateQuantity(comboId) {
     }
 
     const result = await response.json();
-
+    console.log(result);
     if (result.success) {
       location.reload();
     } else {
-      throw new Error(result.message || "An error occurred.");
+      Swal.fire({
+        toast: true,
+        icon: "error",
+        title: result.message || `error occured`,
+        position: "top-right",
+        timer: 3000,
+        showConfirmButton: false,
+      });
     }
   } catch (error) {
     Swal.fire({
