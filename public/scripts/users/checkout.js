@@ -127,3 +127,129 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+
+async function deleteAddress(addressId) {
+  try {
+    // Ask for confirmation using SweetAlert
+    const confirmation = await Swal.fire({
+      title: "Are you sure?",
+      text: "This action cannot be undone. Do you want to delete this address?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+    });
+
+    if (confirmation.isConfirmed) {
+      // Send a DELETE request to the server
+      const response = await fetch(`/deleteAddreess/${addressId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        // Show success toast
+        Swal.fire({
+          toast: true,
+          icon: "success",
+          title: "Address deleted successfully!",
+          position: "top-end",
+          timer: 1500,
+          showConfirmButton: false,
+        }).then(() => {
+          window.location.reload();
+        });
+      } else {
+        // Show error toast
+        Swal.fire({
+          toast: true,
+          icon: "error",
+          title: result.message || "Failed to delete address!",
+          position: "top-end",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      }
+    }
+  } catch (error) {
+    // Show error toast for unexpected issues
+    Swal.fire({
+      toast: true,
+      icon: "error",
+      title: "An unexpected error occurred!",
+      position: "top-end",
+      timer: 1500,
+      showConfirmButton: false,
+    });
+  }
+}
+
+//for address
+// Address Modal Functions
+function openAddressModal() {
+  document.getElementById("addressModal").style.display = "block";
+}
+
+function closeAddressModal() {
+  document.getElementById("addressModal").style.display = "none";
+}
+
+function selectAddress(addressId) {
+  // Remove selected class from all options
+  document.querySelectorAll(".address-option").forEach((option) => {
+    option.classList.remove("selected");
+  });
+
+  // Add selected class to clicked option
+  const selectedOption = document.querySelector(
+    `.address-option[data-address-id="${addressId}"]`
+  );
+  if (selectedOption) {
+    selectedOption.classList.add("selected");
+    selectedOption.querySelector('input[type="radio"]').checked = true;
+  }
+}
+
+function confirmAddressSelection() {
+  const selectedAddressId = document.querySelector(
+    'input[name="modalAddress"]:checked'
+  ).value;
+  const selectedAddress = document.querySelector(
+    `.address-option[data-address-id="${selectedAddressId}"]`
+  );
+
+  if (selectedAddress) {
+    const primaryAddress = document.querySelector(".primary-address");
+    primaryAddress.querySelector('input[type="radio"]').value =
+      selectedAddressId;
+    primaryAddress.querySelector(".address__details").textContent =
+      selectedAddress.querySelector(".address__details").textContent;
+    primaryAddress.querySelector(".contact__number").textContent =
+      selectedAddress.querySelector(".contact__number").textContent;
+    primaryAddress.querySelector(".address__type").textContent =
+      selectedAddress.querySelector(".address__type").textContent;
+  }
+
+  closeAddressModal();
+}
+
+window.onclick = function (event) {
+  const modal = document.getElementById("addressModal");
+  if (event.target === modal) {
+    closeAddressModal();
+  }
+};
+
+// Add click event listeners to address options
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll(".address-option").forEach((option) => {
+    option.addEventListener("click", function () {
+      const addressId = this.dataset.addressId;
+      selectAddress(addressId);
+    });
+  });
+});

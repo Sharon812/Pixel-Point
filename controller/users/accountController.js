@@ -412,10 +412,8 @@ const editAddress = async (req, res) => {
 //for deleting address
 const deleteAddress = async (req, res) => {
   try {
-    const userId = req.session.user; // Assuming the logged-in user's ID is in session
-    const { id } = req.params; // Address ObjectId from the path parameter
-    console.log("id", id);
-    // Find the address document and remove the address by ID
+    const userId = req.session.user;
+    const { id } = req.params;
     const updatedAddress = await Address.findOneAndUpdate(
       { userId },
       { $pull: { address: { _id: id } } },

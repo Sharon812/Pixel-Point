@@ -167,7 +167,6 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                 </div>
               <% } %>
             </div>
-
             <div class="checkout__billing">
               <div class="billing__header">
                 <div class="location__icon">
@@ -176,23 +175,62 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                 <h3 class="section__title">Delivery Address</h3>
               </div>
               <% if (address && address.length > 0) { %>
-                <% address.forEach((address, index) => { %>
-                  <div class="saved__address">
-                    <div class="address__info">
-                      <div class="address__header">
-                        <input type="radio" name="selectedAddress" value="<%= address._id %>" <%= index === 0 ? "checked" : "" %>>
-                        <h4 class="customer__name"><%= user.name %></h4>
-                        <span class="address__type"><%= address.addressType %></span>
-                      </div>
-                      <p class="address__details">
-                        <%= address.name %>, <%= address.landMark %>,
-                        <%= address.city %>, <%= address.state %> - <%= address.pincode %>
-                      </p>
-                      <p class="contact__number"><%= address.phone %></p>
+                <!-- Display first address by default -->
+                <div class="saved__address primary-address">
+                  <div class="address__info">
+                    <div class="address__header">
+                      <input type="radio" name="selectedAddress" value="<%= address[0]._id %>" checked>
+                      <h4 class="customer__name"><%= user.name %></h4>
+                      <span class="address__type"><%= address[0].addressType %></span>
                     </div>
-                    <button type="button" class="change__address" onclick="toggleAddressModal()">CHANGE</button>
+                    <p class="address__details">
+                      <%= address[0].name %>, <%= address[0].landMark %>,
+                      <%= address[0].city %>, <%= address[0].state %> - <%= address[0].pincode %>
+                    </p>
+                    <p class="contact__number"><%= address[0].phone %></p>
                   </div>
-                <% }); %>
+                  <button type="button" class="change__address" onclick="openAddressModal()">CHANGE</button>
+                </div>
+
+                <!-- Address Selection Modal -->
+                <div id="addressModal" class="address-modal">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h2>Select Delivery Address</h2>
+                      <span class="close-modal" onclick="closeAddressModal()">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                      <% address.forEach((addr, index) => { %>
+                        <div class="address-option <%= index === 0 ? 'selected' : '' %>" data-address-id="<%= addr._id %>">
+                          <div class="address__info">
+                            <div class="address__header">
+                              <input type="radio" name="modalAddress" value="<%= addr._id %>" <%= index === 0 ? "checked" : "" %>>
+                              <h4 class="customer__name"><%= user.name %></h4>
+                              <span class="address__type"><%= addr.addressType %></span>
+                            </div>
+                            <p class="address__details">
+                              <%= addr.name %>, <%= addr.landMark %>,
+                              <%= addr.city %>, <%= addr.state %> - <%= addr.pincode %>
+                            </p>
+                            <p class="contact__number"><%= addr.phone %></p>
+                          </div>
+                          <div class="address-actions">
+                            <button type="button" class="edit-address" onclick="window.location.href='/editAddress/<%= addr._id %>'">
+                              <i class="fi fi-rs-edit"></i> Edit
+                            </button>
+                            <button type="button" class="delete-address"  onclick="deleteAddress('<%=addr._id%>')">
+                              <i class="fi fi-rs-trash"></i> Delete
+                            </button>
+                          </div>
+                        </div>
+                      <% }); %>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn-secondary" onclick="closeAddressModal()">Cancel</button>
+                      <button type="button" class="btn-primary" onclick="confirmAddressSelection()">Confirm</button>
+                    </div>
+                  </div>
+                </div>
               <% } else { %>
                 <p>No saved addresses found. Please add a new address.</p>
               <% } %>
@@ -224,217 +262,6 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                </div>
              </div>
            </div>
-
-           <style>
-             .modal {
-               display: none;
-               position: fixed;
-               z-index: 1000;
-               left: 0;
-               top: 0;
-               width: 100%;
-               height: 100%;
-               background-color: rgba(0,0,0,0.4);
-             }
-             
-             .modal-content {
-               background-color: #fefefe;
-               margin: 15% auto;
-               padding: 20px;
-               border: 1px solid #888;
-               width: 80%;
-               max-width: 500px;
-               border-radius: 8px;
-             }
-             
-             .close {
-               color: #aaa;
-               float: right;
-               font-size: 28px;
-               font-weight: bold;
-               cursor: pointer;
-             }
-             
-             .show-coupons-btn {
-               background-color: #4CAF50;
-               color: white;
-               padding: 8px 15px;
-               border: none;
-               border-radius: 4px;
-               cursor: pointer;
-               margin-right: 10px;
-             }
-             
-             .coupon-item {
-               padding: 10px;
-               border: 1px solid #ddd;
-               margin: 10px 0;
-               border-radius: 4px;
-               cursor: pointer;
-             }
-             
-             .coupon-item:hover {
-               background-color: #f5f5f5;
-             }
-           </style>
-
-           <script>
-             let originalPrice = '<%= totalPrice %>';
-             let appliedDiscount = 0;
-             let appliedCouponCode = '';
-             let discountedTotal = originalPrice;
-
-             function showAvailableCoupons() {
-               const modal = document.getElementById('couponModal');
-               const couponList = document.getElementById('couponList');
-               
-               fetch('/checkout/coupons')
-                 .then(response => response.json())
-                 .then(coupons => {
-                   couponList.innerHTML = '';
-                   coupons.forEach(coupon => {
-                     const couponElement = document.createElement('div');
-                     couponElement.className = 'coupon-item';
-                     couponElement.innerHTML = `
-                       <strong>${coupon.name}</strong><br>
-                       Minimum Purchase: ₹${coupon.minimumPrice}<br>
-                       Discount: ₹${coupon.offerPrice}<br>
-                       Valid till: ${new Date(coupon.expireOn).toLocaleDateString("en-GB")}
-                     `;
-                     couponElement.onclick = () => {
-                       document.getElementById('couponInput').value = coupon.name;
-                       closeCouponModal();
-                     };
-                     couponList.appendChild(couponElement);
-                   });
-                 })
-                 .catch(error => {
-                   console.error('Error fetching coupons:', error);
-                   couponList.innerHTML = '<p>Error loading coupons. Please try again.</p>';
-                 });
-               
-               modal.style.display = 'block';
-             }
-
-             function closeCouponModal() {
-               document.getElementById('couponModal').style.display = 'none';
-             }
-
-             function applyCoupon(event) {
-               event.preventDefault(); // Prevent form submission
-               const couponCode = document.getElementById('couponInput').value.trim();
-               if (!couponCode) {
-                 Swal.fire({
-                   icon: 'warning',
-                   text: 'Please enter a coupon code',
-                 });
-                 return;
-               }
-
-               // If same coupon is being applied again, ignore
-               if (appliedCouponCode === couponCode && appliedDiscount > 0) {
-                 Swal.fire({
-                   icon: 'info',
-                   text: 'This coupon is already applied',
-                 });
-                 return;
-               }
-
-               fetch('/checkout/apply-coupon', {
-                 method: 'POST',
-                 headers: {
-                   'Content-Type': 'application/json',
-                 },
-                 body: JSON.stringify({
-                   code: couponCode,
-                   cartTotal: originalPrice
-                 })
-               })
-               .then(response => response.json())
-               .then(data => {
-                 if (data.status === 'success') {
-                   appliedDiscount = data.discount;
-                   appliedCouponCode = couponCode;
-                   updatePriceDisplay();
-                   // Store applied coupon in session storage
-                   sessionStorage.setItem('appliedCoupon', JSON.stringify({
-                     code: couponCode,
-                     discount: data.discount,
-                     totalPrice: data.totalPrice,
-                   }));
-                   Swal.fire({
-                     icon: 'success',
-                     text: data.message,
-                   });
-                 } else {
-                   appliedDiscount = 0;
-                   appliedCouponCode = '';
-                   updatePriceDisplay();
-                   sessionStorage.removeItem('appliedCoupon');
-                   Swal.fire({
-                     icon: 'error',
-                     text: data.message,
-                   });
-                 }
-               })
-               .catch(error => {
-                 console.error('Error applying coupon:', error);
-                 Swal.fire({
-                   icon: 'error',
-                   text: 'Failed to apply coupon. Please try again.',
-                 });
-               });
-             }
-
-             function updatePriceDisplay() {
-               const discountRow = document.getElementById('couponDiscountRow');
-               const discountAmount = document.getElementById('couponDiscountAmount');
-               const finalAmount = document.getElementById('finalAmount');
-
-               if (appliedDiscount > 0) {
-                 discountRow.style.display = 'flex';
-                 discountAmount.textContent = `-₹${appliedDiscount}`;
-                 discountedTotal = originalPrice - appliedDiscount;
-                 finalAmount.textContent = `₹${discountedTotal}`;
-               } else {
-                 discountRow.style.display = 'none';
-                 discountedTotal = originalPrice;
-                 finalAmount.textContent = `₹${originalPrice}`;
-               }
-
-               // Store the discounted total in session storage
-               sessionStorage.setItem('checkoutTotal', JSON.stringify({
-                 originalPrice: originalPrice,
-                 discountedTotal: discountedTotal,
-                 discount: appliedDiscount
-               }));
-             }
-
-             // Restore applied coupon on page load
-             window.addEventListener('load', function() {
-               const savedCoupon = sessionStorage.getItem('appliedCoupon');
-               const savedTotal = sessionStorage.getItem('checkoutTotal');
-               if (savedCoupon) {
-                 const { code, discount } = JSON.parse(savedCoupon);
-                 document.getElementById('couponInput').value = code;
-                 appliedCouponCode = code;
-                 appliedDiscount = discount;
-                 if (savedTotal) {
-                   const { discountedTotal: savedDiscountedTotal } = JSON.parse(savedTotal);
-                   discountedTotal = savedDiscountedTotal;
-                 }
-                 updatePriceDisplay();
-               }
-             });
-
-             // Close modal when clicking outside
-             window.onclick = function(event) {
-               const modal = document.getElementById('couponModal');
-               if (event.target == modal) {
-                 modal.style.display = 'none';
-               }
-             }
-           </script>
             <!-- Price Details -->
             <div class="price__details">
               <h3 class="section__title">Price Details</h3>
@@ -458,39 +285,13 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                 </div>
               </div>
             </div>
-            <script>
-              function removeCoupon() {
-                // Reset coupon related variables
-                appliedDiscount = 0;
-                appliedCouponCode = '';
-                document.getElementById('couponInput').value = '';
-                
-                // Update the display
-                updatePriceDisplay();
-                
-                // Remove from session storage
-                sessionStorage.removeItem('appliedCoupon');
-                sessionStorage.removeItem('checkoutTotal');
-
-                // Show success message
-                Swal.fire({
-                  icon: 'success',
-                  text: 'Coupon removed successfully',
-                  toast: true,
-                  position: 'top-end',
-                  showConfirmButton: false,
-                  timer: 3000,
-                  timerProgressBar: true
-                });
-              }
-            </script>
 
             <!-- Payment Methods -->
             <div class="checkout__payment">
               <h3 class="section__title">Payment Methods</h3>
               <div class="payment__methods">
                 <div class="payment__option">
-                  <input type="radio" name="payment" id="Cash on Delivery" checked>
+                  <input type="radio" name="payment" id="Cash on Delivery">
                   <label for="bank"> Cash on Delivery</label>
                 </div>
                 <div class="payment__option">
@@ -612,6 +413,188 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
     <script src="/scripts/users/checkout.js" ></script>
   <!--=============== MAIN JS ===============-->
   <script src="/scripts/users/main.js"></script>
+  <script>
+    let originalPrice = '<%= totalPrice %>';
+    let appliedDiscount = 0;
+    let appliedCouponCode = '';
+    let discountedTotal = originalPrice;
+
+    function showAvailableCoupons() {
+      const modal = document.getElementById('couponModal');
+      const couponList = document.getElementById('couponList');
+      
+      fetch('/checkout/coupons')
+        .then(response => response.json())
+        .then(coupons => {
+          couponList.innerHTML = '';
+          coupons.forEach(coupon => {
+            const couponElement = document.createElement('div');
+            couponElement.className = 'coupon-item';
+            couponElement.innerHTML = `
+              <strong>${coupon.name}</strong><br>
+              Minimum Purchase: ₹${coupon.minimumPrice}<br>
+              Discount: ₹${coupon.offerPrice}<br>
+              Valid till: ${new Date(coupon.expireOn).toLocaleDateString("en-GB")}
+            `;
+            couponElement.onclick = () => {
+              document.getElementById('couponInput').value = coupon.name;
+              closeCouponModal();
+            };
+            couponList.appendChild(couponElement);
+          });
+        })
+        .catch(error => {
+          console.error('Error fetching coupons:', error);
+          couponList.innerHTML = '<p>Error loading coupons. Please try again.</p>';
+        });
+      
+      modal.style.display = 'block';
+    }
+
+    function closeCouponModal() {
+      document.getElementById('couponModal').style.display = 'none';
+    }
+
+    function applyCoupon(event) {
+      event.preventDefault(); // Prevent form submission
+      const couponCode = document.getElementById('couponInput').value.trim();
+      if (!couponCode) {
+        Swal.fire({
+          icon: 'warning',
+          text: 'Please enter a coupon code',
+        });
+        return;
+      }
+
+      // If same coupon is being applied again, ignore
+      if (appliedCouponCode === couponCode && appliedDiscount > 0) {
+        Swal.fire({
+          icon: 'info',
+          text: 'This coupon is already applied',
+        });
+        return;
+      }
+
+      fetch('/checkout/apply-coupon', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          code: couponCode,
+          cartTotal: originalPrice
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'success') {
+          appliedDiscount = data.discount;
+          appliedCouponCode = couponCode;
+          updatePriceDisplay();
+          // Store applied coupon in session storage
+          sessionStorage.setItem('appliedCoupon', JSON.stringify({
+            code: couponCode,
+            discount: data.discount,
+            totalPrice: data.totalPrice,
+          }));
+          Swal.fire({
+            icon: 'success',
+            text: data.message,
+          });
+        } else {
+          appliedDiscount = 0;
+          appliedCouponCode = '';
+          updatePriceDisplay();
+          sessionStorage.removeItem('appliedCoupon');
+          Swal.fire({
+            icon: 'error',
+            text: data.message,
+          });
+        }
+      })
+      .catch(error => {
+        console.error('Error applying coupon:', error);
+        Swal.fire({
+          icon: 'error',
+          text: 'Failed to apply coupon. Please try again.',
+        });
+      });
+    }
+
+    function updatePriceDisplay() {
+      const discountRow = document.getElementById('couponDiscountRow');
+      const discountAmount = document.getElementById('couponDiscountAmount');
+      const finalAmount = document.getElementById('finalAmount');
+
+      if (appliedDiscount > 0) {
+        discountRow.style.display = 'flex';
+        discountAmount.textContent = `-₹${appliedDiscount}`;
+        discountedTotal = originalPrice - appliedDiscount;
+        finalAmount.textContent = `₹${discountedTotal}`;
+      } else {
+        discountRow.style.display = 'none';
+        discountedTotal = originalPrice;
+        finalAmount.textContent = `₹${originalPrice}`;
+      }
+
+      // Store the discounted total in session storage
+      sessionStorage.setItem('checkoutTotal', JSON.stringify({
+        originalPrice: originalPrice,
+        discountedTotal: discountedTotal,
+        discount: appliedDiscount
+      }));
+    }
+
+    // Restore applied coupon on page load
+    window.addEventListener('load', function() {
+      const savedCoupon = sessionStorage.getItem('appliedCoupon');
+      const savedTotal = sessionStorage.getItem('checkoutTotal');
+      if (savedCoupon) {
+        const { code, discount } = JSON.parse(savedCoupon);
+        document.getElementById('couponInput').value = code;
+        appliedCouponCode = code;
+        appliedDiscount = discount;
+        if (savedTotal) {
+          const { discountedTotal: savedDiscountedTotal } = JSON.parse(savedTotal);
+          discountedTotal = savedDiscountedTotal;
+        }
+        updatePriceDisplay();
+      }
+    });
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+      const modal = document.getElementById('couponModal');
+      if (event.target == modal) {
+        modal.style.display = 'none';
+      }
+    }
+
+function removeCoupon() {
+   // Reset coupon related variables
+   appliedDiscount = 0;
+   appliedCouponCode = '';
+   document.getElementById('couponInput').value = '';
+   
+   // Update the display
+   updatePriceDisplay();
+   
+   // Remove from session storage
+   sessionStorage.removeItem('appliedCoupon');
+   sessionStorage.removeItem('checkoutTotal');
+
+   // Show success message
+   Swal.fire({
+     icon: 'success',
+     text: 'Coupon removed successfully',
+     toast: true,
+     position: 'top-end',
+     showConfirmButton: false,
+     timer: 3000,
+     timerProgressBar: true
+  });
+ }
+  </script>
   </body>
   <%- include("../layouts/users/footer.ejs") %>
   
