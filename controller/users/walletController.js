@@ -14,24 +14,46 @@ const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_ID_KEY, // Store in .env
   key_secret: process.env.RAZORPAY_SECRET_KEY,
 });
+
 //for rendering wallet
 const getWallet = async (req, res) => {
   try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 6; // Items per page
+
     const userId = req.user ? req.user.id : null;
     const userData = await User.findById(userId);
     let walletData = await Wallet.findOne({ user: userId });
-    if (walletData) {
-      walletData.transactions.sort(
-        (a, b) => new Date(b.date) - new Date(a.date)
-      );
+
+    let paginatedTransactions = [];
+    let totalPages = 0;
+
+    if (walletData && walletData.transactions.length > 0) {
+      walletData.transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+      
+      totalPages = Math.ceil(walletData.transactions.length / limit);
+      
+      const startIndex = (page - 1) * limit;
+      const endIndex = startIndex + limit;
+      paginatedTransactions = walletData.transactions.slice(startIndex, endIndex);
     }
 
     res.render("wallet", {
-      walletData: walletData || { balance: 0, transactions: [] },
+      walletData: {
+        balance: walletData ? walletData.balance : 0,
+        transactions: paginatedTransactions
+      },
+      pagination: {
+        currentPage: page,
+        totalPages: totalPages,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1
+      },
       user: userData,
     });
   } catch (error) {
     console.log(error, "error at rendering wallet page");
+    res.redirect("/page404");
   }
 };
 

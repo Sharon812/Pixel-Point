@@ -106,8 +106,16 @@ userRoute.get("/checkout", userAuth.userCheck, orderController.processCheckout);
 userRoute.post("/checkout", orderController.placeOrder);
 
 // Coupon routes for checkout
-userRoute.get("/checkout/coupons", userAuth.userCheck, couponController.getAvailableCoupons);
-userRoute.post("/checkout/apply-coupon", userAuth.userCheck, couponController.applyCoupon);
+userRoute.get(
+  "/checkout/coupons",
+  userAuth.userCheck,
+  couponController.getAvailableCoupons
+);
+userRoute.post(
+  "/checkout/apply-coupon",
+  userAuth.userCheck,
+  couponController.applyCoupon
+);
 
 //for order placed
 userRoute.get("/orderplaced", userAuth.userCheck, orderController.orderPlaced);
@@ -132,8 +140,16 @@ userRoute.post("/addToWishlist", wishlistController.addToWishlist);
 userRoute.post("/removeFromWishlist", wishlistController.removeFromWishlist);
 
 //for wallet
-userRoute.get("/wallet", walletController.getWallet);
-userRoute.post("/add-money", walletController.addMoneyToWallet);
-userRoute.post("/verify-addmoney-payment", walletController.verifyPayment);
+userRoute.get("/wallet", userAuth.userCheck, walletController.getWallet);
+userRoute.post(
+  "/add-money",
+  userAuth.userCheck,
+  walletController.addMoneyToWallet
+);
+userRoute.post(
+  "/verify-addmoney-payment",
+  userAuth.userCheck,
+  walletController.verifyPayment
+);
 
 module.exports = userRoute;

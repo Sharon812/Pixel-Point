@@ -1,21 +1,3 @@
-// document
-//     .getElementById("addMoneyButton")
-//     .addEventListener("click", function () {
-//       const addMoneySection = document.getElementById("addMoneySection");
-//       addMoneySection.innerHTML = `
-//     <form id="addMoneyForm" method="POST" onsubmit="return validateAndSubmit(event)">
-//       <input type="number" id="moneyAmount" name="amount" class="form-control mb-3 input-small" placeholder="Enter amount" />
-//       <div id="errorMessage" class="error-message" style="display: none;">Please enter a valid amount.</div>
-//       <button type="submit" class="btn btn-success">Continue</button>
-//     </form>
-//   `;
-//       addMoneySection.classList.add("show");
-
-//       document
-//         .getElementById("moneyAmount")
-//         .addEventListener("input", validateAmount);
-//     });
-
 function validateAmount() {
   const amount = document.getElementById("amount").value;
   const errorMessage = document.getElementById("errorMessage");
@@ -27,37 +9,33 @@ function validateAmount() {
 }
 
 async function validateAndSubmit(event) {
-  event.preventDefault(); // Prevent form from actually submitting
+  event.preventDefault();
 
   const amount = document.getElementById("amount").value;
   const errorMessage = document.getElementById("errorMessage");
 
-  // Validate the amount
   if (!amount || isNaN(amount) || amount <= 0) {
     errorMessage.textContent = "Please enter a valid amount.";
     return;
   }
 
-  if (amount > 50000) {
-    errorMessage.textContent = "Max limit 50,000/-";
+  if (amount > 10000) {
+    errorMessage.textContent = "Max limit 1,00,000/-";
     errorMessage.style.display = "block";
     return;
   }
 
-  // // Fetch the current wallet balance
-  // const walletBalance = <%= locals.wallet.balance %>;
+  const walletBalance = walletData.walletBalance;
 
-  // // Check if the total balance exceeds 1 lakh
-  // if (walletBalance + parseInt(amount) > 100000) {
-  //   errorMessage.textContent = "Total wallet balance cannot exceed 1 lakh.";
-  //   errorMessage.style.display = "block";
-  //   return;
-  // }
+  if (walletBalance + parseInt(amount) > 200000) {
+    errorMessage.textContent = "Total wallet balance cannot exceed 1 lakh.";
+    errorMessage.style.display = "block";
+    return;
+  }
 
   errorMessage.style.display = "none";
 
   try {
-    // Create Razorpay order by calling the `/add-money` route
     const response = await fetch("/add-money", {
       method: "POST",
       headers: {
@@ -141,3 +119,56 @@ async function validateAndSubmit(event) {
     alert("An error occurred. Please try again.");
   }
 }
+// Add Money Modal functionality
+const modal = document.getElementById("addMoneyModal");
+const addMoneyBtn = document.getElementById("addMoneyBtn");
+const closeBtn = document.querySelector(".close-modal");
+const amountInput = document.getElementById("amount");
+const quickAmountBtns = document.querySelectorAll(".quick-amount");
+const proceedBtn = document.querySelector(".proceed-btn");
+
+// Open modal
+addMoneyBtn.addEventListener("click", () => {
+  modal.style.display = "flex";
+});
+
+// Close modal
+closeBtn.addEventListener("click", () => {
+  modal.style.display = "none";
+});
+
+// Close modal when clicking outside
+window.addEventListener("click", (e) => {
+  if (e.target === modal) {
+    modal.style.display = "none";
+  }
+});
+
+// Quick amount buttons
+quickAmountBtns.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const amount = btn.dataset.amount;
+    amountInput.value = amount;
+  });
+});
+
+// Existing filter functionality
+const filterButtons = document.querySelectorAll(".type-btn");
+const transactions = document.querySelectorAll(".transaction-item");
+
+filterButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    filterButtons.forEach((btn) => btn.classList.remove("active"));
+    button.classList.add("active");
+
+    const filterType = button.dataset.type;
+
+    transactions.forEach((transaction) => {
+      if (filterType === "all" || transaction.dataset.type === filterType) {
+        transaction.style.display = "flex";
+      } else {
+        transaction.style.display = "none";
+      }
+    });
+  });
+});

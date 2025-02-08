@@ -206,44 +206,43 @@
               <% if(walletData.transactions.length > 0) {%>
 
               <div class="transactions-list">
-                <!-- Sample transactions -->
-                <% walletData.transactions.forEach(transaction => { %> <%
-                if(transaction.type == "debit") {%>
-                <div class="transaction-item" data-type="debit">
-                  <div class="transaction-info">
-                    <span class="transaction-title">
-                      <%= transaction.description %>
-                    </span>
-                    <span class="transaction-date">Jan 30, 2025</span>
-                  </div>
-                  <div class="transaction-type debit">
-                    <span class="type-icon">−</span>
-                    <span class="type-text">Debit</span>
-                  </div>
-                  <span class="transaction-amount debit">-₹1,999.00</span>
-                </div>
-                <% } else{ %>
-                <div class="transaction-item" data-type="credit">
-                  <div class="transaction-info">
-                    <span class="transaction-title">
-                      <%= transaction.description %>
-                    </span>
-                    <span class="transaction-date">
-                      <%=transaction.date.toLocaleDateString("en-GB")%>
+                <% walletData.transactions.forEach(transaction => { %>
+                  <div class="transaction-item" data-type="<%= transaction.type %>">
+                    <div class="transaction-info">
+                      <span class="transaction-title"><%= transaction.description %></span>
+                      <span class="transaction-date">
+                        <%= transaction.date.toLocaleDateString("en-GB") %>
+                      </span>
+                    </div>
+                    <div class="transaction-type <%= transaction.type %>">
+                      <span class="type-icon"><%= transaction.type === 'debit' ? '−' : '+' %></span>
+                      <span class="type-text"><%= transaction.type === 'debit' ? 'Debit' : 'Credit' %></span>
+                    </div>
+                    <span class="transaction-amount <%= transaction.type %>">
+                      <%= transaction.type === 'debit' ? '-' : '+' %>₹<%= transaction.amount.toFixed(2) %>
                     </span>
                   </div>
-                  <div class="transaction-type credit">
-                    <span class="type-icon">+</span>
-                    <span class="type-text">Credit</span>
+                <% }) %>
+
+                <% if (pagination.totalPages > 1) { %>
+                  <div class="pagination">
+                    <% if (pagination.hasPrevPage) { %>
+                      <a href="?page=<%= pagination.currentPage - 1 %>" class="page-link">&laquo; Previous</a>
+                    <% } %>
+                    
+                    <% for(let i = 1; i <= pagination.totalPages; i++) { %>
+                      <a href="?page=<%= i %>" class="page-link <%= i === pagination.currentPage ? 'active' : '' %>">
+                        <%= i %>
+                      </a>
+                    <% } %>
+                    
+                    <% if (pagination.hasNextPage) { %>
+                      <a href="?page=<%= pagination.currentPage + 1 %>" class="page-link">Next &raquo;</a>
+                    <% } %>
                   </div>
-                  <span class="transaction-amount credit">
-                    +<%=transaction.amount%>
-                  </span>
-                </div>
-                <% } %> <% }) %>
-              </div>
+                <% } %>
               <% } else {%>
-              <p>Not transactions yet</p>
+                <p class="no-transactions">No transactions yet</p>
               <%}%>
             </div>
           </div>
@@ -352,61 +351,11 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@7.12.15/dist/sweetalert2.all.min.js"></script>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  const walletData = {
+    walletBalance: "<%=walletData.balance%>",
+  };
+</script>
 
 <script src="/scripts/users/wallet.js"></script>
-<script>
-  // Add Money Modal functionality
-  const modal = document.getElementById("addMoneyModal");
-  const addMoneyBtn = document.getElementById("addMoneyBtn");
-  const closeBtn = document.querySelector(".close-modal");
-  const amountInput = document.getElementById("amount");
-  const quickAmountBtns = document.querySelectorAll(".quick-amount");
-  const proceedBtn = document.querySelector(".proceed-btn");
-
-  // Open modal
-  addMoneyBtn.addEventListener("click", () => {
-    modal.style.display = "flex";
-  });
-
-  // Close modal
-  closeBtn.addEventListener("click", () => {
-    modal.style.display = "none";
-  });
-
-  // Close modal when clicking outside
-  window.addEventListener("click", (e) => {
-    if (e.target === modal) {
-      modal.style.display = "none";
-    }
-  });
-
-  // Quick amount buttons
-  quickAmountBtns.forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const amount = btn.dataset.amount;
-      amountInput.value = amount;
-    });
-  });
-
-  // Existing filter functionality
-  const filterButtons = document.querySelectorAll(".type-btn");
-  const transactions = document.querySelectorAll(".transaction-item");
-
-  filterButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      filterButtons.forEach((btn) => btn.classList.remove("active"));
-      button.classList.add("active");
-
-      const filterType = button.dataset.type;
-
-      transactions.forEach((transaction) => {
-        if (filterType === "all" || transaction.dataset.type === filterType) {
-          transaction.style.display = "flex";
-        } else {
-          transaction.style.display = "none";
-        }
-      });
-    });
-  });
-</script>
 <%- include("../layouts/users/footer.ejs") %>
