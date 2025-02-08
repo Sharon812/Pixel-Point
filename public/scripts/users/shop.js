@@ -200,3 +200,34 @@ async function removeFromWishlist(productId) {
     console.error("Error removing from wishlist:", error);
   }
 }
+
+function toggleFilters() {
+  const filtersSection = document.querySelector(".filters-section");
+  filtersSection.classList.toggle("show");
+}
+
+function toggleSort() {
+  const sortDropdown = document.querySelector(".mobile-sort-dropdown");
+  sortDropdown.classList.toggle("show");
+
+  // Close dropdown when clicking outside
+  document.addEventListener("click", function (event) {
+    const sortSection = document.querySelector(".mobile-sort-section");
+    if (!sortSection.contains(event.target)) {
+      sortDropdown.classList.remove("show");
+    }
+  });
+}
+
+// Close filters when clicking outside on mobile
+document.addEventListener("click", function (event) {
+  const filtersSection = document.querySelector(".filters-section");
+  const filterToggleBtn = document.querySelector(".filter-toggle-btn");
+
+  if (
+    !filtersSection.contains(event.target) &&
+    !filterToggleBtn.contains(event.target)
+  ) {
+    filtersSection.classList.remove("show");
+  }
+});

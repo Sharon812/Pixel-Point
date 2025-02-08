@@ -178,7 +178,7 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
     </div>
 
     <div class="filter-group search-group">
-      <input type="text" id="search" name="search" placeholder="Search products..." />
+      <input type="text" id="search" name="search" placeholder="Search products..." value="<%= searchQuery %>" />
       <button class="btn btn-primary" type="button" onclick="submitFilters()">Search</button>
     </div>
 
@@ -319,21 +319,10 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
           <i class="fi fi-rs-star"></i>
           <i class="fi fi-rs-star"></i>
           <i class="fi fi-rs-star"></i>
+          <% if(products[i].combos[0].salePriceBeforeDiscount > 0) {%>
+            <span class="offer-text  " style="background: #e8f0fe; color: #113c7c; font-size: 8px; padding: 5px 10px; border-radius: 12px; margin-left: 80px; font-weight: 500; border: 1px solid #cce0ff;">Offer Applied</span>
+             <%}%>
         </div>
-        <%if (products[i].combos[0].discountedPrice) {%>
-          <div class="product__price flex">
-            <span class="new__price">&#8377; <%= products[i].combos[0].discountedPrice %> </span>
-            <span class="old__price">&#8377; <%= products[i].combos[0].salePrice %> </span>
-            <% 
-              const regularPrice = products[i].combos[0].salePrice;
-              const discountPrice = products[i].combos[0].discountedPrice;
-              const discount = Math.round(((regularPrice - discountPrice) / regularPrice) * 100);
-            %>
-            <span class="offer-badge" style="background: #113c7c; color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-left: 8px;">
-              -<%= discount %>%
-            </span>
-          </div>
-        <%}else{%>
           <div class="product__price flex">
             <span class="new__price">&#8377; <%= products[i].combos[0].salePrice %> </span>
             <span class="old__price">&#8377; <%= products[i].combos[0].regularPrice %> </span>
@@ -346,7 +335,6 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
               -<%= discount %>%
             </span>
           </div>
-          <%}%>
         <% if(products[i].combos[0].quantity > 0 ) {%>
         <div class="product__buttons">
           <button
@@ -499,35 +487,5 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
 <script src="scripts/users/main.js"></script>
 
 <%- include("../layouts/users/footer.ejs") %>
-
-<script>
-function toggleFilters() {
-  const filtersSection = document.querySelector('.filters-section');
-  filtersSection.classList.toggle('show');
-}
-
-function toggleSort() {
-  const sortDropdown = document.querySelector('.mobile-sort-dropdown');
-  sortDropdown.classList.toggle('show');
-  
-  // Close dropdown when clicking outside
-  document.addEventListener('click', function(event) {
-    const sortSection = document.querySelector('.mobile-sort-section');
-    if (!sortSection.contains(event.target)) {
-      sortDropdown.classList.remove('show');
-    }
-  });
-}
-
-// Close filters when clicking outside on mobile
-document.addEventListener('click', function(event) {
-  const filtersSection = document.querySelector('.filters-section');
-  const filterToggleBtn = document.querySelector('.filter-toggle-btn');
-  
-  if (!filtersSection.contains(event.target) && !filterToggleBtn.contains(event.target)) {
-    filtersSection.classList.remove('show');
-  }
-});
-</script>
 </body>
 </html>

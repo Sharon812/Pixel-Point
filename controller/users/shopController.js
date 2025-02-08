@@ -28,11 +28,10 @@ const loadShopPage = async (req, res) => {
       page: queryPage = 1,
     } = req.query;
 
-    const limit = 12; // Products per page
+    const limit = 12;
     const page = parseInt(queryPage) || 1;
     const skip = (page - 1) * limit;
 
-    // Resolve category and brand names to IDs
     let categoryId = null;
     let brandId = null;
 
@@ -45,42 +44,40 @@ const loadShopPage = async (req, res) => {
       brandId = brandDoc ? brandDoc._id : null;
     }
 
-    const matchStage = { $and: [] };
+    const matchStage = {};
+    const filterConditions = [];
 
     if (categoryId) {
-      matchStage.$and.push({ category: categoryId });
+      filterConditions.push({ category: categoryId });
     }
-
     if (brandId) {
-      matchStage.$and.push({ brand: brandId });
+      filterConditions.push({ brand: brandId });
     }
-
     if (selectedPriceRange) {
       const maxPrice = parseFloat(selectedPriceRange);
       if (!isNaN(maxPrice)) {
-        matchStage.$and.push({ "combos.salePrice": { $lte: maxPrice } });
+        filterConditions.push({ "combos.salePrice": { $lte: maxPrice } });
       }
     }
-
     if (selectedRam) {
-      matchStage.$and.push({ "combos.ram": selectedRam });
+      filterConditions.push({ "combos.ram": selectedRam });
     }
-
     if (selectedStorage) {
-      matchStage.$and.push({ "combos.storage": selectedStorage });
+      filterConditions.push({ "combos.storage": selectedStorage });
     }
-
     if (selectedColor) {
-      matchStage.$and.push({ "combos.color": selectedColor });
+      filterConditions.push({ "combos.color": selectedColor });
     }
-
     if (searchQuery) {
-      matchStage.$and.push({
+      filterConditions.push({
         productName: { $regex: searchQuery, $options: "i" },
       });
     }
+    console.log(filterConditions);
 
-    if (matchStage.$and.length === 0) delete matchStage.$and;
+    if (filterConditions.length > 0) {
+      matchStage.$and = filterConditions;
+    }
 
     const sortOptions = {
       priceLowToHigh: { "combos.salePrice": 1 },
@@ -118,16 +115,16 @@ const loadShopPage = async (req, res) => {
       { $skip: skip },
       { $limit: limit },
     ]);
+
     const [colors, rams, storages] = await Promise.all([
-      Product.distinct("combos.color"),
-      Product.distinct("combos.ram"),
-      Product.distinct("combos.storage"),
+      Product.distinct("combos.color", matchStage),
+      Product.distinct("combos.ram", matchStage),
+      Product.distinct("combos.storage", matchStage),
     ]);
 
     const user = req.session.user;
     let userData = null;
     let cartItemCount = 0;
-
     let wishlistProducts = [];
 
     if (user) {
@@ -150,6 +147,7 @@ const loadShopPage = async (req, res) => {
           .toUpperCase();
       }
     }
+
     const totalPages = Math.ceil(totalProducts / limit);
 
     res.render("shop", {
