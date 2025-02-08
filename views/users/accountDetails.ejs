@@ -134,10 +134,15 @@
         <a href="/address" class="account__tab">
           <i class="fi fi-rs-marker"></i> My Address
         </a>
-        <p class="account__tab">
+        <a href="/wallet" class="account__tab">
+          <i class="fi fi-rs-marker"></i> wallet
+        </a>
+        <a class="account__tab" href="/forgot-password">
           <i class="fi fi-rs-settings-sliders"></i> Change Password
-        </p>
-        <p class="account__tab"><i class="fi fi-rs-exit"></i> Logout</p>
+        </a>
+        <a class="account__tab" href="/logout"
+          ><i class="fi fi-rs-exit"></i> Logout</a
+        >
       </div>
       <div class="tabs__content">
         <div class="tab__content active-tab" content id="accountDetails">
@@ -165,6 +170,7 @@
               />
 
               <span>Email</span>
+              <% if(user.googleId === null) {%>
               <input
                 type="text"
                 placeholder="Email"
@@ -173,7 +179,17 @@
                 value="<%= (typeof user !== 'undefined' && user.email) || '' %>"
                 readonly
               />
-
+              <% }else{ %>
+              <input
+                type="text"
+                placeholder="Email"
+                id="email"
+                class="form__input"
+                value="<%= (typeof user !== 'undefined' && user.email) || '' %>"
+                readonly
+                disabled
+              />
+              <% } %>
               <span>Mobile</span>
               <input
                 type="text"

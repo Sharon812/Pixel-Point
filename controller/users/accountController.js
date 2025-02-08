@@ -204,8 +204,6 @@ const getAccountDetails = async (req, res) => {
       return res.render("accountDetails", {
         user: userData,
       });
-    } else {
-      return res.render("accountDetails");
     }
   } catch (error) {
     console.log("error at getting account details", error);
