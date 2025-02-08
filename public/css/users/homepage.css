@@ -806,6 +806,35 @@ table {
   background: #b91c1c;
 }
 
+.wishlist__btnpro {
+  background: white;
+  border: 1px solid #dc2626;
+  color: #dc2626;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.3s ease;
+}
+
+.wishlist__btnpro:hover {
+  background: #fee2e2;
+}
+
+.wishlist__btnpro.active {
+  background: #dc2626;
+  color: white;
+  border-color: #dc2626;
+}
+
+.wishlist__btnpro.active:hover {
+  background: #b91c1c;
+}
+
 .wishlist__btn i {
   font-size: 1rem;
 }

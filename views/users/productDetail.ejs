@@ -261,35 +261,28 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                 >
                   <%= combo.ram %>GB / <%= combo.storage %>GB / <%= combo.color %>
                 </button>
-
-                  
-
-
-
-
-
-                
               <% }); %>
             </li>
-            <!-- <li>
-            <a href="#" class="size__link">L</a>
-          </li>
-          <li>
-            <a href="#" class="size__link">XL</a>
-          </li>
-          <li>
-            <a href="#" class="size__link">XXL</a>
-          </li> -->
           </ul>
         </div>
         <% if(product.combos[0].quantity > 0 ) {%>
         <div class="details__action" id="actionButtons">
-          <input type="number" class="quantity" value="1" />
+          <input type="number" class="quantity" min="1" max="5" value="1" />
 
           <button id="addToCart" onclick="addToCart('<%= product._id %>','<%=product.combos[0]._id%>')"  class="btn btn--sm">Add To Cart</button>
-          <a href="#" class="details__action-btn">
+          <% if (wishlistProducts.includes(product._id.toString())) { %>
+            <button class="wishlist__btnpro active"
+              onclick="removeFromWishlist('<%=product._id %>')"
+              aria-label="Add to Wishlist">
+              <i class="fi fi-rs-heart"></i>
+            </button>
+          <% }else{ %>
+            <button class="wishlist__btnpro "
+            onclick="toggleWishlist('<%=product._id %>')"
+            aria-label="Add to Wishlist">
             <i class="fi fi-rs-heart"></i>
-          </a>
+          </button>
+          <% } %>
         </div>
         <ul class="details__meta">
           <!-- <li class="meta__list flex"><span>SKU:</span>FWM15VKT</li>
