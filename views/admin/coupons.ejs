@@ -38,18 +38,20 @@
           id="sidebarClose"
         ></button>
       </div>
-      <a href="/dashboard"><i class="fas fa-chart-line me-2"></i>Dashboard</a>
-      <a href="/profile"><i class="fas fa-user me-2"></i>Profile</a>
-      <a href="/orders"><i class="fas fa-shopping-bag me-2"></i>Orders</a>
-      <a href="/wishlist"><i class="fas fa-heart me-2"></i>Wishlist</a>
-      <a href="/coupons" class="active"
-        ><i class="fas fa-tags me-2"></i>Coupons</a
+      <a href="#" class="active"
+        ><i class="fas fa-chart-line me-2"></i>Dashboard</a
       >
-      <a href="/addresses"
-        ><i class="fas fa-map-marker-alt me-2"></i>Addresses</a
+      <a href="/admin/users"><i class="fas fa-users me-2"></i>Users</a>
+      <a href="/admin/category"><i class="fas fa-tags me-2"></i>Categories</a>
+      <a href="/admin/brands"><i class="fas fa-building me-2"></i>Brands</a>
+      <a href="/admin/addProducts"
+        ><i class="fas fa-plus-circle me-2"></i>Add Products</a
       >
-      <a href="/settings"><i class="fas fa-cog me-2"></i>Settings</a>
-      <a href="/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
+      <a href="/admin/products"><i class="fas fa-box me-2"></i>Products</a>
+      <a href="/admin/coupons"><i class="fa-solid fa-tag"></i>Coupons</a>
+      <a href="/admin/orders"><i class="fa-solid fa-book me-2"></i>Orders</a>
+      <a href="#"><i class="fas fa-cog me-2"></i>Settings</a>
+      <a href="/admin/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
     </div>
 
     <!-- Main Content -->
@@ -296,6 +298,6 @@
 <!-- SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <!-- Custom JS -->
-<script src="/js/coupons.js"></script>
+<script src="/scripts/admin/coupons.js"></script>
 
 <%- include('../layouts/users/footer.ejs') %>

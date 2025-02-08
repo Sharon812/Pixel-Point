@@ -16,7 +16,27 @@
     });
   }
 
-  // Form submission handling
+ const startDateInput = document.getElementById("startDate");
+  const expiryDateInput = document.getElementById("expiryDate");
+
+  const today = new Date().toISOString().split('T')[0];
+  if (startDateInput) {
+    startDateInput.min = today;
+    startDateInput.addEventListener('change', function() {
+      if (expiryDateInput) {
+        expiryDateInput.min = this.value;
+        
+        if (expiryDateInput.value && expiryDateInput.value < this.value) {
+          expiryDateInput.value = '';
+        }
+      }
+    });
+  }
+
+  if (expiryDateInput) {
+    expiryDateInput.min = today;
+  }
+
   const addCouponForm = document.getElementById("addCouponForm");
   if (addCouponForm) {
     addCouponForm.addEventListener("submit", async function (e) {
@@ -24,12 +44,35 @@
 
       // Get form data
       const formData = new FormData(this);
+      const startDate = formData.get("startDate");
+      const expiryDate = formData.get("expiryDate");
+      // Additional date validation
+      if (startDate < today) {
+        Swal.fire({
+          title: "Error!",
+          text: "Start date cannot be before today",
+          icon: "error",
+          confirmButtonColor: "#4e73df",
+        });
+        return;
+      }
+
+      if (expiryDate < startDate) {
+        Swal.fire({
+          title: "Error!",
+          text: "Expiry date must be after start date",
+          icon: "error",
+          confirmButtonColor: "#4e73df",
+        });
+        return;
+      }
+
       const couponData = {
         name: formData.get("code"),
         offerPrice: Number(formData.get("offerAmount")),
         minimumPrice: Number(formData.get("minPurchase")),
-        expireOn: formData.get("expiryDate"),
-        startOn: formData.get("startDate"),
+        expireOn: expiryDate,
+        startOn: startDate,
         maxUses: Number(formData.get("usesLeft")),
         maxUsesPerUser: Number(formData.get("maxUsesPerUser")),
       };
@@ -171,7 +214,7 @@
   });
 
   // Set minimum date for expiry date input
-  const expiryDateInput = document.getElementById("expiryDate");
+  // const expiryDateInput = document.getElementById("expiryDate");
   if (expiryDateInput) {
     const today = new Date();
     const tomorrow = new Date(today);
