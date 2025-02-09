@@ -1,5 +1,4 @@
- document.addEventListener("DOMContentLoaded", function () {
-  // Sidebar toggle functionality
+document.addEventListener("DOMContentLoaded", function () {
   const sidebarToggle = document.getElementById("sidebarToggle");
   const sidebarClose = document.getElementById("sidebarClose");
   const sidebar = document.getElementById("sidebar");
@@ -16,18 +15,18 @@
     });
   }
 
- const startDateInput = document.getElementById("startDate");
+  const startDateInput = document.getElementById("startDate");
   const expiryDateInput = document.getElementById("expiryDate");
 
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toISOString().split("T")[0];
   if (startDateInput) {
     startDateInput.min = today;
-    startDateInput.addEventListener('change', function() {
+    startDateInput.addEventListener("change", function () {
       if (expiryDateInput) {
         expiryDateInput.min = this.value;
-        
+
         if (expiryDateInput.value && expiryDateInput.value < this.value) {
-          expiryDateInput.value = '';
+          expiryDateInput.value = "";
         }
       }
     });
@@ -42,11 +41,9 @@
     addCouponForm.addEventListener("submit", async function (e) {
       e.preventDefault();
 
-      // Get form data
       const formData = new FormData(this);
       const startDate = formData.get("startDate");
       const expiryDate = formData.get("expiryDate");
-      // Additional date validation
       if (startDate < today) {
         Swal.fire({
           title: "Error!",
@@ -92,14 +89,12 @@
 
         const result = await response.json();
 
-        // Show success message
         Swal.fire({
           title: "Success!",
           text: "Coupon added successfully",
           icon: "success",
           confirmButtonColor: "#4e73df",
         }).then(() => {
-          // Close modal and refresh page
           const modal = bootstrap.Modal.getInstance(
             document.getElementById("addCouponModal")
           );
@@ -118,7 +113,6 @@
     });
   }
 
-  // Validate maxUsesPerUser input
   const maxUsesPerUserInput = document.getElementById("maxUsesPerUser");
   if (maxUsesPerUserInput) {
     maxUsesPerUserInput.addEventListener("input", function () {
@@ -131,7 +125,6 @@
     });
   }
 
-  // Delete coupon functionality
   const deleteButtons = document.querySelectorAll(".delete-coupon");
   deleteButtons.forEach((button) => {
     button.addEventListener("click", function () {
@@ -170,7 +163,6 @@
     });
   });
 
-  // Toggle status functionality
   const toggleButtons = document.querySelectorAll(".toggle-status");
   toggleButtons.forEach((button) => {
     button.addEventListener("click", async function () {
@@ -190,7 +182,6 @@
 
         const result = await response.json();
 
-        // Show success message and reload
         Swal.fire({
           title: "Success!",
           text: `Coupon status ${
@@ -213,8 +204,6 @@
     });
   });
 
-  // Set minimum date for expiry date input
-  // const expiryDateInput = document.getElementById("expiryDate");
   if (expiryDateInput) {
     const today = new Date();
     const tomorrow = new Date(today);

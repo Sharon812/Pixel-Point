@@ -218,3 +218,36 @@ const removeOffer = async (categoryId) => {
     }
   });
 };
+
+function addOffer(categoryId) {
+  const offerPercentage = document.getElementById(
+    `offerPercentage_${categoryId}`
+  ).value;
+  const endDate = document.getElementById(`endDate_${categoryId}`).value;
+
+  fetch("/admin/add-category-offer", {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      categoryId,
+      offerPercentage,
+      endDate,
+    }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        bootstrap.Modal.getInstance(
+          document.getElementById(`addOfferModal_${categoryId}`)
+        ).hide();
+        Swal.fire("Success", "Offer added successfully", "success");
+      } else {
+        Swal.fire("Error", data.message || "Failed to add offer", "error");
+      }
+    })
+    .catch((error) => {
+      Swal.fire("Error", "Something went wrong", "error");
+    });
+}
