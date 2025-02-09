@@ -7,20 +7,17 @@ const Order = require("../../models/orderSchema");
 
 const getOrderDetails = async (req, res) => {
   try {
-    // Get page number from query params, default to 1
     const page = parseInt(req.query.page) || 1;
-    const limit = 10; // Items per page
+    const limit = 10;
     const skip = (page - 1) * limit;
 
-    // Get total count of orders for pagination
     const totalOrders = await Order.countDocuments();
     const totalPages = Math.ceil(totalOrders / limit);
 
-    // Fetch paginated orders
     const orders = await Order.find()
       .populate("userId", "name")
       .populate("orderedItems.product", "productName price _id")
-      .sort({ createdAt: -1 }) // Sort by newest first
+      .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
 
@@ -39,10 +36,28 @@ const getOrderDetails = async (req, res) => {
         itemStatus: item.status,
         orderStatus: order.status,
         totalAmount: order.FinalAmount,
-        orderDate: order.createdAt
+        orderDate: order.createdAt,
       }))
     );
 
+    const returnRequestedProducts = orders.flatMap((order) =>
+      order.orderedItems
+        .filter((item) => item.status === "Return Requested")
+        .map((item) => ({
+          name:
+            order.userId && order.userId.name ? order.userId.name : "Unknown",
+          orderItemId: item._id,
+          orderId: order.orderId,
+          productName: item.product?.productName || "Unknown Product",
+          quantity: item.quantity,
+          price: item.price,
+          totalPrice: item.totalPrice,
+          cancellationReason: item.cancellationReason || null,
+          status: item.status,
+        }))
+    );
+
+    console.log(returnRequestedProducts, "returend reqested");
     res.render("orderDetailss", {
       orders: transformedOrders,
       currentPage: page,
@@ -51,7 +66,8 @@ const getOrderDetails = async (req, res) => {
       hasPrevPage: page > 1,
       nextPage: page + 1,
       prevPage: page - 1,
-      lastPage: totalPages
+      lastPage: totalPages,
+      returnedProducts: returnRequestedProducts,
     });
   } catch (error) {
     console.error("Error fetching orders:", error);
@@ -59,8 +75,6 @@ const getOrderDetails = async (req, res) => {
   }
 };
 const updateStatus = async (req, res) => {
-  console.log(req.body);
-  console.log(req.query);
   const { orderId, productId, status } = req.body;
   try {
     const order = await Order.findOne({ orderId });
@@ -82,15 +96,69 @@ const updateStatus = async (req, res) => {
     product.status = status;
 
     await order.save();
-    console.log("Order updated successfully");
 
     res.redirect("/admin/orders");
   } catch (error) {
     console.error("Error updating order status:", error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).json({ error: "internal server error" });
   }
 };
+
+const confirmReturnOrder = async (req, res) => {
+  try {
+    const { orderId, itemId } = req.body;
+    const order = await Order.findOneAndUpdate(
+      {
+        orderId: orderId,
+        "orderedItems._id": itemId,
+      },
+      {
+        $set: { "orderedItems.$.status": "Returned" },
+      },
+      { new: true }
+    );
+    if (!order) {
+      res
+        .status(400)
+        .json({ success: false, message: "Unable to find the order" });
+    }
+
+    res.status(200).json({ success: true, message: "Order returned" });
+  } catch (error) {
+    console.log(error, "error confirm returning order");
+    res.status(500).json({ error: "internal server error" });
+  }
+};
+
+const denyReturnOrder = async (req, res) => {
+  try {
+    const { orderId, itemId } = req.body;
+    const order = await Order.findOneAndUpdate(
+      {
+        orderId: orderId,
+        "orderedItems._id": itemId,
+      },
+      {
+        $set: { "orderedItems.$.status": "Delivered" },
+      },
+      { new: true }
+    );
+    if (!order) {
+      res
+        .status(400)
+        .json({ success: false, message: "Unable to find the order" });
+    }
+
+    res.status(200).json({ success: true, message: "Return denied" });
+  } catch (error) {
+    console.log(error, "error confirm returning order");
+    res.status(500).json({ error: "internal server error" });
+  }
+};
+
 module.exports = {
   getOrderDetails,
   updateStatus,
+  confirmReturnOrder,
+  denyReturnOrder,
 };

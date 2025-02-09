@@ -212,6 +212,11 @@ const placeOrder = async (req, res) => {
         receipt: newOrder._id.toString(),
         payment_capture: 1,
       });
+      if (discount > 0) {
+        const couponData = await Coupons.findOne({ name: couponCode });
+        couponData.usesCount += 1;
+        await couponData.save();
+      }
 
       return res.json({
         success: true,
@@ -290,11 +295,6 @@ const verifyPayment = async (req, res) => {
 
       order.paymentStatus = "Confirmed";
       await order.save();
-      if (discount > 0) {
-        const couponData = await Coupons.findOne({ name: couponCode });
-        couponData.usesCount += 1;
-        await couponData.save();
-      }
       await Cart.findOneAndUpdate(
         { userId: order.userId },
         { $set: { items: [] } }

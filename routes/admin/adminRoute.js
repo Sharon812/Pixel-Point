@@ -64,6 +64,8 @@ router.get("/blockBrand", brandController.blockBrand);
 //for orders
 router.get("/orders", orderController.getOrderDetails);
 router.post("/orders/update-status", orderController.updateStatus);
+router.patch("/confirm-returnorder", orderController.confirmReturnOrder);
+router.patch("/deny-returnorder", orderController.denyReturnOrder);
 
 // Sales Report Routes
 router.get("/sales-report/daily", adminController.generateDailyReport);
