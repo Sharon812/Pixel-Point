@@ -107,7 +107,7 @@
     <div class="order-date px-3">
       Ordered on <%= orderData.createdAt.toLocaleDateString() %>
     </div>
-    <% if(orderDetails[0].status == "Delivered") {%>
+    <% if(orderDetails[0].status === "Delivered") {%>
     <span class="badge status-completed"> <%= orderDetails[0].status %> </span>
     <% } else{%>
     <span class="badge bg-warning"><%= orderDetails[0].status %> </span>
@@ -145,10 +145,12 @@
       <span>Quantity</span>
       <span><%= orderDetails[0].quantity %></span>
     </div>
+    <% if(orderData.couponCode !== null) {%>
     <div class="summary-row">
-      <span>Coupon Applied (NEW2024)</span>
-      <span class="discount-badge">-₹2,000</span>
+      <span>Coupon Applied (<%=orderData.couponCode %> )</span>
+      <span class="discount-badge">-₹ <%= orderData.discount %> </span>
     </div>
+    <%} %>
     <div class="summary-row">
       <strong>Final Amount</strong>
       <span class="total-amount">₹ <%= orderDetails[0].totalPrice %></span>
@@ -170,7 +172,7 @@
 
   <div class="payment-info">
     <i class="fas fa-credit-card payment-method-icon"></i>
-    <span>Paid via CREDIT CARD</span>
+    <span>Paid COD</span>
   </div>
 
   <div class="order-timeline mt-4">
@@ -287,7 +289,7 @@
     <% } %>
   </div>
   <% if(orderDetails[0].status !== "Cancelled" && orderDetails[0].status !==
-  "Returned") {%>
+  "Returned" && orderDetails[0].status !== "Return Requested") {%>
   <div class="order-actions mt-4">
     <% if(orderDetails[0].status !== "Delivered") { %>
     <button
@@ -298,8 +300,8 @@
     </button>
     <% } else { %>
     <button
-      class="btn-primary"
-      onclick="openCancelModal( '<%=orderData._id%>', '<%= orderDetails[0]._id %>')"
+      class="btn-danger"
+      onclick="openReturnModal('<%= orderDetails[0]._id %>','<%=orderData._id%>')"
     >
       Return Order
     </button>
@@ -335,6 +337,35 @@
         class="modal-btn confirm-btn"
         id="confirmButton"
         onclick="confirmCancelOrder()"
+      >
+        Confirm
+      </button>
+    </div>
+  </div>
+</div>
+<div class="cancel-modal" id="returnModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 class="modal-title" id="modalTitle">Return Order</h3>
+      <p class="modal-subtitle" id="modalSubtitle">
+        Please provide a reason for Return
+      </p>
+    </div>
+    <div class="modal-body">
+      <input
+        class="reason-textarea"
+        id="returnReason"
+        placeholder="Enter your reason here..."
+      />
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn cancel-btn" onclick="closeReturnModal( )">
+        Close
+      </button>
+      <button
+        class="modal-btn confirm-btn"
+        id="confirmButton"
+        onclick="confirmReturnOrder()"
       >
         Confirm
       </button>

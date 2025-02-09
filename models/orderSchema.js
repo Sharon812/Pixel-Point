@@ -59,7 +59,7 @@ const orderSchema = new Schema(
             "Shipped",
             "Delivered",
             "Cancelled",
-            "Return Request",
+            "Return Requested",
             "Returned",
           ],
         },

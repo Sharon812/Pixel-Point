@@ -133,6 +133,7 @@ userRoute.patch(
   userAuth.userCheck,
   accountController.cancelOrder
 );
+userRoute.patch("/returnorder", accountController.returnOrder);
 
 //for wishlist
 userRoute.get("/wishlist", wishlistController.getWishlist);

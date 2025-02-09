@@ -178,7 +178,7 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                           </div>
                         <div class="order-info">
                           <span class="order-label">Status</span>
-                          <% if(item.status === "Pending" ||item.status === "Processing"||item.status === "Shipped" || item.status === "Cancelled"|| item.status === "Returned" ) {%>
+                          <% if(item.status === "Pending" ||item.status === "Processing"||item.status === "Shipped" || item.status === "Cancelled"|| item.status === "Returned" || item.status === "Return Requested" ) {%>
                           <span class="order-status status-processing"> <%= item.status %> </span>
                           <% } else{ %>
                             <span class="order-status status-completed"> <%= item.status %> </span>
@@ -188,7 +188,7 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                           <span class="order-label">Total</span>
                           <span class="order-value">&#8377;<%=item.totalPrice %> </span>
                         </div>
-                        <% if(item.status !== "Cancelled" && item.status !== "Returned") {%>
+                        <% if(item.status !== "Cancelled" && item.status !== "Returned" && item.status !== "Return Requested") {%>
                         <div class="order-actions">
                           <a href="/orderDetails/?orderId=<%= item._id %>" class="view-order-btn">View Order</a>
                           <% if(item.status !== "Delivered" && item.status !== "Shipped") {%>

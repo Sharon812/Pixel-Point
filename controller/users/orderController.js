@@ -153,6 +153,7 @@ const placeOrder = async (req, res) => {
       totalPrice: totalAmount,
       discount: discount,
       FinalAmount: finalAmount,
+      couponCode: couponCode || null,
       paymentStatus:
         paymentMethod === "Cash on Delivery" ? "Confirmed" : "Pending Payment",
     });
@@ -194,6 +195,11 @@ const placeOrder = async (req, res) => {
         description: `${finalAmount} debited for purchasing `,
       });
       await wallet.save();
+      if (discount > 0) {
+        const couponData = await Coupons.findOne({ name: couponCode });
+        couponData.usesCount += 1;
+        await couponData.save();
+      }
       await updateInventory(orderItems, userId);
 
       return res.status(200).json({ success: true, message: "Order Placed" });
@@ -284,7 +290,11 @@ const verifyPayment = async (req, res) => {
 
       order.paymentStatus = "Confirmed";
       await order.save();
-
+      if (discount > 0) {
+        const couponData = await Coupons.findOne({ name: couponCode });
+        couponData.usesCount += 1;
+        await couponData.save();
+      }
       await Cart.findOneAndUpdate(
         { userId: order.userId },
         { $set: { items: [] } }
