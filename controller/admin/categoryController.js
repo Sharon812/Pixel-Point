@@ -86,7 +86,7 @@ const editCategory = async (req, res) => {
         description: description,
       },
       { new: true }
-    ); //we get return of updated data
+    );
     if (updateCategory) {
       res.status(200).json({ response: "updated successfully" });
     } else {
@@ -101,7 +101,6 @@ const editCategory = async (req, res) => {
 const addCateogoryOffer = async (req, res) => {
   try {
     const { categoryId, offerPercentage, endDate } = req.body;
-    console.log("body", categoryId, offerPercentage, endDate);
     if (!categoryId && !offerPercentage && !endDate) {
       return res.status(400).json({ error: "Please fill all the fields" });
     }
@@ -110,7 +109,6 @@ const addCateogoryOffer = async (req, res) => {
     if (!category) {
       return res.status(400).json({ error: "Category not found" });
     }
-    console.log("category", category);
     category.categoryOffer = offerPercentage;
     category.offerEndDate = endDate;
     await category.save();

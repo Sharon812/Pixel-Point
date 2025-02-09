@@ -53,6 +53,8 @@ router.post(
   productCont.editProduct
 );
 router.post("/deleteimage", productCont.deleteSingleImage);
+router.patch("/add-product-offer", productCont.addOffer);
+router.patch("/remove-product-offer", productCont.removeOffer);
 
 //for brands section
 router.get("/brands", brandController.getBrandPage);

@@ -67,6 +67,14 @@ const productSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    offerPercentage: {
+      type: Number,
+      default: 0,
+    },
+    offerEndDate: {
+      type: Date,
+      default: null,
+    },
   },
   { timestamps: true }
 );

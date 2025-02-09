@@ -206,7 +206,7 @@ const removeOffer = async (categoryId) => {
         if (data.success) {
           Swal.fire("Removed!", "The offer has been removed.", "success").then(
             () => {
-              location.reload(); // Reload the page to reflect changes
+              location.reload();
             }
           );
         } else {
@@ -260,50 +260,49 @@ function addOffer(categoryId) {
   fetch("/admin/add-category-offer", {
     method: "PATCH",
     headers: {
-      'Content-Type': 'application/json'
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       categoryId,
-      offerPercentage: percentage,  // Changed to match server expectation
-      endDate
+      offerPercentage: percentage,
+      endDate,
+    }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        const modal = bootstrap.Modal.getInstance(
+          document.getElementById(`addOfferModal_${categoryId}`)
+        );
+        modal.hide();
+
+        Swal.fire({
+          icon: "success",
+          title: "Success!",
+          text: "Offer added successfully",
+          showConfirmButton: false,
+          timer: 1500,
+        }).then(() => {
+          window.location.reload();
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Error!",
+          text: data.message || "Failed to add offer",
+        });
+      }
     })
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.success) {
-      // Close modal
-      const modal = bootstrap.Modal.getInstance(document.getElementById(`addOfferModal_${categoryId}`));
-      modal.hide();
-      
-      // Show success message
+    .catch((error) => {
       Swal.fire({
-        icon: 'success',
-        title: 'Success!',
-        text: 'Offer added successfully',
-        showConfirmButton: false,
-        timer: 1500
-      }).then(() => {
-        window.location.reload();
+        icon: "error",
+        title: "Error!",
+        text: "Failed to add offer. Please try again.",
       });
-    } else {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error!',
-        text: data.message || 'Failed to add offer'
-      });
-    }
-  })
-  .catch(error => {
-    Swal.fire({
-      icon: 'error',
-      title: 'Error!',
-      text: 'Failed to add offer. Please try again.'
     });
-  });
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-  // Find all offer modals
   const offerModals = document.querySelectorAll('[id^="addOfferModal_"]');
 
   offerModals.forEach((modal) => {
@@ -311,13 +310,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const percentage = document.getElementById(`percentage_${categoryId}`);
     const endDate = document.getElementById(`endDate_${categoryId}`);
 
-    // Set minimum date to tomorrow for each date input
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     const minDate = tomorrow.toISOString().split("T")[0];
     endDate.min = minDate;
 
-    // Add real-time validation for percentage
     percentage.addEventListener("input", function () {
       const value = this.value;
       if (value && (value < 1 || value > 100)) {
@@ -327,7 +324,6 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
 
-    // Add real-time validation for end date
     endDate.addEventListener("input", function () {
       const selectedDate = new Date(this.value);
       const tomorrow = new Date();

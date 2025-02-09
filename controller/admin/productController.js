@@ -277,6 +277,69 @@ const deleteSingleImage = async (req, res) => {
     });
   }
 };
+
+const addOffer = async (req, res) => {
+  try {
+    const { productId, offerPercentage, endDate } = req.body;
+    if (!productId || !offerPercentage || !endDate) {
+      return res.status(400).json({ error: "Please fill all the fields" });
+    }
+
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(400).json({ error: "Product not found" });
+    }
+    product.offerPercentage = offerPercentage;
+    product.offerEndDate = endDate;
+    if (product.combos && Array.isArray(product.combos)) {
+      product.combos.forEach((combo) => {
+        combo.salePriceBeforeDiscount = combo.salePrice;
+        combo.salePrice = Math.round(
+          combo.salePriceBeforeDiscount -
+            (combo.salePriceBeforeDiscount * offerPercentage) / 100
+        );
+      });
+    }
+    await product.save();
+
+    res
+      .status(200)
+      .json({ success: true, message: "Offer added successfully" });
+  } catch (error) {
+    console.log(error, "error at adding offer");
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+const removeOffer = async (req, res) => {
+  try {
+    const { productId } = req.body;
+    if (!productId) {
+      return res.status(400).json({ error: "product Id missing" });
+    }
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(400).json({ error: "Product not found" });
+    }
+    product.offerPercentage = 0;
+    product.offerEndDate = null;
+    if (product.combos && Array.isArray(product.combos)) {
+      product.combos.forEach((combo) => {
+        combo.salePrice = combo.salePriceBeforeDiscount;
+        combo.salePriceBeforeDiscount = null;
+      });
+    }
+    await product.save();
+
+    res
+      .status(200)
+      .json({ success: true, message: "Offer added successfully" });
+  } catch (error) {
+    console.log(error, "error at adding offer");
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
 module.exports = {
   getProductInfo,
   addProducts,
@@ -285,4 +348,6 @@ module.exports = {
   getEditProducts,
   editProduct,
   deleteSingleImage,
+  addOffer,
+  removeOffer,
 };

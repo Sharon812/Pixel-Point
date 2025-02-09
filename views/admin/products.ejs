@@ -1,14 +1,26 @@
 <% include("../layouts/admin/header.ejs") %>
 <!-- Bootstrap CSS -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+  rel="stylesheet"
+/>
 <!-- Font Awesome -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+/>
 <!-- SweetAlert2 -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css">
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css"
+/>
 <!-- Toastify -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"
+/>
 <!-- Custom CSS -->
-<link rel="stylesheet" href="/css/admin/product.css">
+<link rel="stylesheet" href="/css/admin/product.css" />
 
 <div class="admin-dashboard">
   <!-- Top Navigation Bar -->
@@ -26,14 +38,21 @@
     <div class="sidebar" id="sidebar">
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="text-white mb-0 d-none d-lg-block">Pixel-Point</h2>
-        <button class="btn-close d-lg-none text-white" id="sidebarClose"></button>
+        <button
+          class="btn-close d-lg-none text-white"
+          id="sidebarClose"
+        ></button>
       </div>
       <a href="/admin"><i class="fas fa-chart-line me-2"></i>Dashboard</a>
       <a href="/admin/users"><i class="fas fa-users me-2"></i>Users</a>
       <a href="/admin/category"><i class="fas fa-tags me-2"></i>Categories</a>
       <a href="/admin/brands"><i class="fas fa-building me-2"></i>Brands</a>
-      <a href="/admin/addProducts"><i class="fas fa-plus-circle me-2"></i>Add Products</a>
-      <a href="/admin/products" class="active"><i class="fas fa-box me-2"></i>Products</a>
+      <a href="/admin/addProducts"
+        ><i class="fas fa-plus-circle me-2"></i>Add Products</a
+      >
+      <a href="/admin/products" class="active"
+        ><i class="fas fa-box me-2"></i>Products</a
+      >
       <a href="/admin/coupons"><i class="fa-solid fa-tag me-2"></i>Coupons</a>
       <a href="/admin/orders"><i class="fa-solid fa-book me-2"></i>Orders</a>
       <a href="#"><i class="fas fa-cog me-2"></i>Settings</a>
@@ -50,7 +69,9 @@
             <nav aria-label="breadcrumb">
               <ol class="breadcrumb mb-0">
                 <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Products</li>
+                <li class="breadcrumb-item active" aria-current="page">
+                  Products
+                </li>
               </ol>
             </nav>
           </div>
@@ -64,8 +85,13 @@
         <div class="card shadow-sm mb-4">
           <div class="card-body">
             <form action="" method="get" class="d-flex justify-content-center">
-              <div class="input-group" style="max-width: 500px;">
-                <input type="text" class="form-control" placeholder="Search products or brands" name="search">
+              <div class="input-group" style="max-width: 500px">
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Search products or brands"
+                  name="search"
+                />
                 <button class="btn btn-primary" type="submit">
                   <i class="fas fa-search"></i>
                 </button>
@@ -84,6 +110,8 @@
                     <th scope="col">Product Name</th>
                     <th scope="col">Brand</th>
                     <th scope="col">Category</th>
+                    <th scope="col">product Offer</th>
+                    <th scope="col">end date</th>
                     <th scope="col">Offer</th>
                     <th scope="col">Combos</th>
                     <th scope="col">Actions</th>
@@ -95,23 +123,46 @@
                     <td class="fw-medium"><%=productData[i].productName%></td>
                     <td><%=productData[i].brand.brandName%></td>
                     <td><%=productData[i].category.name%></td>
+                    <td><%=productData[i].offerPercentage%></td>
+                    <td>
+                      <%= productData[i].offerEndDate ?
+                      productData[i].offerEndDate.toLocaleDateString('en-GB') :
+                      'N/A' %>
+                    </td>
+                    <td><%=productData[i].category.name%></td>
                     <td>
                       <div class="d-flex gap-2">
-                        <a href="#" class="btn btn-sm btn-outline-primary">
+                        <button
+                          class="btn btn-sm btn-outline-primary"
+                          onclick="openAddOfferModal('<%= productData[i]._id %>')"
+                        >
                           <i class="fas fa-plus-circle me-1"></i>Add Offer
-                        </a>
-                        <a href="#" class="btn btn-sm btn-outline-danger">
+                        </button>
+                        <button
+                          class="btn btn-sm btn-outline-danger"
+                          onclick="removeOffer('<%=productData[i]._id%>')"
+                        >
                           <i class="fas fa-minus-circle me-1"></i>Remove
-                        </a>
+                        </button>
                       </div>
                     </td>
-                    <td><span class="badge bg-info"><%=productData[i].combos.length%></span></td>
+                    <td>
+                      <span class="badge bg-info"
+                        ><%=productData[i].combos.length%></span
+                      >
+                    </td>
                     <td>
                       <div class="d-flex gap-2">
-                        <a href="/admin/editProduct?id=<%=productData[i]._id%>" class="btn btn-sm btn-primary">
+                        <a
+                          href="/admin/editProduct?id=<%=productData[i]._id%>"
+                          class="btn btn-sm btn-primary"
+                        >
                           <i class="fas fa-edit me-1"></i>Edit
                         </a>
-                        <button class="btn btn-sm btn-danger" onclick="softDeleteProduct('<%= productData[i]._id %>')">
+                        <button
+                          class="btn btn-sm btn-danger"
+                          onclick="softDeleteProduct('<%= productData[i]._id %>')"
+                        >
                           <i class="fas fa-trash-alt me-1"></i>Delete
                         </button>
                       </div>
@@ -128,26 +179,91 @@
         <nav class="mt-4" aria-label="Page navigation">
           <ul class="pagination justify-content-center">
             <% if (currentPage > 1) { %>
-              <li class="page-item">
-                <a class="page-link" href="?page=<%= currentPage - 1 %>">
-                  <i class="fas fa-chevron-left me-1"></i>Previous
-                </a>
-              </li>
-            <% } %>
-            <% for(let i = 1; i <= totalPages; i++) { %>
-              <li class="page-item <%= currentPage == i ? 'active' : '' %>">
-                <a class="page-link" href="?page=<%= i %>"><%= i %></a>
-              </li>
-            <% } %>
-            <% if (currentPage < totalPages) { %>
-              <li class="page-item">
-                <a class="page-link" href="?page=<%= currentPage + 1 %>">
-                  Next<i class="fas fa-chevron-right ms-1"></i>
-                </a>
-              </li>
+            <li class="page-item">
+              <a class="page-link" href="?page=<%= currentPage - 1 %>">
+                <i class="fas fa-chevron-left me-1"></i>Previous
+              </a>
+            </li>
+            <% } %> <% for(let i = 1; i <= totalPages; i++) { %>
+            <li class="page-item <%= currentPage == i ? 'active' : '' %>">
+              <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+            </li>
+            <% } %> <% if (currentPage < totalPages) { %>
+            <li class="page-item">
+              <a class="page-link" href="?page=<%= currentPage + 1 %>">
+                Next<i class="fas fa-chevron-right ms-1"></i>
+              </a>
+            </li>
             <% } %>
           </ul>
         </nav>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Offer Modal -->
+<div
+  class="modal fade"
+  id="addOfferModal"
+  tabindex="-1"
+  aria-labelledby="addOfferModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addOfferModalLabel">Add Offer</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form id="addOfferForm" novalidate>
+          <input type="hidden" id="productId" name="productId" />
+          <div class="mb-3">
+            <label for="percentage" class="form-label"
+              >Discount Percentage</label
+            >
+            <div class="input-group">
+              <input
+                type="number"
+                class="form-control"
+                id="percentage"
+                name="percentage"
+                min="1"
+                max="100"
+                required
+              />
+              <span class="input-group-text">%</span>
+              <div class="invalid-feedback">
+                Please enter a percentage between 1 and 100.
+              </div>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="endDate" class="form-label">End Date</label>
+            <input
+              type="date"
+              class="form-control"
+              id="endDate"
+              name="endDate"
+              required
+            />
+            <div class="invalid-feedback">Please select a future date.</div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button type="button" class="btn btn-primary" onclick="submitOffer()">
+          Add Offer
+        </button>
       </div>
     </div>
   </div>
@@ -159,23 +275,28 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <!-- Toastify -->
 <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js" ></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="/scripts/admin/products.js"></script>
 <script>
   // Display current date
-  document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
+  document.getElementById("currentDate").textContent =
+    new Date().toLocaleDateString("en-US", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
 
   // Mobile sidebar toggle
-  document.getElementById('sidebarToggle')?.addEventListener('click', function() {
-    document.getElementById('sidebar').classList.toggle('show');
-  });
+  document
+    .getElementById("sidebarToggle")
+    ?.addEventListener("click", function () {
+      document.getElementById("sidebar").classList.toggle("show");
+    });
 
-  document.getElementById('sidebarClose')?.addEventListener('click', function() {
-    document.getElementById('sidebar').classList.remove('show');
-  });
+  document
+    .getElementById("sidebarClose")
+    ?.addEventListener("click", function () {
+      document.getElementById("sidebar").classList.remove("show");
+    });
 </script>
