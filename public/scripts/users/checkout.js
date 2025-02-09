@@ -24,7 +24,11 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       let discountedTotal = null;
+      let couponCode = null;
       const checkoutData = sessionStorage.getItem("checkoutTotal");
+      const appliedcouon = sessionStorage.getItem("appliedCoupon");
+      const couponParsedData = JSON.parse(appliedcouon);
+      couponCode = couponParsedData.code;
       if (checkoutData) {
         const parsedData = JSON.parse(checkoutData);
         discountedTotal = parsedData.discountedTotal;
@@ -33,9 +37,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const payload = {
         selectedAddress,
         paymentMethod,
+        couponCode,
         discountedTotal,
       };
-
+      console.log(couponCode, "copiobvhjk");
       const response = await fetch("/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

@@ -493,23 +493,9 @@ const getOrderDetails = async (req, res) => {
 
     const addressDocuments = await Address.find({ userId: user });
 
-    if (!addressDocuments || addressDocuments.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "No addresses found for this user",
-      });
-    }
-
     const specificAddress = addressDocuments
       .flatMap((doc) => doc.address) // Combine all address arrays
       .find((addr) => addr._id.toString() === orderWithItem.address.toString());
-
-    if (!specificAddress) {
-      return res.status(404).json({
-        success: false,
-        message: "Specific address not found",
-      });
-    }
 
     res.render("viewOrder", {
       orderDetails: orderDetails,

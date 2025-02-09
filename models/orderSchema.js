@@ -96,9 +96,9 @@ const orderSchema = new Schema(
     invoiceDate: {
       type: Date,
     },
-    couponApplied: {
-      type: Boolean,
-      default: false,
+    couponCode: {
+      type: String,
+      default: null,
     },
   },
   { timestamps: true }

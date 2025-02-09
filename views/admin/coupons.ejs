@@ -100,8 +100,8 @@
                     <th>MIN. PURCHASE</th>
                     <th>START DATE</th>
                     <th>EXPIRY DATE</th>
-                    <th>USES LEFT</th>
-                    <th>MAX USES/USER</th>
+                    <th>TOTAL USES</th>
+                    <th>NO. OF USES</th>
                     <th>STATUS</th>
                     <th>ACTIONS</th>
                   </tr>
@@ -115,7 +115,7 @@
                     <td><%= coupon.startOn.toLocaleDateString("en-GB") %></td>
                     <td><%= coupon.expireOn.toLocaleDateString("en-GB") %></td>
                     <td><%= coupon.maxUses %></td>
-                    <td><%= coupon.maxUsesPerUser %></td>
+                    <td><%= coupon.usesCount %></td>
                     <td>
                       <% if(coupon.isListed == 1) {%>
                       <span class="badge bg-success">ACTIVE</span>

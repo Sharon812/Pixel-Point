@@ -456,7 +456,7 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
     }
 
     function applyCoupon(event) {
-      event.preventDefault(); // Prevent form submission
+      event.preventDefault(); 
       const couponCode = document.getElementById('couponInput').value.trim();
       if (!couponCode) {
         Swal.fire({
@@ -466,7 +466,6 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
         return;
       }
 
-      // If same coupon is being applied again, ignore
       if (appliedCouponCode === couponCode && appliedDiscount > 0) {
         Swal.fire({
           icon: 'info',
@@ -490,8 +489,9 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
         if (data.status === 'success') {
           appliedDiscount = data.discount;
           appliedCouponCode = couponCode;
+          console.log(appliedCouponCode,"applied")
+          console.log(data,'data')
           updatePriceDisplay();
-          // Store applied coupon in session storage
           sessionStorage.setItem('appliedCoupon', JSON.stringify({
             code: couponCode,
             discount: data.discount,
@@ -525,7 +525,7 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
       const discountRow = document.getElementById('couponDiscountRow');
       const discountAmount = document.getElementById('couponDiscountAmount');
       const finalAmount = document.getElementById('finalAmount');
-
+     
       if (appliedDiscount > 0) {
         discountRow.style.display = 'flex';
         discountAmount.textContent = `-₹${appliedDiscount}`;
@@ -537,15 +537,12 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
         finalAmount.textContent = `₹${originalPrice}`;
       }
 
-      // Store the discounted total in session storage
       sessionStorage.setItem('checkoutTotal', JSON.stringify({
         originalPrice: originalPrice,
         discountedTotal: discountedTotal,
-        discount: appliedDiscount
+        discount: appliedDiscount,
       }));
     }
-
-    // Restore applied coupon on page load
     window.addEventListener('load', function() {
       const savedCoupon = sessionStorage.getItem('appliedCoupon');
       const savedTotal = sessionStorage.getItem('checkoutTotal');
@@ -571,19 +568,15 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
     }
 
 function removeCoupon() {
-   // Reset coupon related variables
    appliedDiscount = 0;
    appliedCouponCode = '';
    document.getElementById('couponInput').value = '';
    
-   // Update the display
    updatePriceDisplay();
    
-   // Remove from session storage
    sessionStorage.removeItem('appliedCoupon');
    sessionStorage.removeItem('checkoutTotal');
 
-   // Show success message
    Swal.fire({
      icon: 'success',
      text: 'Coupon removed successfully',

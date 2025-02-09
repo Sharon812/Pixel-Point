@@ -4,15 +4,13 @@ const getAvailableCoupons = async (req, res) => {
   try {
     let currentDate = new Date();
     currentDate = currentDate.toISOString().replace("Z", "+00:00");
-    console.log(currentDate);
 
     const coupons = await Coupon.find({
       isDeleted: false,
+      $expr: { $gt: ["$maxUses", "$usesCount"] },
       startOn: { $lte: currentDate },
       expireOn: { $gt: currentDate },
     });
-    console.log(currentDate);
-    console.log(coupons, "coupons");
     res.json(coupons);
   } catch (error) {
     console.error("Error fetching coupons:", error);
@@ -69,5 +67,5 @@ const applyCoupon = async (req, res) => {
 
 module.exports = {
   getAvailableCoupons,
-  applyCoupon
+  applyCoupon,
 };

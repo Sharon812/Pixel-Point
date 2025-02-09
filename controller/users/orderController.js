@@ -11,6 +11,7 @@ const Brand = require("../../models/brandSchema");
 const Category = require("../../models/categorySchema");
 const Order = require("../../models/orderSchema");
 const Wallet = require("../../models/walletSchema");
+const Coupons = require("../../models/couponSchema");
 
 const processCheckout = async (req, res) => {
   try {
@@ -86,7 +87,8 @@ const razorpay = new Razorpay({
 const placeOrder = async (req, res) => {
   try {
     const userId = req.session.user;
-    const { selectedAddress, paymentMethod } = req.body;
+    const { selectedAddress, paymentMethod, couponCode } = req.body;
+    console.log(req.body, "redfjo");
 
     if (!selectedAddress || !paymentMethod) {
       return res.status(400).json({
@@ -154,12 +156,16 @@ const placeOrder = async (req, res) => {
       paymentStatus:
         paymentMethod === "Cash on Delivery" ? "Confirmed" : "Pending Payment",
     });
-    console.log(newOrder, "neworder");
     await newOrder.save();
 
     if (paymentMethod === "Cash on Delivery") {
       await updateInventory(orderItems, userId);
       await Cart.findOneAndUpdate({ userId }, { $set: { items: [] } });
+      if (discount > 0) {
+        const couponData = await Coupons.findOne({ name: couponCode });
+        couponData.usesCount += 1;
+        await couponData.save();
+      }
       return res.json({
         success: true,
         message: "COD order placed successfully",
@@ -200,7 +206,6 @@ const placeOrder = async (req, res) => {
         receipt: newOrder._id.toString(),
         payment_capture: 1,
       });
-      console.log(razorpayOrder, "razorpayorder");
 
       return res.json({
         success: true,
