@@ -219,35 +219,126 @@ const removeOffer = async (categoryId) => {
   });
 };
 
+function validateOfferForm(categoryId) {
+  const percentage = document.getElementById(`percentage_${categoryId}`);
+  const endDate = document.getElementById(`endDate_${categoryId}`);
+  let isValid = true;
+
+  // Validate percentage
+  const percentageValue = parseInt(percentage.value);
+  if (isNaN(percentageValue) || percentageValue < 1 || percentageValue > 100) {
+    percentage.classList.add("is-invalid");
+    isValid = false;
+  } else {
+    percentage.classList.remove("is-invalid");
+  }
+
+  // Validate end date
+  const selectedDate = new Date(endDate.value);
+  const tomorrow = new Date();
+  tomorrow.setHours(0, 0, 0, 0);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  if (!endDate.value || selectedDate < tomorrow) {
+    endDate.classList.add("is-invalid");
+    isValid = false;
+  } else {
+    endDate.classList.remove("is-invalid");
+  }
+
+  return isValid;
+}
+
 function addOffer(categoryId) {
-  const offerPercentage = document.getElementById(
-    `offerPercentage_${categoryId}`
-  ).value;
+  if (!validateOfferForm(categoryId)) {
+    return;
+  }
+
+  const percentage = document.getElementById(`percentage_${categoryId}`).value;
   const endDate = document.getElementById(`endDate_${categoryId}`).value;
 
   fetch("/admin/add-category-offer", {
     method: "PATCH",
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify({
       categoryId,
-      offerPercentage,
-      endDate,
-    }),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.success) {
-        bootstrap.Modal.getInstance(
-          document.getElementById(`addOfferModal_${categoryId}`)
-        ).hide();
-        Swal.fire("Success", "Offer added successfully", "success");
-      } else {
-        Swal.fire("Error", data.message || "Failed to add offer", "error");
-      }
+      offerPercentage: percentage,  // Changed to match server expectation
+      endDate
     })
-    .catch((error) => {
-      Swal.fire("Error", "Something went wrong", "error");
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      // Close modal
+      const modal = bootstrap.Modal.getInstance(document.getElementById(`addOfferModal_${categoryId}`));
+      modal.hide();
+      
+      // Show success message
+      Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: 'Offer added successfully',
+        showConfirmButton: false,
+        timer: 1500
+      }).then(() => {
+        window.location.reload();
+      });
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error!',
+        text: data.message || 'Failed to add offer'
+      });
+    }
+  })
+  .catch(error => {
+    Swal.fire({
+      icon: 'error',
+      title: 'Error!',
+      text: 'Failed to add offer. Please try again.'
     });
+  });
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+  // Find all offer modals
+  const offerModals = document.querySelectorAll('[id^="addOfferModal_"]');
+
+  offerModals.forEach((modal) => {
+    const categoryId = modal.id.split("_")[1];
+    const percentage = document.getElementById(`percentage_${categoryId}`);
+    const endDate = document.getElementById(`endDate_${categoryId}`);
+
+    // Set minimum date to tomorrow for each date input
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const minDate = tomorrow.toISOString().split("T")[0];
+    endDate.min = minDate;
+
+    // Add real-time validation for percentage
+    percentage.addEventListener("input", function () {
+      const value = this.value;
+      if (value && (value < 1 || value > 100)) {
+        this.classList.add("is-invalid");
+      } else {
+        this.classList.remove("is-invalid");
+      }
+    });
+
+    // Add real-time validation for end date
+    endDate.addEventListener("input", function () {
+      const selectedDate = new Date(this.value);
+      const tomorrow = new Date();
+      tomorrow.setHours(0, 0, 0, 0);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+
+      if (selectedDate < tomorrow) {
+        this.classList.add("is-invalid");
+      } else {
+        this.classList.remove("is-invalid");
+      }
+    });
+  });
+});

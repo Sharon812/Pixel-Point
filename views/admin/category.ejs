@@ -200,52 +200,31 @@
                           ></button>
                         </div>
                         <div class="modal-body">
-                          <form id="offerForm_<%= category._id %>">
+                          <form id="offerForm_<%= category._id %>" novalidate>
                             <div class="mb-3">
-                              <label
-                                for="offerPercentage_<%= category._id %>"
-                                class="form-label"
-                                >Offer Percentage</label
-                              >
-                              <input
-                                type="number"
-                                class="form-control"
-                                id="offerPercentage_<%= category._id %>"
-                                name="offerPercentage"
-                                min="0"
-                                max="100"
-                                required
-                              />
+                              <label for="percentage_<%= category._id %>" class="form-label">Discount Percentage</label>
+                              <div class="input-group">
+                                <input type="number" class="form-control" id="percentage_<%= category._id %>" 
+                                       name="percentage" min="1" max="100" required>
+                                <span class="input-group-text">%</span>
+                                <div class="invalid-feedback">
+                                  Please enter a percentage between 1 and 100.
+                                </div>
+                              </div>
                             </div>
                             <div class="mb-3">
-                              <label
-                                for="endDate_<%= category._id %>"
-                                class="form-label"
-                                >End Date</label
-                              >
-                              <input
-                                type="date"
-                                class="form-control"
-                                id="endDate_<%= category._id %>"
-                                name="endDate"
-                                required
-                              />
+                              <label for="endDate_<%= category._id %>" class="form-label">End Date</label>
+                              <input type="date" class="form-control" id="endDate_<%= category._id %>" 
+                                     name="endDate" required>
+                              <div class="invalid-feedback">
+                                Please select a future date.
+                              </div>
                             </div>
                           </form>
                         </div>
                         <div class="modal-footer">
-                          <button
-                            type="button"
-                            class="btn btn-secondary"
-                            data-bs-dismiss="modal"
-                          >
-                            Close
-                          </button>
-                          <button
-                            type="button"
-                            class="btn btn-primary"
-                            onclick="addOffer('<%= category._id %>')"
-                          >
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          <button type="button" class="btn btn-primary" onclick="addOffer('<%= category._id %>')">
                             Add Offer
                           </button>
                         </div>
