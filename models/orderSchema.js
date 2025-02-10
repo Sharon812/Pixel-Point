@@ -50,6 +50,14 @@ const orderSchema = new Schema(
           type: Number,
           required: true,
         },
+        dicountPrice: {
+          type: Number,
+          default: 0,
+        },
+        finalAmount: {
+          type: Number,
+          default: 0,
+        },
         status: {
           type: String,
           required: true,

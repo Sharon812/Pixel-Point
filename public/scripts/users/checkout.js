@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       let discountedTotal = null;
       let couponCode = null;
+      let discount = null;
       const checkoutData = sessionStorage.getItem("checkoutTotal");
       const appliedcouon = sessionStorage.getItem("appliedCoupon");
       const couponParsedData = JSON.parse(appliedcouon);
@@ -32,6 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (checkoutData) {
         const parsedData = JSON.parse(checkoutData);
         discountedTotal = parsedData.discountedTotal;
+        discount = parsedData ? parsedData.discount : null;
       }
 
       const payload = {
@@ -39,6 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
         paymentMethod,
         couponCode,
         discountedTotal,
+        discount,
       };
       const response = await fetch("/checkout", {
         method: "POST",
@@ -47,7 +50,6 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       const result = await response.json();
-      console.log(result);
       console.log(result.finalAmount, "Final Amount");
       if (!response.ok) {
         throw new Error(result.message || "Order placement failed");

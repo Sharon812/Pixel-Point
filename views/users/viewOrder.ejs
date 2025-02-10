@@ -147,8 +147,14 @@
     </div>
     <% if(orderData.couponCode !== null) {%>
     <div class="summary-row">
-      <span>Coupon Applied (<%=orderData.couponCode %> )</span>
+      <span>Coupon Applied On Cart (<%=orderData.couponCode %> )</span>
       <span class="discount-badge">-₹ <%= orderData.discount %> </span>
+
+    </div>
+    <div class="summary-row">
+      <span>Product Discount (<%=orderData.couponCode %> )</span>
+
+      <span class="discount-badge">-₹ <%= orderDetails[0].dicountPrice %> </span>
     </div>
     <%} %>
     <div class="summary-row">
@@ -371,6 +377,9 @@
       </button>
     </div>
   </div>
+</div>
+
+
 </div>
 <footer class="footer container">
   <div class="footer__container grid">

@@ -186,7 +186,7 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                         </div>
                         <div class="order-info">
                           <span class="order-label">Total</span>
-                          <span class="order-value">&#8377;<%=item.totalPrice %> </span>
+                          <span class="order-value">&#8377;<%=item.finalAmount %> </span>
                         </div>
                         <% if(item.status !== "Cancelled" && item.status !== "Returned" && item.status !== "Return Requested") {%>
                         <div class="order-actions">

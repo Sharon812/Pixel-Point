@@ -87,7 +87,7 @@ const razorpay = new Razorpay({
 const placeOrder = async (req, res) => {
   try {
     const userId = req.session.user;
-    const { selectedAddress, paymentMethod, couponCode } = req.body;
+    const { selectedAddress, paymentMethod, couponCode, discount } = req.body;
     console.log(req.body, "redfjo");
 
     if (!selectedAddress || !paymentMethod) {
@@ -103,7 +103,11 @@ const placeOrder = async (req, res) => {
         populate: { path: "combos", model: "Combo" },
       })
       .lean();
-
+    const cartItemLength = cart.items.length;
+    let discountPerProduct = 0;
+    if (discount !== null) {
+      discountPerProduct = Math.round(discount / cartItemLength);
+    }
     if (!cart?.items?.length) {
       return res.status(400).json({
         success: false,
@@ -129,6 +133,9 @@ const placeOrder = async (req, res) => {
           quantity: item.quantity,
           price: selectedCombo.salePrice,
           totalPrice: item.quantity * selectedCombo.salePrice,
+          dicountPrice: discountPerProduct,
+          finalAmount:
+            item.quantity * selectedCombo.salePrice - discountPerProduct,
           RAM: selectedCombo.ram,
           Storage: selectedCombo.storage,
           color: selectedCombo.color[0],
@@ -143,7 +150,6 @@ const placeOrder = async (req, res) => {
     );
 
     const finalAmount = req.body.discountedTotal || totalAmount;
-    const discount = totalAmount - finalAmount;
 
     const newOrder = new Order({
       userId: userId,
