@@ -7,10 +7,12 @@ const getAvailableCoupons = async (req, res) => {
 
     const coupons = await Coupon.find({
       isDeleted: false,
-      $expr: { $gt: ["$maxUses", "$usesCount"] },
-      startOn: { $lte: currentDate },
-      expireOn: { $gt: currentDate },
+      isListed: true,
+      startOn: { $gte: currentDate },
+      expireOn: { $gte: currentDate },
+      $expr: { $lte: ["$usesCount", "$maxUses"] },
     });
+
     res.json(coupons);
   } catch (error) {
     console.error("Error fetching coupons:", error);
@@ -27,6 +29,8 @@ const applyCoupon = async (req, res) => {
       name: code,
       isListed: true,
       isDeleted: false,
+      startOn: { $gte: new Date() },
+      $expr: { $lte: ["$usesCount", "$maxUses"] },
       expireOn: { $gt: new Date() },
     });
 
