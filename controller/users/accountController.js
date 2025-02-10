@@ -7,6 +7,7 @@ const crypto = require("crypto");
 const Address = require("../../models/addressSchema");
 const Cart = require("../../models/cartSchema");
 const Order = require("../../models/orderSchema");
+const Wallet = require("../../models/walletSchema");
 
 //for forgot password
 const getForgotPassword = async (req, res) => {
@@ -340,8 +341,8 @@ const getEditAddress = async (req, res) => {
     const user = req.session.user;
     const userData = await User.findById({ _id: user });
     const addressData = await Address.findOne(
-      { userId: user, "address._id": id }, // Find the address in the user's address array by its _id
-      { "address.$": 1 } // Project only the matched address object
+      { userId: user, "address._id": id },
+      { "address.$": 1 }
     );
     if (!addressData) {
       return res
@@ -371,10 +372,10 @@ const editAddress = async (req, res) => {
     }
     console.log("iddsjo", id);
     const addressUpdateResult = await Address.updateOne(
-      { userId: user, "address._id": id }, // Find the specific address in the user's address array
+      { userId: user, "address._id": id },
       {
         $set: {
-          "address.$.addressType": type, // Update the matched address object's fields
+          "address.$.addressType": type,
           "address.$.name": houseName,
           "address.$.city": city,
           "address.$.landmark": landmark,
@@ -512,21 +513,54 @@ const getOrderDetails = async (req, res) => {
 const cancelOrder = async (req, res) => {
   try {
     const { itemId, orderId, reason } = req.body;
-    const order = await Order.findOneAndUpdate(
-      { _id: orderId, "orderedItems._id": itemId },
-      {
-        $set: {
-          "orderedItems.$.status": "Cancelled",
-          "orderedItems.$.cancellationReason": reason,
-        },
-      },
-      { new: true }
-    );
+    const order = await Order.findOne({
+      _id: orderId,
+      "orderedItems._id": itemId,
+    });
     if (!order) {
       return res
         .status(404)
         .json({ success: false, message: "Order or item not found" });
     }
+    let refundAmount = 0;
+    let orderItem = order.orderedItems.find(
+      (item) => item._id.toString() === itemId
+    );
+    if (!orderItem) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Item not found in order" });
+    }
+
+    if (
+      order.paymentMethod === "razorpay" ||
+      order.paymentMethod === "wallet"
+    ) {
+      refundAmount = orderItem.finalAmount;
+      let wallet = await Wallet.findOne({ user: order.userId });
+
+      if (!wallet) {
+        wallet = new Wallet({
+          user: order.userId,
+          balance: refundAmount,
+          transactions: [],
+        });
+      } else {
+        wallet.balance += refundAmount;
+      }
+
+      wallet.transactions.push({
+        type: "credit",
+        amount: refundAmount,
+        date: new Date(),
+        description: `Refund of product ${orderItem.productName}`,
+      });
+
+      await wallet.save();
+    }
+
+    orderItem.status = "Returned";
+    await order.save();
 
     return res
       .status(200)
