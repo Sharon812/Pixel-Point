@@ -144,7 +144,7 @@ function submitOffer() {
         Swal.fire({
           icon: "success",
           title: "Success!",
-          text: "Offer added successfully",
+          text: data.message || "Offer added successfully",
           showConfirmButton: false,
           timer: 1500,
         }).then(() => {
@@ -161,7 +161,7 @@ function submitOffer() {
     .catch((error) => {
       Swal.fire({
         icon: "error",
-        title: "Error!",
+        title: error || "Error!",
         text: "Failed to add offer. Please try again.",
       });
     });

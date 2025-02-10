@@ -123,16 +123,32 @@ const calculateDiscountedPrice = async (categoryId, offerPercentage) => {
   try {
     const products = await Product.find({ category: categoryId });
     console.log("Products:", products);
-    const updatedProducts = products.map((product) => {
+
+    const updatedProducts = [];
+
+    products.forEach((product) => {
+      let shouldUpdate = false;
+
+      if (product.offerPercentage < offerPercentage) {
+        product.offerPercentage = offerPercentage;
+        shouldUpdate = true;
+      }
+
       product.combos.forEach((combo) => {
-        combo.salePriceBeforeDiscount = combo.salePrice;
-        combo.salePrice = Math.round(
-          combo.salePriceBeforeDiscount -
-            (combo.salePriceBeforeDiscount * offerPercentage) / 100
-        );
+        if (shouldUpdate) {
+          combo.salePriceBeforeDiscount = combo.salePrice;
+          combo.salePrice = Math.round(
+            combo.salePriceBeforeDiscount -
+              (combo.salePriceBeforeDiscount * offerPercentage) / 100
+          );
+        }
       });
-      return product.save();
+
+      if (shouldUpdate) {
+        updatedProducts.push(product.save());
+      }
     });
+
     await Promise.all(updatedProducts);
     console.log("Discounted prices updated successfully");
   } catch (error) {
@@ -162,12 +178,13 @@ const removeOffer = async (req, res) => {
     });
     const updatedProducts = products.map(async (product) => {
       product.combos.forEach((combo) => {
+        product.offerPercentage = 0;
         combo.salePrice = combo.salePriceBeforeDiscount;
         combo.salePriceBeforeDiscount = null;
       });
       return product.save();
     });
-    await Promise.all(updatedProducts);
+    await Promise.allSettled(updatedProducts);
 
     return res
       .status(200)

@@ -289,6 +289,9 @@ const addOffer = async (req, res) => {
     if (!product) {
       return res.status(400).json({ error: "Product not found" });
     }
+    if (product.offerPercentage >= offerPercentage) {
+      return res.json({ success: false, message: "Offer Already exists" });
+    }
     product.offerPercentage = offerPercentage;
     product.offerEndDate = endDate;
     if (product.combos && Array.isArray(product.combos)) {
