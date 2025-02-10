@@ -4,6 +4,7 @@ const Brand = require("../../models/brandSchema");
 const User = require("../../models/userSchema");
 const cart = require("../../models/cartSchema");
 const Order = require("../../models/orderSchema");
+const Wallet = require("../../models/walletSchema");
 
 const getOrderDetails = async (req, res) => {
   try {
@@ -32,6 +33,7 @@ const getOrderDetails = async (req, res) => {
           : "Unknown Product",
         quantity: item.quantity,
         price: item.price,
+        finalAmount: item.finalAmount,
         totalPrice: item.totalPrice,
         itemStatus: item.status,
         orderStatus: order.status,
@@ -51,7 +53,7 @@ const getOrderDetails = async (req, res) => {
           productName: item.product?.productName || "Unknown Product",
           quantity: item.quantity,
           price: item.price,
-          totalPrice: item.totalPrice,
+          finalAmount: item.finalAmount,
           cancellationReason: item.cancellationReason || null,
           status: item.status,
         }))
@@ -107,26 +109,65 @@ const updateStatus = async (req, res) => {
 const confirmReturnOrder = async (req, res) => {
   try {
     const { orderId, itemId } = req.body;
-    const order = await Order.findOneAndUpdate(
-      {
-        orderId: orderId,
-        "orderedItems._id": itemId,
-      },
-      {
-        $set: { "orderedItems.$.status": "Returned" },
-      },
-      { new: true }
-    );
+
+    const order = await Order.findOne({
+      orderId: orderId,
+      "orderedItems._id": itemId,
+    });
+
     if (!order) {
-      res
+      return res
         .status(400)
         .json({ success: false, message: "Unable to find the order" });
     }
 
-    res.status(200).json({ success: true, message: "Order returned" });
+    let refundAmount = 0;
+    let orderItem = order.orderedItems.find(
+      (item) => item._id.toString() === itemId
+    );
+
+    if (!orderItem) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Item not found in order" });
+    }
+
+    if (
+      order.paymentMethod === "razorpay" ||
+      order.paymentMethod === "wallet"
+    ) {
+      refundAmount = orderItem.finalAmount;
+      let wallet = await Wallet.findOne({ user: order.userId });
+
+      if (!wallet) {
+        wallet = new Wallet({
+          user: order.userId,
+          balance: refundAmount,
+          transactions: [],
+        });
+      } else {
+        wallet.balance += refundAmount;
+      }
+
+      wallet.transactions.push({
+        type: "credit",
+        amount: refundAmount,
+        date: new Date(),
+        description: `Refund of product ${orderItem.productName}`,
+      });
+
+      await wallet.save();
+    }
+
+    orderItem.status = "Returned";
+    await order.save();
+
+    res
+      .status(200)
+      .json({ success: true, message: "Order returned successfully" });
   } catch (error) {
     console.log(error, "error confirm returning order");
-    res.status(500).json({ error: "internal server error" });
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 

@@ -56,7 +56,7 @@ async function confirmReturnOrder(orderId, itemId) {
   }
 }
 
-async function confirmReturnOrder(orderId, itemId) {
+async function confirmdenyOrder(orderId, itemId) {
   try {
     const response = await fetch("/admin/deny-returnorder", {
       method: "PATCH",
