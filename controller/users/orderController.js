@@ -210,15 +210,18 @@ const placeOrder = async (req, res) => {
 
       return res.status(200).json({ success: true, message: "Order Placed" });
     }
-
+    console.log(finalAmount, "finalamount");
     if (paymentMethod === "razorpay") {
+      console.log("hey");
       const razorpayOrder = await razorpay.orders.create({
         amount: Math.round(finalAmount * 100),
         currency: "INR",
         receipt: newOrder._id.toString(),
         payment_capture: 1,
       });
+      console.log(razorpayOrder, "raxor");
       if (discount > 0) {
+        console.log("under");
         const couponData = await Coupons.findOne({ name: couponCode });
         couponData.usesCount += 1;
         await couponData.save();

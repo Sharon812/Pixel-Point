@@ -224,15 +224,37 @@ const generateSalesReport = async (
   }
   doc.moveDown();
 
-  const totalAmount = orders.reduce((sum, order) => sum + order.FinalAmount, 0);
+  const totalAmount = orders.reduce((sum, order) => {
+    if (!Array.isArray(order.orderedItems)) return sum;
+
+    const deliveredItems = order.orderedItems.filter(
+      (item) => item.status === "Delivered"
+    );
+
+    const deliveredAmount = deliveredItems.reduce(
+      (itemSum, item) => itemSum + (item.finalAmount || 0),
+      0
+    );
+
+    return sum + deliveredAmount;
+  }, 0);
+
+  console.log("Total Amount of Delivered Orders:", totalAmount);
+
   const totalOrders = orders.length;
+  const successfulOrders = orders.filter((order) =>
+    order.orderedItems.some((item) => item.status === "Delivered")
+  ).length;
+  const returnedOrders = orders.filter((order) =>
+    order.orderedItems.some((item) => item.status === "Returned")
+  ).length;
 
   doc.fontSize(14).text("Summary", { underline: true });
   doc.moveDown(0.5);
   doc.fontSize(12).text(`Total Orders: ${totalOrders}`);
-  doc
-    .fontSize(12)
-    .text(`Total Revenue: ₹${totalAmount.toLocaleString("en-IN")}`);
+  doc.fontSize(12).text(`Successful Orders: ${successfulOrders}`);
+  doc.fontSize(12).text(`Returned Orders: ${returnedOrders}`);
+  doc.fontSize(12).text(`Total Revenue: ₹${totalAmount.toLocaleString("en-IN")}`);
   doc.moveDown();
 
   doc.fontSize(14).text("Order Details", { underline: true });
@@ -328,8 +350,20 @@ const generateExcelReport = async (
     worksheet.getCell("A4").alignment = { horizontal: "center" };
   }
 
-  const totalAmount = orders.reduce((sum, order) => sum + order.FinalAmount, 0);
+  const totalAmount = orders.reduce((sum, order) => {
+    const deliveredAmount = order.orderedItems
+      .filter((item) => item.status === "Delivered")
+      .reduce((itemSum, item) => itemSum + item.finalAmount, 0);
+
+    return sum + deliveredAmount;
+  }, 0);
   const totalOrders = orders.length;
+  const successfulOrders = orders.filter((order) =>
+    order.orderedItems.some((item) => item.status === "Delivered")
+  ).length;
+  const returnedOrders = orders.filter((order) =>
+    order.orderedItems.some((item) => item.status === "Returned")
+  ).length;
 
   worksheet.mergeCells("A6:E6");
   worksheet.getCell("A6").value = "Summary";
@@ -340,20 +374,28 @@ const generateExcelReport = async (
   worksheet.getCell("A7").font = { size: 12 };
 
   worksheet.mergeCells("A8:B8");
-  worksheet.getCell("A8").value = `Total Revenue: ₹${totalAmount.toLocaleString(
-    "en-IN"
-  )}`;
+  worksheet.getCell("A8").value = `Successful Orders: ${successfulOrders}`;
   worksheet.getCell("A8").font = { size: 12 };
 
-  worksheet.mergeCells("A10:E10");
-  worksheet.getCell("A10").value = "Order Details";
-  worksheet.getCell("A10").font = { size: 14, bold: true };
+  worksheet.mergeCells("A9:B9");
+  worksheet.getCell("A9").value = `Returned Orders: ${returnedOrders}`;
+  worksheet.getCell("A9").font = { size: 12 };
+
+  worksheet.mergeCells("A10:B10");
+  worksheet.getCell("A10").value = `Total Revenue: ₹${totalAmount.toLocaleString(
+    "en-IN"
+  )}`;
+  worksheet.getCell("A10").font = { size: 12 };
+
+  worksheet.mergeCells("A12:E12");
+  worksheet.getCell("A12").value = "Order Details";
+  worksheet.getCell("A12").font = { size: 14, bold: true };
 
   const headers = ["Order ID", "Date", "Customer", "Status", "Amount"];
-  worksheet.getRow(12).values = headers;
-  worksheet.getRow(12).font = { bold: true };
+  worksheet.getRow(14).values = headers;
+  worksheet.getRow(14).font = { bold: true };
 
-  worksheet.getRow(12).eachCell((cell) => {
+  worksheet.getRow(14).eachCell((cell) => {
     cell.fill = {
       type: "pattern",
       pattern: "solid",
@@ -367,7 +409,7 @@ const generateExcelReport = async (
     };
   });
 
-  let rowIndex = 13;
+  let rowIndex = 15;
   orders.forEach((order) => {
     worksheet.getRow(rowIndex).values = [
       order.orderId,
@@ -412,10 +454,14 @@ const generateExcelReport = async (
 const generateDailyReport = async (req, res) => {
   try {
     const today = moment().startOf("day");
+
     const orders = await Order.find({
       createdAt: {
         $gte: today.toDate(),
         $lte: moment().endOf("day").toDate(),
+      },
+      orderedItems: {
+        $elemMatch: { status: { $in: ["Returned", "Delivered"] } },
       },
     }).populate("userId", "name");
 
@@ -438,6 +484,9 @@ const generateWeeklyReport = async (req, res) => {
         $gte: startOfWeek.toDate(),
         $lte: moment().endOf("week").toDate(),
       },
+      orderedItems: {
+        $elemMatch: { status: { $in: ["Returned", "Delivered"] } },
+      },
     }).populate("userId", "name");
 
     if (req.query.format === "excel") {
@@ -458,6 +507,9 @@ const generateYearlyReport = async (req, res) => {
       createdAt: {
         $gte: startOfYear.toDate(),
         $lte: moment().endOf("year").toDate(),
+      },
+      orderedItems: {
+        $elemMatch: { status: { $in: ["Returned", "Delivered"] } },
       },
     }).populate("userId", "name");
 
@@ -482,6 +534,9 @@ const generateCustomReport = async (req, res) => {
       createdAt: {
         $gte: startDate.toDate(),
         $lte: endDate.toDate(),
+      },
+      orderedItems: {
+        $elemMatch: { status: { $in: ["Returned", "Delivered"] } },
       },
     }).populate("userId", "name");
 

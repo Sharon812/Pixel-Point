@@ -364,7 +364,6 @@
     }
   });
 
-  // Revenue Chart
   const revenueCtx = document.getElementById('revenueChart').getContext('2d');
   new Chart(revenueCtx, {
     type: 'bar',
@@ -405,7 +404,6 @@
     }
   });
 
-  // Set current date
   document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-IN', {
     weekday: 'long',
     year: 'numeric',
@@ -451,8 +449,7 @@
 
   .dropdown-item:hover {
     background-color: var(--bs-light);
-  }
-
+  
   .form-control-sm {
     font-size: 0.875rem;
   }

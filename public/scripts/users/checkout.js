@@ -50,7 +50,6 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       const result = await response.json();
-      console.log(result.finalAmount, "Final Amount");
       if (!response.ok) {
         throw new Error(result.message || "Order placement failed");
       }
