@@ -1,182 +1,201 @@
 <%- include("../layouts/admin/header.ejs") %>
-<link rel="stylesheet" href="/css/category.css" />
-
-<link
-  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-  rel="stylesheet"
-/>
-
-<link
-  rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.css"
-/>
-
 <link rel="stylesheet" href="/css/admin/brands.css" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.css" />
 
-<div class="d-flex">
-  <div class="sidebar">
-    <h2 class="text-white">Admin Dashboard</h2>
-    <a href="/admin">Dashboard</a>
-    <a href="/admin/users">Users</a>
-    <a href="/admin/category">Categories</a>
-    <a
-      id="live-dashboard-button"
-      href="#"
-      style="
-        background-color: #007bff;
-        color: white;
-        padding: 10px 15px;
-        border-radius: 5px;
-        text-decoration: none;
-      "
-      >Brands</a
-    >
-    <a href="/admin/addProducts">Add Products</a>
-    <a href="/admin/products">Products</a>
-    <a href="#">Settings</a>
-    <a href="/admin/logout">Logout</a>
-  </div>
-  <div class="main-content flex-grow-1">
-    <div class="container">
-      <div class="category-management">
+<div class="admin-dashboard">
+  <!-- Top Navigation Bar -->
+  <nav class="navbar fixed-top d-lg-none bg-primary">
+    <div class="container-fluid">
+      <button class="navbar-toggler border-0" type="button" id="sidebarToggle">
+        <i class="fas fa-bars text-white"></i>
+      </button>
+      <span class="navbar-brand text-white">Pixel-Point</span>
+    </div>
+  </nav>
+
+  <div class="d-flex">
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-white mb-0">Pixel-Point</h2>
+        <button class="btn-close d-lg-none text-white" id="sidebarClose"></button>
+      </div>
+      <a href="/admin"><i class="fas fa-chart-line me-2"></i>Dashboard</a>
+      <a href="/admin/users"><i class="fas fa-users me-2"></i>Users</a>
+      <a href="/admin/category"><i class="fas fa-tags me-2"></i>Categories</a>
+      <a href="#" class="active"><i class="fas fa-building me-2"></i>Brands</a>
+      <a href="/admin/addProducts"><i class="fas fa-plus-circle me-2"></i>Add Products</a>
+      <a href="/admin/products"><i class="fas fa-box me-2"></i>Products</a>
+      <a href="/admin/coupons"><i class="fa-solid fa-tag me-2"></i>Coupons</a>
+      <a href="/admin/orders"><i class="fa-solid fa-book me-2"></i>Orders</a>
+      <a href="#"><i class="fas fa-cog me-2"></i>Settings</a>
+      <a href="/admin/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content flex-grow-1">
+      <div class="container-fluid">
+        <!-- Page Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h1 class="h3 text-gray-800">Brand Management</h1>
+          <div class="date text-secondary">
+            <i class="far fa-calendar-alt me-2"></i>
+            <span id="currentDate"></span>
+          </div>
+        </div>
+
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/admin"><i class="fas fa-home me-2"></i>Dashboard</a></li>
+            <li class="breadcrumb-item active">Brands</li>
+          </ol>
+        </nav>
+
+        <!-- Brands Table -->
         <div class="brand-management">
-          <div class="text-center">
-            <h1 class="my-4">Brands Management</h1>
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="mb-0">All Brands</h5>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBrandModal">
+              <i class="fas fa-plus me-2"></i>Add New Brand
+            </button>
           </div>
-          <div class="breadcrumb-container">
-            <nav aria-label="breadcrumb">
-              <ol class="breadcrumb">
-                <li class="breadcrumb-item">
-                  <a href="/admin/dashboard">Dashboard</a>
-                </li>
-                <li class="breadcrumb-item active" aria-current="page">
-                  Brands
-                </li>
-              </ol>
-            </nav>
-          </div>
+
           <div class="table-responsive">
-            <table class="table table-striped table-hover">
-              <thead class="table-light">
+            <table class="table table-hover">
+              <thead>
                 <tr>
-                  <th>Name</th>
-                  <th>Photo</th>
+                  <th>Brand Name</th>
+                  <th>Logo</th>
+                  <th>Status</th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 <% brands.forEach(brand => { %>
                 <tr>
-                  <td><%= brand.brandName %></td>
-                  <td>
-                    <img
-                      src="<%= brand.brandImage %>"
-                      alt="<%= brand.name %>"
-                      width="50"
-                      height="50"
-                    />
+                  <td class="align-middle">
+                    <div class="d-flex align-items-center">
+                      <span class="ms-2"><%= brand.brandName %></span>
+                    </div>
                   </td>
                   <td>
-                    <button
-                      class="btn btn-warning"
-                      onclick='updateBrand("<%= brands.id %>")'
-                    >
-                      Update
-                    </button>
-                    <% if(brands.isBlocked == false){%>
-                    <button class="btn btn-danger">
-                      <a href="/admin/blockBrand?id=<%= brand._id %>">Delete</a>
-                    </button>
-                    <% }else{ %>
-                    <button class="btn btn-danger">
-                      <a
-                        class="text-decoration-none text-dark"
-                        href="/admin/unblockBrand?id=<%= brand._id %>"
-                        >restore</a
-                      >
-                    </button>
+                    <img src="<%= brand.brandImage %>" alt="<%= brand.name %>" width="50" height="50" class="rounded-circle border" />
+                  </td>
+                  <td class="align-middle">
+                    <% if(!brand.isBlocked) { %>
+                      <span class="badge bg-success">Active</span>
+                    <% } else { %>
+                      <span class="badge bg-danger">Inactive</span>
                     <% } %>
+                  </td>
+                  <td class="align-middle">
+                    <div class="btn-group">
+                      <button class="btn btn-sm btn-outline-primary" onclick='updateBrand("<%= brand.id %>")'>
+                        <i class="fas fa-edit me-1"></i>Edit
+                      </button>
+                      <% if(!brand.isBlocked) { %>
+                        <a href="/admin/blockBrand?id=<%= brand._id %>" class="btn btn-sm btn-outline-danger">
+                          <i class="fas fa-ban me-1"></i>Block
+                        </a>
+                      <% } else { %>
+                        <a href="/admin/unblockBrand?id=<%= brand._id %>" class="btn btn-sm btn-outline-success">
+                          <i class="fas fa-undo me-1"></i>Restore
+                        </a>
+                      <% } %>
+                    </div>
                   </td>
                 </tr>
                 <% }); %>
               </tbody>
             </table>
-            <% if (totalPages > 0) { %>
-            <nav aria-label="Page navigation">
-              <ul class="pagination justify-content-center">
-                <% if (currentPage > 1) { %>
-                <li class="page-item">
-                  <a class="page-link" href="?page=<%= currentPage - 1 %>"
-                    >Previous</a
-                  >
-                </li>
-                <% } %> <% for (let i = 1; i <= totalPages; i++) { %>
-                <li
-                  class="page-item <%= (i === currentPage) ? 'active' : '' %>"
-                >
-                  <a class="page-link" href="?page=<%= i %>"><%= i %></a>
-                </li>
-                <% } %> <% if (currentPage < totalPages) { %>
-                <li class="page-item">
-                  <a class="page-link" href="?page=<%= currentPage + 1 %>"
-                    >Next</a
-                  >
-                </li>
-                <% } %>
-              </ul>
-            </nav>
-            <% } %>
           </div>
-        </div>
 
-        <h2 class="my-4 text-center">Add New Brands</h2>
-        <div class="d-flex justify-content-center">
-          <form
-            class="w-50"
-            method="post"
-            action="/admin/addBrands"
-            enctype="multipart/form-data"
-          >
-            <div class="mb-3">
-              <label for="categoryName" class="form-label">Name:</label>
-              <input
-                type="text"
-                class="form-control"
-                id="categoryName"
-                name="name"
-                required
-              />
-            </div>
-            <div class="mb-3">
-              <label for="categoryPhoto" class="form-label">Photo:</label>
-              <input
-                type="file"
-                class="form-control"
-                id="brandPhoto"
-                name="image"
-                accept=".jpg, .jpeg, .png"
-                required
-              />
-            </div>
-            <button type="submit" class="btn btn-primary">Add</button>
-          </form>
+          <!-- Pagination -->
+          <% if (totalPages > 0) { %>
+          <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center">
+              <% if (currentPage > 1) { %>
+              <li class="page-item">
+                <a class="page-link" href="?page=<%= currentPage - 1 %>">
+                  <i class="fas fa-chevron-left"></i>
+                </a>
+              </li>
+              <% } %>
+              
+              <% for (let i = 1; i <= totalPages; i++) { %>
+              <li class="page-item <%= (i === currentPage) ? 'active' : '' %>">
+                <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+              </li>
+              <% } %>
+              
+              <% if (currentPage < totalPages) { %>
+              <li class="page-item">
+                <a class="page-link" href="?page=<%= currentPage + 1 %>">
+                  <i class="fas fa-chevron-right"></i>
+                </a>
+              </li>
+              <% } %>
+            </ul>
+          </nav>
+          <% } %>
         </div>
       </div>
     </div>
   </div>
 </div>
-<footer>
-  <div class="container text-center"></div>
-</footer>
 
-<!-- Bootstrap JS -->
+<!-- Add Brand Modal -->
+<div class="modal fade" id="addBrandModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add New Brand</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="post" action="/admin/addBrands" enctype="multipart/form-data">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Brand Name</label>
+            <input type="text" class="form-control" name="name" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Brand Logo</label>
+            <input type="file" class="form-control" name="image" accept=".jpg, .jpeg, .png" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Add Brand</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<!-- Include jQuery before your script -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 <script src="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.js"></script>
 
-<%- include("../layouts/admin/header.ejs") %>
+<script>
+  // Set current date
+  document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+
+  // Mobile sidebar toggle
+  document.getElementById('sidebarToggle')?.addEventListener('click', () => {
+    document.getElementById('sidebar').classList.add('show');
+  });
+
+  document.getElementById('sidebarClose')?.addEventListener('click', () => {
+    document.getElementById('sidebar').classList.remove('show');
+  });
+</script>

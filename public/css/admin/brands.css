@@ -1,87 +1,225 @@
-body {
-    background-color: #f8f9fa;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
+/* Modern Admin Dashboard Styles */
+:root {
+    --primary-color: #4361ee;
+    --secondary-color: #3f37c9;
+    --success-color: #4CAF50;
+    --danger-color: #f72585;
+    --warning-color: #ff9e00;
+    --info-color: #4cc9f0;
+    --light-color: #f8f9fa;
+    --dark-color: #212529;
+    --border-radius: 10px;
+    --box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
 }
 
-
+/* Sidebar Styles */
 .sidebar {
-    height: 100vh;
-    background-color: #343a40;
-    padding: 20px;
+    width: 280px;
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    padding: 1.5rem;
+    transition: all 0.3s ease;
 }
 
-.sidebar a {
-    color: white;
-    text-decoration: none;
-    padding: 10px;
-    display: block;
-    border-radius: 5px;
-    margin-bottom: 10px;
-}
-
-.sidebar a:hover {
-    background-color: #495057;
-}
-
-.main-content {
-    padding: 20px;
-    flex-grow: 1;
-}
-
-.breadcrumb-container {
-    margin-bottom: 20px;
-    padding: 10px 15px;
-    background: linear-gradient(90deg, #f8f9fa, #e9ecef);
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.breadcrumb {
-    display: flex;
-    align-items: center;
-    margin: 0;
-    padding: 0;
-    background: transparent;
-    font-size: 16px;
-    font-weight: 500;
-    color: #6c757d;
-}
-
-.breadcrumb-item+.breadcrumb-item::before {
-    content: ">";
-    margin: 0 10px;
-    color: #adb5bd;
-}
-
-.breadcrumb-item a {
-    text-decoration: none;
-    color: #007bff;
-    padding: 5px 10px;
-    border-radius: 5px;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.breadcrumb-item a:hover {
-    background-color: #007bff;
-    color: white;
-    text-decoration: none;
-}
-
-.breadcrumb-item.active {
-    color: #495057;
+.sidebar h2 {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
     font-weight: 600;
 }
 
-.card {
-    margin-bottom: 20px;
-    border: 1px solid #dee2e6;
-    border-radius: 5px;
-    background-color: #ffffff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+.sidebar a {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    border-radius: var(--border-radius);
+    margin-bottom: 0.5rem;
+    transition: all 0.3s ease;
 }
 
+.sidebar a:hover, .sidebar a.active {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    transform: translateX(5px);
+}
+
+/* Main Content Styles */
+.main-content {
+    padding: 2rem;
+    background-color: #f8f9fa;
+}
+
+/* Brand Management Section */
+.brand-management {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    box-shadow: var(--box-shadow);
+}
+
+.brand-management h1 {
+    color: var(--dark-color);
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+/* Breadcrumb Styles */
+.breadcrumb-container {
+    background-color: var(--light-color);
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    margin-bottom: 2rem;
+}
+
+.breadcrumb {
+    margin-bottom: 0;
+}
+
+/* Table Styles */
+.table-responsive {
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--box-shadow);
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.table thead {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.table th {
+    padding: 1rem;
+    font-weight: 600;
+    border: none;
+}
+
+.table td {
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+.table tbody tr {
+    transition: all 0.3s ease;
+}
+
+.table tbody tr:hover {
+    background-color: rgba(67, 97, 238, 0.05);
+}
+
+/* Brand Image Styles */
+.table img {
+    border-radius: 8px;
+    object-fit: cover;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Button Styles */
+.btn {
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-warning {
+    background-color: var(--warning-color);
+    border: none;
+    color: white;
+}
+
+.btn-danger {
+    background-color: var(--danger-color);
+    border: none;
+}
+
+.btn-danger a {
+    color: white;
+    text-decoration: none;
+}
+
+/* Add Brand Form Styles */
+.add-brand-section {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    box-shadow: var(--box-shadow);
+    margin-top: 2rem;
+}
+
+.add-brand-section h2 {
+    color: var(--dark-color);
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.form-control {
+    border-radius: var(--border-radius);
+    padding: 0.75rem 1rem;
+    border: 1px solid #dee2e6;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.25);
+}
+
+/* Pagination Styles */
+.pagination {
+    margin-top: 1.5rem;
+    margin-bottom: 0;
+}
+
+.page-link {
+    color: var(--primary-color);
+    border: none;
+    padding: 0.5rem 1rem;
+    margin: 0 0.25rem;
+    border-radius: var(--border-radius);
+}
+
+.page-item.active .page-link {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+/* Responsive Design */
+@media (max-width: 991.98px) {
+    .sidebar {
+        width: 100%;
+        position: fixed;
+        z-index: 1000;
+        transform: translateX(-100%);
+    }
+    
+    .sidebar.show {
+        transform: translateX(0);
+    }
+    
+    .main-content {
+        padding: 1rem;
+    }
+    
+    .brand-management {
+        padding: 1rem;
+    }
+}
+
+/* Animation Styles */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.brand-management {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Footer Styles */
 footer {
     background-color: #000000;
     color: white;
