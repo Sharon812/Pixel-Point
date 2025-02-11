@@ -6,6 +6,15 @@ function validateAndSubmit(event) {
 
   if (validateForm()) {
     // Collect combo data from the form
+    Swal.fire({
+      title: 'Adding Product...',
+      html: 'Please wait while we process your request',
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      willOpen: () => {
+        Swal.showLoading();
+      }
+    });
     let combos = [];
     const comboRows = document.querySelectorAll(".combo-row");
 
@@ -28,7 +37,7 @@ function validateAndSubmit(event) {
         color: color,
       });
     });
-
+console.log(combos,'combos')
     const combosField = document.createElement("input");
     combosField.type = "hidden";
     combosField.name = "combos";
@@ -55,6 +64,7 @@ function validateAndSubmit(event) {
             window.location.href = "/admin/addProducts";
           });
         } else {
+          Swal.close()
           Swal.fire({
             icon: "error",
             title: "Error",
@@ -65,6 +75,7 @@ function validateAndSubmit(event) {
         }
       })
       .catch((error) => {
+        Swal.close()
         console.error(error); // Log the error for debugging
         Swal.fire({
           icon: "error",
@@ -274,39 +285,53 @@ addComboBtn.addEventListener("click", () => {
   const comboIndex = document.querySelectorAll(".combo-row").length;
 
   newRow.innerHTML = `
-        <div class="col-lg-3">
-            <label class="form-label">RAM</label>
-            <input name="ram" type="text" class="form-control border" required>
-            <div id="comboRAM-error-${comboIndex}" class="error-message"></div>
-        </div>
-        <div class="col-lg-3">
-            <label class="form-label">Storage</label>
-            <input name="storage" type="text" class="form-control border" required>
-            <div id="comboStorage-error-${comboIndex}" class="error-message"></div>
-        </div>
-        <div class="col-lg-3">
-            <label class="form-label">Quantity</label>
-            <input name="quantity" type="number" class="form-control border" required>
-            <div id="comboQuantity-error-${comboIndex}" class="error-message"></div>
-        </div>
-        <div class="col-lg-3">
-            <label class="form-label">Regular Price</label>
-            <input name="regularPrice" type="number" class="form-control border" required>
-            <div id="comboReg-error-${comboIndex}" class="error-message"></div>
-        </div>
-        <div class="col-lg-3">
-            <label class="form-label">Sale Price</label>
-            <input name="salePrice" type="number" class="form-control border" required>
-            <div id="comboSale-error-${comboIndex}" class="error-message"></div>
-        </div>
-        <div class="col-lg-3">
-            <label class="form-label">Color</label>
-            <input name="color" type="text" class="form-control border" placeholder="e.g., Red, Blue, Green" required>
-            <div id="comboColor-error-${comboIndex}" class="error-message"></div>
-        </div>
-        <div class="col-lg-3 d-flex align-items-center">
-            <button type="button" class="btn btn-danger delete-combo-btn">Delete</button>
-        </div>
+                   <div class="col-lg-3">
+                                    <label class="form-label">
+                                        <i class="fas fa-memory me-2"></i>RAM
+                                    </label>
+                                    <input name="ram" type="text" class="form-control" required>
+                                    <div id="comboRAM-error" class="error-message"></div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <label class="form-label">
+                                        <i class="fas fa-hdd me-2"></i>Storage
+                                    </label>
+                                    <input name="storage" type="text" class="form-control" required>
+                                    <div id="comboStorage-error" class="error-message"></div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <label class="form-label">
+                                        <i class="fas fa-boxes me-2"></i>Quantity
+                                    </label>
+                                    <input name="quantity" type="number" class="form-control" required>
+                                    <div id="comboQuantity-error" class="error-message"></div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <label class="form-label">
+                                        <i class="fas fa-dollar-sign me-2"></i>Regular Price
+                                    </label>
+                                    <input name="regularPrice" type="number" class="form-control" required>
+                                    <div id="comboReg-error" class="error-message"></div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <label class="form-label">
+                                        <i class="fas fa-dollar-sign me-2"></i>Sale Price
+                                    </label>
+                                    <input name="salePrice" type="number" class="form-control" required>
+                                    <div id="comboSale-error" class="error-message"></div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <label class="form-label">
+                                        <i class="fas fa-palette me-2"></i>Color
+                                    </label>
+                                    <input name="color" type="text" class="form-control" placeholder="e.g., Red, Blue, Green" required>
+                                    <div id="comboColor-error" class="error-message"></div>
+                                </div>
+                                <div class="col-lg-3 d-flex align-items-end">
+                                    <button type="button" class="btn btn-danger delete-combo-btn w-100">
+                                        <i class="fas fa-trash-alt me-2"></i>Delete
+                                    </button>
+                                </div>
     `;
 
   // Append the new row to the product-combos container
