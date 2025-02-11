@@ -1,4 +1,4 @@
-<% include("../layouts/admin/header.ejs") %>
+<%- include("../layouts/admin/header.ejs") %>
 <!-- Bootstrap CSS -->
 <link
   href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
@@ -323,7 +323,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <!-- Custom JS -->
 <script src="/js/admindash.js"></script>
-
 <!-- Chart Initialization -->
 <script>
   // Orders Chart
@@ -435,6 +434,7 @@
     window.location.href = url;
   }
 </script>
+<%- include ("../layouts/admin/footer.ejs")%>
 
 <style>
   .dropdown-menu {
@@ -449,7 +449,7 @@
 
   .dropdown-item:hover {
     background-color: var(--bs-light);
-  
+  }
   .form-control-sm {
     font-size: 0.875rem;
   }

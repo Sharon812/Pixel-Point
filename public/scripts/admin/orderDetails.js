@@ -83,7 +83,7 @@ async function confirmdenyOrder(orderId, itemId) {
     }
   } catch (error) {
     Swal.fire({
-      title: "Error!",
+      title: error || "Error!",
       text: "Failed to confirm return order.",
       icon: "error",
     });
