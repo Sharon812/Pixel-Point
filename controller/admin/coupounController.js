@@ -7,6 +7,8 @@ const getCoupons = async (req, res) => {
     });
     res.render("coupons", {
       coupons: coupons,
+      currentPage:"coupons"
+
     });
   } catch (error) {
     console.log("error at coupons", error);

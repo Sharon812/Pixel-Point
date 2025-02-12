@@ -40,6 +40,8 @@ const userInfo = async (req, res) => {
       data: userData,
       totalPages,
       currentPage: page,
+      currentPage:"users"
+
     });
   } catch (error) {
     console.log(error);

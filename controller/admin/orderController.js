@@ -70,6 +70,8 @@ const getOrderDetails = async (req, res) => {
       prevPage: page - 1,
       lastPage: totalPages,
       returnedProducts: returnRequestedProducts,
+      currentPage:"orders"
+
     });
   } catch (error) {
     console.error("Error fetching orders:", error);

@@ -15,6 +15,8 @@ const categoryInfo = async (req, res) => {
     res.render("category", {
       cat: categoryData,
       currentPage: page,
+      currentPage:"category"
+
     });
   } catch (error) {
     console.log("errpr at category info,", error);
@@ -62,6 +64,8 @@ const geteditCategory = async (req, res) => {
     const category = await Category.findOne({ _id: id });
     res.render("editCategory", {
       category,
+      currentPage:"category"
+
     });
   } catch (error) {
     console.log("error at edit category,", error);

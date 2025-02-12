@@ -11,8 +11,13 @@ const getProductInfo = async (req, res) => {
     res.render("addProduct", {
       cat: category,
       brand: brand,
+      currentPage:"addProduct"
+
     });
-  } catch (error) {}
+  } catch (error) {
+    console.log(error,"error at getting product page")
+    res.redirect("/page-not-found")
+  }
 };
 
 //to add product
@@ -109,6 +114,8 @@ const getAllProducts = async (req, res) => {
         totalPages: Math.ceil(count / limit),
         categories,
         brands,
+        currentPage:"products"
+
       });
     } else {
       res.redirect("/page-not-found");
@@ -155,6 +162,8 @@ const getEditProducts = async (req, res) => {
       product: product,
       cat: category,
       brand: brand,
+      currentPage:"products"
+
     });
   } catch (error) {
     console.log("Error found in the loading Edit Product side: ", error);

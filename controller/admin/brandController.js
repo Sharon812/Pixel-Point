@@ -21,6 +21,8 @@ const getBrandPage = async (req, res) => {
       currentPage: page,
       totalPages: totalPages,
       totalBrands: totalBrands,
+      currentPage:"brands"
+
     });
   } catch (error) {
     console.log("error at brandpage", error);

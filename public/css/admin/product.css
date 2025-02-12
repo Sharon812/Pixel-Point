@@ -7,42 +7,42 @@
 /* Navbar */
 .navbar {
   background: linear-gradient(135deg, #0d6efd 0%, #0a4da6 100%);
-  padding: 1rem;
-  z-index: 1030;
+  height: 56px;
+  z-index: 1060;
 }
 
 .navbar-brand {
   font-weight: 600;
 }
 
-/* Sidebar */
 .sidebar {
-  background: linear-gradient(135deg, #0d6efd 0%, #0a4da6 100%);
   width: 250px;
-  min-height: 100vh;
-  padding-top: 1rem;
+  background: linear-gradient(135deg, #0d6efd 0%, #0a4da6 100%);
+  min-height: calc(100vh - 56px); /* Subtract navbar height */
+  padding: 1.5rem;
+  transition: all 0.3s ease;
   position: fixed;
   left: 0;
-  top: 0;
+  top: 0px; /* Start below navbar */
   bottom: 0;
-  z-index: 1020;
-  transition: transform 0.3s ease;
+  z-index: 1040;
 }
 
 .sidebar h2 {
-  color: white;
-  padding: 0 1.5rem;
-  margin-bottom: 1.5rem;
-  font-size: 1.25rem;
+  color: #ffffff;
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
 }
-
 .sidebar a {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
   color: rgba(255, 255, 255, 0.8);
   text-decoration: none;
-  padding: 0.75rem 1.5rem;
-  display: block;
-  font-size: 0.9rem;
+  border-radius: 0.5rem;
+  margin-bottom: 0.5rem;
   transition: all 0.3s ease;
+  white-space: nowrap;
 }
 
 .sidebar a:hover {

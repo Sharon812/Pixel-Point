@@ -157,6 +157,7 @@ const loaddashboard = async (req, res) => {
         revenueData,
       },
       recentOrders: formattedRecentOrders,
+      currentPage:"dashboard"
     });
   } catch (error) {
     console.log(error);
