@@ -559,7 +559,8 @@ const cancelOrder = async (req, res) => {
       await wallet.save();
     }
 
-    orderItem.status = "Returned";
+    orderItem.status = "Cancelled";
+    orderItem.cancellationReason = reason
     await order.save();
 
     return res
@@ -574,7 +575,6 @@ const cancelOrder = async (req, res) => {
 const returnOrder = async (req, res) => {
   try {
     const { itemId, orderId, reason } = req.body;
-    console.log(req.body, "reqbody");
     const order = await Order.findOneAndUpdate(
       { _id: orderId, "orderedItems._id": itemId },
       {
@@ -585,7 +585,6 @@ const returnOrder = async (req, res) => {
       },
       { new: true }
     );
-    console.log(order, "order");
     if (!order) {
       return res
         .status(404)
