@@ -103,7 +103,7 @@ function openReturnModal(itemid, orderid) {
   itemId = itemid;
 }
 function closeReturnModal() {
-  const modal = document.getElementById("cancelModal");
+  const modal = document.getElementById("returnModal");
   modal.classList.remove("show");
   document.getElementById("cancelReason").value = "";
 }

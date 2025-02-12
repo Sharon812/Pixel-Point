@@ -195,7 +195,7 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                           <button class="cancel-order-btn" onclick="openCancelModal('<%= item._id %>','<%=order._id%>')">Cancel Order</button>
                         </div>
                         <% } else {%>
-                         <button class="cancel-order-btn" onclick="openCancelModal('<%= item._id %>', true)">Return</button>
+                         <button class="cancel-order-btn" onclick="openReturnModal('<%= item._id %>','<%=order._id%>')">Return</button>
                         <% } %>
                      <% } else{ %>
                       <a  href="/orderDetails/?orderId=<%= item._id %>" class="view-order-btn text-center">View Order</a>
@@ -209,7 +209,35 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                   <% }); %>
                   <% }); %>
                 </div>
-                
+                <div class="cancel-modal" id="returnModal">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h3 class="modal-title" id="modalTitle">Return Order</h3>
+                      <p class="modal-subtitle" id="modalSubtitle">
+                        Please provide a reason for Return
+                      </p>
+                    </div>
+                    <div class="modal-body">
+                      <input
+                        class="reason-textarea"
+                        id="returnReason"
+                        placeholder="Enter your reason here..."
+                      />
+                    </div>
+                    <div class="modal-actions">
+                      <button class="modal-btn cancel-btn" onclick="closeReturnModal()">
+                        Close
+                      </button>
+                      <button
+                        class="modal-btn confirm-btn"
+                        id="confirmButton"
+                        onclick="confirmReturnOrder()"
+                      >
+                        Confirm
+                      </button>
+                    </div>
+                  </div>
+                </div>
                 <!-- Cancel/Return Order Modal -->
                 <div class="cancel-modal" id="cancelModal">
                     <div class="modal-content">
