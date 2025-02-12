@@ -1,83 +1,77 @@
-function handleFormSubmit(event) {
+async function handleFormSubmit(event) {
   event.preventDefault();
-  const name = document.getElementById("categoryName").value;
-  const description = document.getElementById("categoryDescription").value;
-  fetch("/admin/addCategory", {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-    },
-    body: JSON.stringify({ name, description }),
-  })
-    .then((response) => {
-      if (!response.ok) {
-        return response.json().then((err) => {
-          throw new Error(err.error);
-        });
-      }
-      return response.json();
-    })
-    .then((data) => {
-      Swal.fire({
-        icon: "success",
-        title: "category Verified Successfully",
-        showConfirmButton: false,
-        timer: 1500,
-      }).then(() => {
-        location.reload();
-      });
-    })
-    .catch((error) => {
-      if (error.message === "Category already exists") {
-        Swal.fire({
-          icon: "error",
-          title: "Oops",
-          text: "Category already exists",
-        });
-      } else {
-        Swal.fire({
-          icon: "error",
-          title: "Oops",
-          text: "An error occurred in adding category",
-        });
-      }
-    });
+  clearErrorMessages();
 
-  // function validateForm() {
-  // clearErrorMessages();
-  // const name = document.categoryName("categoryDescription")[0].value.trim();
-  // const description = document.categoryName("categoryDescription").value.trim();
-  // isValid = true;
-
-  // if (name == "") {
-  // displayErrorMessage("name-error", "Please enter a name");
-  // isValid = false;
-  // } else if (!/^[a-zA-Z\s]+$/.test(name)) {
-  // displayErrorMessage("name-error", "Name field only contains alphabets");
-  // isValid = false;
-  // }
-
-  // if (description == "") {
-  // displayErrorMessage("description-error", "Please enter a description");
-  // isValid = false;
-  // }
-  // return isValid;
-  // }
-
-  function displayErrorMessage(elementId, message) {
-    let errorElement = document.getElementById(elementId);
-    errorElement.innerText = message;
-    errorElement.style.display = "block";
+  const name = document.getElementById("categoryName").value.trim();
+  const description = document.getElementById("categoryDescription").value.trim();
+  let isValid = true;
+  // Validation
+  if (name === "") {
+    displayErrorMessage("name-error", "Please enter a category name");
+    isValid = false;
+  } else if (!/^[a-zA-Z\s]+$/.test(name)) {
+    displayErrorMessage("name-error", "Category name should only contain alphabets");
+    isValid = false;
   }
 
-  function clearErrorMessages() {
-    let errorElements = document.getElementsByClassName("error-message");
-    Array.from(errorElements).forEach((element) => {
-      element.innerText = "";
-      element.style.display = "none";
+  if (description === "") {
+    console.log("here")
+    displayErrorMessage("description-error", "Please enter a category description");
+    isValid = false;
+  }
+
+  if (!isValid) return; 
+
+  try {
+    const response = await fetch("/admin/addCategory", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ name, description }),
     });
+
+    const data = await response.json();
+
+    Swal.fire({
+      icon: "success",
+      title: "Category added successfully",
+      showConfirmButton: false,
+      timer: 1500,
+    }).then(() => {
+      location.reload();
+    });
+  } catch (error) {
+    if (error.message === "Category already exists") {
+      Swal.fire({
+        icon: "error",
+        title: "Oops",
+        text: "Category already exists",
+      });
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Oops",
+        text: "An error occurred while adding the category",
+      });
+    }
   }
 }
+
+function displayErrorMessage(elementId, message) {
+  let errorElement = document.getElementById(elementId);
+  errorElement.innerText = message;
+  errorElement.style.display = "block";
+}
+
+function clearErrorMessages() {
+  let errorElements = document.getElementsByClassName("error-message");
+  Array.from(errorElements).forEach((element) => {
+    element.innerText = "";
+    element.style.display = "none";
+  });
+}
+
 
 function deleteCategory(categoryId) {
   Swal.fire({
@@ -146,7 +140,6 @@ document.addEventListener("DOMContentLoaded", function () {
     sidebarClose.addEventListener("click", closeSidebar);
   }
 
-  // Close sidebar when clicking outside
   document.addEventListener("click", function (event) {
     const isClickInsideSidebar = sidebar.contains(event.target);
     const isClickOnToggle = sidebarToggle.contains(event.target);
@@ -224,7 +217,6 @@ function validateOfferForm(categoryId) {
   const endDate = document.getElementById(`endDate_${categoryId}`);
   let isValid = true;
 
-  // Validate percentage
   const percentageValue = parseInt(percentage.value);
   if (isNaN(percentageValue) || percentageValue < 1 || percentageValue > 100) {
     percentage.classList.add("is-invalid");
@@ -233,7 +225,6 @@ function validateOfferForm(categoryId) {
     percentage.classList.remove("is-invalid");
   }
 
-  // Validate end date
   const selectedDate = new Date(endDate.value);
   const tomorrow = new Date();
   tomorrow.setHours(0, 0, 0, 0);

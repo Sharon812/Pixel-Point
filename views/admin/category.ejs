@@ -211,7 +211,7 @@
             <h5 class="card-title mb-4">Add New Category</h5>
             <form
               method="post"
-              onsubmit="return handleFormSubmit(event)"
+              onsubmit="handleFormSubmit (event)"
               class="row g-3"
             >
               <div class="col-12 col-md-6">
@@ -221,9 +221,9 @@
                   class="form-control"
                   id="categoryName"
                   name="name"
-                  required
                   placeholder="Enter category name"
                 />
+                <p id="name-error"  class="error-message text-danger" ></p>
               </div>
               <div class="col-12 col-md-6">
                 <label for="categoryDescription" class="form-label"
@@ -234,9 +234,9 @@
                   class="form-control"
                   id="categoryDescription"
                   name="description"
-                  required
                   placeholder="Enter category description"
                 />
+                <p id="description-error"  class="error-message text-danger" ></p>
               </div>
               <div class="col-12">
                 <button type="submit" class="btn btn-primary w-100 w-md-auto">
