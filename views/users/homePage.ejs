@@ -75,14 +75,13 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
          
         </ul>
         <div class="header__search">
-          <input
-            type="text"
-            placeholder="Search For Items..."
-            class="form__input"
-          />
-          <button class="search__btn">
+          <form action="/shop" method="get">
+            <input type="text" id="search" class="form__input" name="search" placeholder="Search products..."  />
+          <button class="search__btn" type="submit">
             <img src="/img/search.png" alt="search icon" />
           </button>
+        </form>
+         
         </div>
       </div>
       <div class="header__user-actions">
