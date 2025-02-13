@@ -101,7 +101,10 @@ async function updateQuantity(comboId) {
   }
 }
 
-async function decreaseQuantity(comboId) {
+async function decreaseQuantity(comboId,quantity) {
+  if(quantity < 1){
+    return
+  }
   try {
     const response = await fetch(`/decreaseQuantity?comboId=${comboId}`, {
       method: "PATCH",

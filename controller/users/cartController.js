@@ -8,6 +8,7 @@ const Address = require("../../models/addressSchema");
 const Product = require("../../models/productSchema");
 const Cart = require("../../models/cartSchema");
 const { response } = require("express");
+const _  = require("lodash")
 
 const getCart = async (req, res) => {
   try {
@@ -221,6 +222,9 @@ const addquantity = async (req, res) => {
     }
 
     const combo = productWithCombo.combos[0];
+    if(product.quantity >5){
+      return 
+    }
 
     product.quantity += 1;
 
@@ -244,7 +248,9 @@ const addquantity = async (req, res) => {
   }
 };
 
-const decreaseQuantity = async (req, res) => {
+
+
+const decreaseQuantity = _.throttle(async (req, res) => {
   try {
     const user = req.session.user;
     const { comboId } = req.query;
@@ -282,14 +288,18 @@ const decreaseQuantity = async (req, res) => {
         .json({ success: false, message: "Combo not found" });
     }
 
+    console.log(product.quantity, "ifi");
+    if (product.quantity < 1) {
+      console.log("belloo");
+      return res.status(400).json({
+        success: false,
+        message: "Quantity cannot be less than one.",
+      });
+    }
+
     const combo = productWithCombo.combos[0];
 
     product.quantity -= 1;
-
-    // if (product.quantity === 0) {
-    //   cart.items = cart.items.filter((item) => item.comboId != comboId);
-    // } else {
-    //   product.totalPrice = product.quantity * combo.salePrice;
     product.totalPrice = product.quantity * combo.salePrice;
 
     cart.totalPrice = cart.items.reduce(
@@ -308,7 +318,7 @@ const decreaseQuantity = async (req, res) => {
       .status(500)
       .json({ success: false, message: "Internal server error" });
   }
-};
+}, 2000); // 2 seconds throttle time
 
 module.exports = {
   getCart,

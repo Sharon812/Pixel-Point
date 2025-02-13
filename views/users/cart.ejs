@@ -171,11 +171,11 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                     <i class="fi fi-rs-minus-small"></i>
                   </button>
                   <% }else{ %>
-                    <button  onclick="decreaseQuantity( '<%=item.combo._id%>' )" class="cart__quantity-btn minus" disabled>
+                    <button  onclick="decreaseQuantity( '<%=item.combo._id%>','<%=item.quantity%>' )" class="cart__quantity-btn minus" disabled>
                       <i class="fi fi-rs-minus-small"></i>
                     </button>
                     <% } %>
-                  <input type="number" value="<%= item.quantity %>" min="1" class="cart__quantity-input" />
+                  <input type="number" value="<%= item.quantity %>" min="1" max="5" class="cart__quantity-input" />
 
                   <button onclick="updateQuantity( '<%=item.combo._id%>' )" class="cart__quantity-btn plus" >
                     <i class="fi fi-rs-plus-small"></i>
@@ -333,6 +333,9 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
   <!-- Include jQuery before your script -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   
+
+
+
   <script src="/scripts/users/cart.js" ></script>
 <!--=============== MAIN JS ===============-->
 <script src="scripts/users/main.js"></script>
