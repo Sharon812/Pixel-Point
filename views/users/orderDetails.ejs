@@ -209,6 +209,24 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                   <% }); %>
                   <% }); %>
                 </div>
+                <% if (totalPages > 1) { %>
+                <div class="pagination" style="display: flex; justify-content: center; gap: 10px; margin-top: 20px;">
+                  <% if (currentPage > 1) { %>
+                    <a href="?page=<%= currentPage - 1 %>" style="padding: 8px 12px; border: 1px solid #ddd; text-decoration: none; color: #333;">&laquo; Previous</a>
+                  <% } %>
+                  
+                  <% for(let i = 1; i <= totalPages; i++) { %>
+                    <a href="?page=<%= i %>" 
+                       style="padding: 8px 12px; border: 1px solid #ddd; text-decoration: none; color: #333; <%= currentPage === i ? 'background-color: #007bff; color: white;' : '' %>">
+                      <%= i %>
+                    </a>
+                  <% } %>
+                  
+                  <% if (currentPage < totalPages) { %>
+                    <a href="?page=<%= currentPage + 1 %>" style="padding: 8px 12px; border: 1px solid #ddd; text-decoration: none; color: #333;">Next &raquo;</a>
+                  <% } %>
+                </div>
+              <% } %>
                 <div class="cancel-modal" id="returnModal">
                   <div class="modal-content">
                     <div class="modal-header">

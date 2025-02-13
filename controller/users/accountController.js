@@ -443,13 +443,25 @@ const getOrders = async (req, res) => {
   try {
     const user = req.session.user;
     const userData = await User.findById(user);
+    
+    const page = parseInt(req.query.page) || 1;
+    const limit = 4;
+    const skip = (page - 1) * limit;
+    
+    const totalOrders = await Order.countDocuments({ userId: user });
+    const totalPages = Math.ceil(totalOrders / limit);
+    
     const orders = await Order.find({ userId: user })
       .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
       .populate("orderedItems.product");
-    console.log(orders, "orders");
+      
     res.render("orderDetails", {
       user: userData,
       orders: orders,
+      currentPage: page,
+      totalPages: totalPages
     });
   } catch (error) {
     console.log(
