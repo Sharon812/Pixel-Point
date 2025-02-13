@@ -168,12 +168,17 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
               <% } %>
             </div>
             <div class="checkout__billing">
-              <div class="billing__header">
+              <div class="billing__header d-flex justify-content-between">
                 <div class="location__icon">
                   <i class="fi fi-rs-marker"></i>
+
                 </div>
                 <h3 class="section__title">Delivery Address</h3>
+
+                <button class="btn-primary d-block" id="addAddressBtn">Add Address</button>
+
               </div>
+
               <% if (address && address.length > 0) { %>
                 <!-- Display first address by default -->
                 <div class="saved__address primary-address">
@@ -398,6 +403,84 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
         <p class="copyright">&copy; 2024 Pixel-Point. All right reserved</p>
       </div>
     </footer>
+      <!-- Address Modal -->
+  <div class="modal fade" id="newAddressModal" tabindex="-1" aria-labelledby="newAddressModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="newAddressModalLabel">Add New Address</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="newAddressForm" class="needs-validation">
+            <div class="mb-3">
+              <label for="houseName" class="form-label">House Name/Number</label>
+              <input type="text" class="form-control" id="houseName" >
+              <span id="houseNameError" class="text-danger"></span>
+            </div>
+            
+            <div class="mb-3">
+              <label for="addressType" class="form-label">Address Type</label>
+              <select class="form-select" id="type" >
+                <option value="">Select Type</option>
+                <option value="home">Home</option>
+                <option value="work">Work</option>
+                <option value="other">Other</option>
+              </select>
+              <span id="addressTypeError" class="text-danger"></span>
+
+            </div>
+
+            <div class="mb-3">
+              <label for="city" class="form-label">City</label>
+              <input type="text" class="form-control" id="city" >
+              <span id="cityError" class="text-danger"></span>
+
+            </div>
+
+            <div class="mb-3">
+              <label for="landmark" class="form-label">Landmark</label>
+              <input type="text" class="form-control" id="landmark">
+              <span id="landMarkError" class="text-danger"></span>
+
+            </div>
+
+            <div class="mb-3">
+              <label for="state" class="form-label">State</label>
+              <input type="text" class="form-control" id="state" >
+              <span id="stateError" class="text-danger"></span>
+
+            </div>
+
+            <div class="mb-3">
+              <label for="pincode" class="form-label">Pincode</label>
+              <input type="text" class="form-control" id="pincode" >
+              <span id="pincodeError" class="text-danger"></span>
+
+            </div>
+
+            <div class="mb-3">
+              <label for="phone" class="form-label">Phone Number</label>
+              <input type="tel" class="form-control" id="phone"  >
+              <span id="phoneError" class="text-danger"></span>
+
+            </div>
+
+            <div class="mb-3">
+              <label for="altPhone" class="form-label">Alternate Phone Number</label>
+              <input type="tel" class="form-control" id="alt-phone">
+              <span id="altPhoneError" class="text-danger"></span>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Save Address</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <!--=============== SWIPER JS ===============-->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
@@ -589,5 +672,7 @@ function removeCoupon() {
  }
   </script>
   </body>
+
+
+
   <%- include("../layouts/users/footer.ejs") %>
-  

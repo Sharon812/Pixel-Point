@@ -90,6 +90,7 @@
                     <th scope="col">end date</th>
                     <th scope="col">Offer</th>
                     <th scope="col">Combos</th>
+
                     <th scope="col">Actions</th>
                   </tr>
                 </thead>
@@ -103,9 +104,8 @@
                     <td>
                       <%= productData[i].offerEndDate ?
                       productData[i].offerEndDate.toLocaleDateString('en-GB') :
-                      'N/A' %>
+                      'N/A' %> 
                     </td>
-                    <td><%=productData[i].category.name%></td>
                     <td>
                       <div class="d-flex gap-2">
                         <button

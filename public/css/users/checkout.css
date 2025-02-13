@@ -949,3 +949,82 @@
 .btn-secondary:hover {
   background: #e0e0e0;
 }
+#newAddressModal .modal-content {
+  border-radius: 15px;
+  border: none;
+  box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+
+#newAddressModal .modal-header {
+  border-bottom: 1px solid #eee;
+  padding: 1.5rem;
+}
+
+#newAddressModal .modal-body {
+  padding: 1.5rem;
+}
+
+#newAddressModal .modal-footer {
+  border-top: 1px solid #eee;
+  padding: 1.5rem;
+}
+
+#newAddressModal .form-label {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+#newAddressModal .form-control,
+#newAddressModal .form-select {
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  transition: border-color 0.15s ease-in-out;
+}
+
+#newAddressModal .form-control:focus,
+#newAddressModal .form-select:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+}
+
+#newAddressModal .btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+#newAddressModal .was-validated .form-control:invalid,
+#newAddressModal .was-validated .form-select:invalid {
+  border-color: #dc3545;
+}
+
+#newAddressModal .was-validated .form-control:valid,
+#newAddressModal .was-validated .form-select:valid {
+  border-color: #198754;
+}
+
+/* Fix for modal backdrop issue */
+.modal {
+  z-index: 1050 !important;
+}
+
+.modal-backdrop {
+  z-index: 1040 !important;
+  background-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+.modal-dialog {
+  z-index: 1060 !important;
+}
+
+/* Make sure the modal is clickable */
+.modal.show {
+  pointer-events: auto;
+}
+
+/* Allow clicking outside modal to close it */
+.modal-backdrop.show {
+  pointer-events: auto;
+  cursor: pointer;
+}

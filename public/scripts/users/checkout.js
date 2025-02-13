@@ -258,3 +258,155 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 });
+
+
+//for add address
+    // Add this to your existing JavaScript
+    document.addEventListener('DOMContentLoaded', function() {
+      const addAddressBtn = document.getElementById('addAddressBtn');
+      const newAddressModal = new bootstrap.Modal(document.getElementById('newAddressModal'), {
+        backdrop: true,
+        keyboard: true
+      });
+      
+      // Show modal when add address button is clicked
+      addAddressBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        newAddressModal.show();
+      });
+
+      // // Close modal when clicking outside
+      // document.querySelector('.modal-backdrop').addEventListener('click', function() {
+      //   newAddressModal.hide();
+      // });
+
+      // Form validation
+      document
+      .getElementById("newAddressForm")
+      .addEventListener("submit", async function (e) {
+        e.preventDefault(); 
+    
+        let isValid = true;
+    
+        document
+          .querySelectorAll(".error-message")
+          .forEach((el) => (el.textContent = ""));
+    
+    
+        const houseName = document.getElementById("houseName");
+        if (!houseName.value.trim()) {
+          document.getElementById("houseNameError").textContent =
+            "House name is required.";
+          isValid = false;
+        }
+    
+        // Address Type
+        const addressType = document.getElementById("type");
+        if (!addressType.value) {
+          document.getElementById("addressTypeError").textContent =
+            "Please select an address type.";
+          isValid = false;
+        }
+    
+        // City
+        const city = document.getElementById("city");
+        if (!city.value.trim()) {
+          document.getElementById("cityError").textContent = "City is required.";
+          isValid = false;
+        }
+    
+        // State
+        const state = document.getElementById("state");
+        if (!state.value.trim()) {
+          document.getElementById("stateError").textContent = "State is required.";
+          isValid = false;
+        }
+    
+        // Landmark
+        const landmark = document.getElementById("landmark");
+        if (!landmark.value.trim()) {
+          document.getElementById("landMarkError").textContent =
+            "Landmark is required.";
+          isValid = false;
+        }
+    
+        // Pincode
+        const pincode = document.getElementById("pincode");
+        if (!pincode.value.match(/^\d{6}$/)) {
+          document.getElementById("pincodeError").textContent =
+            "Pincode must be a 6-digit number.";
+          isValid = false;
+        }
+    
+        // Phone Number
+        const phone = document.getElementById("phone");
+        if (!phone.value.match(/^\d{10}$/)) {
+          document.getElementById("phoneError").textContent =
+            "Phone number must be a 10-digit number.";
+          isValid = false;
+        }
+    
+        // Alternate Phone
+        const altPhone = document.getElementById("alt-phone");
+        if (!altPhone.value.match(/^\d{10}$/)) {
+          document.getElementById("altPhoneError").textContent =
+            "Alternate phone number must be a 10-digit number.";
+          isValid = false;
+        }
+    
+        if (!isValid) {
+          return; // Stop further execution
+        }
+    
+        // If the form is valid, prepare data for submission
+        const formData = {
+          houseName: houseName.value.trim(),
+          type: addressType.value,
+          city: city.value.trim(),
+          state: state.value.trim(),
+          landmark: landmark.value.trim(),
+          pincode: pincode.value,
+          phone: phone.value,
+          altPhone: altPhone.value,
+        };
+    
+        try {
+          // Send data using Fetch API
+          const response = await fetch("/add-address", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+          });
+    
+          // Handle server response
+          if (response.ok) {
+            const result = await response.json();
+            Swal.fire({
+              icon: "success",
+              title: "Success",
+              timer: 1500,
+              showConfirmButton: false,
+              text: result.message || "Address added successfully!",
+            }).then(() => {
+              window.location.reload()
+            });
+          } else {
+            const error = await response.json();
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: error.message || "Failed to add the address.",
+            });
+          }
+        } catch (error) {
+          // Handle network or server errors
+          Swal.fire({
+            icon: "error",
+            title: result.message || "Network Error",
+            text: "An error occurred while submitting the form. Please try again.",
+          });
+        }
+      });
+    })    
