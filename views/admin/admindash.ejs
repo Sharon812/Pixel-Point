@@ -244,6 +244,8 @@
 
 <!-- Bootstrap JS -->
 <!-- Custom JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="/js/admindash.js"></script>
 
 <!-- Chart Initialization -->
@@ -346,13 +348,56 @@
     const endDate = document.getElementById('endDate').value;
     
     if (!startDate || !endDate) {
-      alert('Please select both start and end dates');
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "error",
+        title: "Error!",
+        text:  "Date not Set",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        customClass: {
+          popup: "colored-toast error-toast",
+          icon: "error-icon",
+        },
+      });
       return;
     }
     
-    if (new Date(startDate) > new Date(endDate)) {
-      alert('Start date must be before end date');
-      return;
+    if (new Date(startDate) >  new Date(endDate)) {
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "error",
+        title: "Error!",
+        text:  "Start date must be before end date",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        customClass: {
+          popup: "colored-toast error-toast",
+          icon: "error-icon",
+        },
+      });
+            return;
+    }
+    if(new Date(endDate) > new Date()){
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "error",
+        title: "Error!",
+        text:  "End date must be before today",
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        customClass: {
+          popup: "colored-toast error-toast",
+          icon: "error-icon",
+        },
+      });
+      return
     }
     
     const url = `/admin/sales-report/custom?start=${startDate}&end=${endDate}&format=${format}`;
