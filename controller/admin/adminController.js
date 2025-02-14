@@ -226,36 +226,55 @@ const generateSalesReport = async (
   doc.moveDown();
 
   const totalAmount = orders.reduce((sum, order) => {
-    if (!Array.isArray(order.orderedItems)) return sum;
+    if (!Array.isArray(order.orderedItems)) return sum; 
+
+    const deliveredItems = order.orderedItems.filter(
+      (item) => item.status === "Delivered"
+    );
+    console.log(deliveredItems,"items")
+
+    const deliveredAmount = deliveredItems.reduce(
+      (itemSum, item) => itemSum + (item.totalPrice || 0),
+      0
+    );
+    console.log(deliveredAmount,"amt")
+
+    return sum + deliveredAmount;
+  }, 0);
+
+  const discountAmount = orders.reduce((sum, order) => {
+    if (!Array.isArray(order.orderedItems)) return sum; 
 
     const deliveredItems = order.orderedItems.filter(
       (item) => item.status === "Delivered"
     );
 
     const deliveredAmount = deliveredItems.reduce(
-      (itemSum, item) => itemSum + (item.finalAmount || 0),
+      (itemSum, item) => itemSum + (item.dicountPrice || 0),
       0
     );
 
     return sum + deliveredAmount;
   }, 0);
+console.log(orders,"orderin here below")
 
-  console.log("Total Amount of Delivered Orders:", totalAmount);
-
-  const totalOrders = orders.length;
-  const successfulOrders = orders.filter((order) =>
-    order.orderedItems.some((item) => item.status === "Delivered")
-  ).length;
-  const returnedOrders = orders.filter((order) =>
-    order.orderedItems.some((item) => item.status === "Returned")
-  ).length;
+  const totalOrders = orders.reduce((count, order) => 
+    count + order.orderedItems.filter((item) => item.status === "Delivered").length, 0
+  );
+  
+  
+  // const returnedOrders = orders.filter((order) =>
+  //   order.orderedItems.some((item) => item.status === "Returned")
+  // ).length;
 
   doc.fontSize(14).text("Summary", { underline: true });
   doc.moveDown(0.5);
   doc.fontSize(12).text(`Total Orders: ${totalOrders}`);
-  doc.fontSize(12).text(`Successful Orders: ${successfulOrders}`);
-  doc.fontSize(12).text(`Returned Orders: ${returnedOrders}`);
-  doc.fontSize(12).text(`Total Revenue: ₹${totalAmount.toLocaleString("en-IN")}`);
+  // doc.fontSize(12).text(`Successful Orders: ${successfulOrders}`);
+  doc.fontSize(12).text(`Discounted Price: ${discountAmount}`);
+  doc.fontSize(12).text(`Total Money: ₹${totalAmount}`);
+  doc.fontSize(12).text(`Final Amount after discount: ₹${totalAmount - discountAmount}`);
+
   doc.moveDown();
 
   doc.fontSize(14).text("Order Details", { underline: true });
@@ -279,8 +298,11 @@ const generateSalesReport = async (
     .lineTo(startX + 470, currentY)
     .stroke();
   doc.moveDown();
-
+console.log(orders,"orderinsalejf")
   orders.forEach((order) => {
+    order.orderedItems.forEach((item) => {
+
+
     currentY = doc.y;
 
     if (currentY > 700) {
@@ -289,7 +311,7 @@ const generateSalesReport = async (
     }
 
     doc.fontSize(9);
-    doc.text(order.orderId, startX, currentY);
+    doc.text(order.orderId.substring(0, 8) + "...", startX, currentY);
     doc.text(
       moment(order.createdAt).format("DD/MM/YYYY"),
       startX + 100,
@@ -297,17 +319,18 @@ const generateSalesReport = async (
     );
     doc.text(order.userId.name, startX + 200, currentY);
     doc.text(
-      order.orderedItems[0]?.status || "Processing",
+      item.status || "Delivered",
       startX + 300,
       currentY
     );
     doc.text(
-      `₹${order.FinalAmount.toLocaleString("en-IN")}`,
+      `₹${item.finalAmount}`,
       startX + 400,
       currentY
     );
 
     doc.moveDown();
+  })
   });
 
   doc.end();
@@ -416,7 +439,7 @@ const generateExcelReport = async (
       order.orderId,
       moment(order.createdAt).format("DD/MM/YYYY"),
       order.userId.name,
-      order.orderedItems[0]?.status || "Processing",
+      order.orderedItems[0]?.status || "Delivered",
       order.FinalAmount,
     ];
 
@@ -461,15 +484,18 @@ const generateDailyReport = async (req, res) => {
         $gte: today.toDate(),
         $lte: moment().endOf("day").toDate(),
       },
-      orderedItems: {
-        $elemMatch: { status: { $in: ["Returned", "Delivered"] } },
-      },
     }).populate("userId", "name");
+    const formattedOrders = orders.map(order => ({
+      userId: order.userId,
+      orderId:order.orderId,
+      orderedItems: order.orderedItems.filter(item => item.status === "Delivered"),
+    })).filter(order => order.orderedItems.length > 0); 
+
 
     if (req.query.format === "excel") {
-      await generateExcelReport(res, orders, "daily");
+      await generateExcelReport(res, formattedOrders, "daily");
     } else {
-      await generateSalesReport(res, orders, "daily");
+      await generateSalesReport(res, formattedOrders, "daily");
     }
   } catch (error) {
     console.error("Error generating daily report:", error);
@@ -485,15 +511,17 @@ const generateWeeklyReport = async (req, res) => {
         $gte: startOfWeek.toDate(),
         $lte: moment().endOf("week").toDate(),
       },
-      orderedItems: {
-        $elemMatch: { status: { $in: ["Returned", "Delivered"] } },
-      },
     }).populate("userId", "name");
+    const formattedOrders = orders.map(order => ({
+      userId: order.userId,
+      orderId:order.orderId,
+      orderedItems: order.orderedItems.filter(item => item.status === "Delivered"),
+    })).filter(order => order.orderedItems.length > 0); 
 
     if (req.query.format === "excel") {
-      await generateExcelReport(res, orders, "weekly");
+      await generateExcelReport(res, formattedOrders, "weekly");
     } else {
-      await generateSalesReport(res, orders, "weekly");
+      await generateSalesReport(res, formattedOrders, "weekly");
     }
   } catch (error) {
     console.error("Error generating weekly report:", error);
@@ -509,15 +537,19 @@ const generateYearlyReport = async (req, res) => {
         $gte: startOfYear.toDate(),
         $lte: moment().endOf("year").toDate(),
       },
-      orderedItems: {
-        $elemMatch: { status: { $in: ["Returned", "Delivered"] } },
-      },
-    }).populate("userId", "name");
+    })
+      .populate("userId", "name");
+    const formattedOrders = orders.map(order => ({
+      userId: order.userId,
+      orderId:order.orderId,
+      orderedItems: order.orderedItems.filter(item => item.status === "Delivered"),
+    })).filter(order => order.orderedItems.length > 0); 
+
 
     if (req.query.format === "excel") {
-      await generateExcelReport(res, orders, "yearly");
+      await generateExcelReport(res, formattedOrders, "yearly");
     } else {
-      await generateSalesReport(res, orders, "yearly");
+      await generateSalesReport(res, formattedOrders, "yearly");
     }
   } catch (error) {
     console.error("Error generating yearly report:", error);
@@ -536,15 +568,17 @@ const generateCustomReport = async (req, res) => {
         $gte: startDate.toDate(),
         $lte: endDate.toDate(),
       },
-      orderedItems: {
-        $elemMatch: { status: { $in: ["Returned", "Delivered"] } },
-      },
     }).populate("userId", "name");
+    const formattedOrders = orders.map(order => ({
+      userId: order.userId,
+      orderId:order.orderId,
+      orderedItems: order.orderedItems.filter(item => item.status === "Delivered"),
+    })).filter(order => order.orderedItems.length > 0); 
 
     if (req.query.format === "excel") {
-      await generateExcelReport(res, orders, "custom", startDate, endDate);
+      await generateExcelReport(res, formattedOrders, "custom", startDate, endDate);
     } else {
-      await generateSalesReport(res, orders, "custom", startDate, endDate);
+      await generateSalesReport(res, formattedOrders, "custom", startDate, endDate);
     }
   } catch (error) {
     console.error("Error generating custom report:", error);
