@@ -4,12 +4,14 @@ const getAvailableCoupons = async (req, res) => {
   try {
     let currentDate = new Date();
     currentDate = currentDate.toISOString().replace("Z", "+00:00");
-
     const coupons = await Coupon.find({
       isDeleted: false,
       isListed: true,
+      $expr: { $lte: ["$usesCount", "$maxUses"] },
+      startOn:{ $lte:currentDate},
       expireOn: { $gte: currentDate },
-    });
+    }); 
+
 
     res.json(coupons);
   } catch (error) {
@@ -21,14 +23,15 @@ const getAvailableCoupons = async (req, res) => {
 const applyCoupon = async (req, res) => {
   try {
     const { code, cartTotal } = req.body;
-    const userId = req.session.user;
-
+    let currentDate = new Date();
+    currentDate = currentDate.toISOString().replace("Z", "+00:00");
     const coupon = await Coupon.findOne({
       name: code,
       isListed: true,
       isDeleted: false,
       $expr: { $lte: ["$usesCount", "$maxUses"] },
-      expireOn: { $gt: new Date() },
+      startOn:{ $lte:currentDate},
+      expireOn: { $gte: currentDate},
     });
 
     if (!coupon) {
