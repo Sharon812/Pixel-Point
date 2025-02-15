@@ -168,6 +168,7 @@
                 value="<%= (typeof user !== 'undefined' && user.name) || '' %>"
                 readonly
               />
+              <span class="text-danger" id="nameError"></span>
 
               <span>Email</span>
               <% if(user.googleId === null) {%>
@@ -179,6 +180,7 @@
                 value="<%= (typeof user !== 'undefined' && user.email) || '' %>"
                 readonly
               />
+              <span class="text-danger" id="emailError"></span>
               <% }else{ %>
               <input
                 type="text"
@@ -189,6 +191,7 @@
                 readonly
                 disabled
               />
+              <span class="text-danger" id="emailError"></span>
               <% } %>
               <span>Mobile</span>
               <input
@@ -199,6 +202,8 @@
                 value="<%= (typeof user !== 'undefined' && user.phone) || '' %>"
                 readonly
               />
+              <span  class="text-danger" id="phoneError"></span>
+
 
               <div class="form__btn">
                 <button
