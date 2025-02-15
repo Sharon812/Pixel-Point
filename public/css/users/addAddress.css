@@ -1,0 +1,187 @@
+/* Add Address Page Styles */
+.accounts__container {
+  gap: 2rem;
+}
+
+.account__tabs {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+}
+
+.account__tab {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: 8px;
+  color: #64748b;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.account__tab:hover {
+  background: #f8fafc;
+  color: #0066ff;
+}
+
+.account__tab.active-tab {
+  background: #f0f7ff;
+  color: #0066ff;
+  font-weight: 600;
+}
+
+.account__tab i {
+  font-size: 1.2rem;
+}
+
+/* Tab Content Styles */
+.tab__content {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+  padding: 2rem;
+}
+
+.tab__header {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 2rem;
+}
+
+/* Form Styles */
+.address__form-container {
+  margin: 0 auto;
+}
+
+.address__form {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.form__group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form__label {
+  font-weight: 500;
+  color: #1e293b;
+  font-size: 0.9rem;
+}
+
+.form__input {
+  padding: 0.75rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.form__input:focus {
+  border-color: #0066ff;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.1);
+}
+
+select.form__input {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 2.5rem;
+}
+
+.error-message {
+  color: #dc2626;
+  font-size: 0.875rem;
+}
+
+/* Form Actions */
+.form__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.btn-primary {
+  background: #0066ff;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #0052cc;
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.btn-secondary:hover {
+  background: #e2e8f0;
+  color: #1e293b;
+}
+
+/* Responsive Styles */
+@media screen and (max-width: 768px) {
+  .accounts__container {
+    gap: 1rem;
+  }
+
+  .account__tabs {
+    padding: 1rem;
+  }
+
+  .account__tab {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .tab__content {
+    padding: 1.5rem;
+  }
+
+  .tab__header {
+    font-size: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .address__form {
+    gap: 1.25rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .account__tab {
+    font-size: 0.85rem;
+  }
+
+  .tab__content {
+    padding: 1rem;
+  }
+
+  .form__actions {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}

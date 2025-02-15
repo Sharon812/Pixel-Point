@@ -12,6 +12,7 @@
 
 <!--=============== CSS ===============-->
 <link rel="stylesheet" href="/css/users/homepage.css" />
+<link rel="stylesheet" href="/css/users/addAddress.css" />
 <header class="header">
   <% if(!locals.user){ %>
   <div class="header__top">
@@ -122,24 +123,24 @@
   <section class="accounts section--lg">
     <div class="accounts__container container grid">
       <div class="account__tabs">
-        <a
-          href="/accountDetails"
-          class="account__tab"
-          data-target="#accountDetails"
-        >
+        <a href="/accountDetails" class="account__tab">
           <i class="fi fi-rs-settings"></i> Account details
         </a>
-        <p class="account__tab" data-target="#orders">
+        <a href="/orders" class="account__tab">
           <i class="fi fi-rs-shopping-bag"></i> Orders
-        </p>
-
-        <p class="account__tab active-tab" data-target="#address">
-          <i class="fi fi-rs-marker active-tab"></i> My Address
-        </p>
-        <p class="account__tab" data-target="#change-password">
-          <i class="fi fi-rs-settings-sliders"></i> Change Password
-        </p>
-        <p class="account__tab"><i class="fi fi-rs-exit"></i> Logout</p>
+        </a>
+        <a href="/address" class="account__tab active-tab">
+          <i class="fi fi-rs-marker"></i> My Address
+        </a>
+        <a href="/wallet" class="account__tab">
+          <i class="fi fi-rs-wallet"></i> Wallet
+        </a>
+        <a href="/forgot-password" class="account__tab">
+          <i class="fi fi-rs-key"></i> Change Password
+        </a>
+        <a href="/logout" class="account__tab">
+          <i class="fi fi-rs-exit"></i> Logout
+        </a>
       </div>
       <div class="tabs__content">
         <div class="tab__content active-tab" content id="addresses">
@@ -148,16 +149,15 @@
             <form
               class="address__form"
               id="addAddressForm"
-              method="post"
-              action="/add-address"
             >
               <div class="form__group">
-                <label for="name" class="form__label">House Name</label>
+                <label for="houseName" class="form__label">House Name</label>
                 <input
                   type="text"
                   id="houseName"
                   class="form__input"
                   name="house_name"
+                  placeholder="Enter house name"
                 />
                 <span id="houseNameError" class="error-message"></span>
               </div>
@@ -175,8 +175,14 @@
 
               <div class="form__group">
                 <label for="city" class="form__label">City</label>
-                <input type="text" id="city" class="form__input" name="city" />
-                <span id="" class="error-message"></span>
+                <input 
+                  type="text" 
+                  id="city" 
+                  class="form__input" 
+                  name="city" 
+                  placeholder="Enter city"
+                />
+                <span id="cityError" class="error-message"></span>
               </div>
 
               <div class="form__group">
@@ -186,6 +192,7 @@
                   id="landmark"
                   class="form__input"
                   name="landmark"
+                  placeholder="Enter nearby landmark"
                 />
                 <span id="landMarkError" class="error-message"></span>
               </div>
@@ -197,6 +204,7 @@
                   id="state"
                   class="form__input"
                   name="state"
+                  placeholder="Enter state"
                 />
                 <span id="stateError" class="error-message"></span>
               </div>
@@ -206,10 +214,9 @@
                 <input
                   type="text"
                   id="pincode"
-                  name="pincode"
                   class="form__input"
-                  pattern="[0-9]{6}"
-                  maxlength="6"
+                  name="pincode"
+                  placeholder="Enter pincode"
                 />
                 <span id="pincodeError" class="error-message"></span>
               </div>
@@ -219,32 +226,29 @@
                 <input
                   type="tel"
                   id="phone"
-                  name="phone"
                   class="form__input"
-                  pattern="[0-9]{10}"
-                  maxlength="10"
+                  name="phone"
+                  placeholder="Enter phone number"
                 />
                 <span id="phoneError" class="error-message"></span>
               </div>
 
               <div class="form__group">
-                <label for="alt-phone" class="form__label"
-                  >Alternate Phone (Optional)</label
-                >
+                <label for="alternatePhone" class="form__label">Alternate Phone Number</label>
                 <input
                   type="tel"
-                  name="alt-phone"
                   id="alt-phone"
                   class="form__input"
-                  pattern="[0-9]{10}"
-                  maxlength="10"
+                  name="alternatePhone"
+                  placeholder="Enter alternate phone number"
                 />
-                <span id="altPhoneError" class="error-message"></span>
+                <span id="alternatePhoneError" class="error-message"></span>
               </div>
 
-              <button type="submit" class="btn btn--primary">
-                Save Address
-              </button>
+              <div class="form__actions">
+                <button type="submit" class="btn btn-primary">Save Address</button>
+                <a href="/address" class="btn btn-secondary">Cancel</a>
+              </div>
             </form>
           </div>
         </div>
