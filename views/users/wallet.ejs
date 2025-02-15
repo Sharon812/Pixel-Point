@@ -122,23 +122,24 @@
   <section class="accounts section--lg">
     <div class="accounts__container container grid">
       <div class="account__tabs">
-        <a href="" class="account__tab">
+        <a href="/accountDetails" class="account__tab">
           <i class="fi fi-rs-settings"></i> Account details
         </a>
-        <a class="account__tab" href="/orders"
-          ><i class="fi fi-rs-shopping-bag"></i> Orders</a
-        >
+        <a href="/orders" class="account__tab">
+          <i class="fi fi-rs-shopping-bag"></i> Orders
+        </a>
         <a href="/address" class="account__tab">
           <i class="fi fi-rs-marker"></i> My Address
         </a>
         <a href="/wallet" class="account__tab active-tab">
-          <i class="fi fi-rs-marker" data-target="#wallet"></i>
-          Wallet
+          <i class="fi fi-rs-wallet"></i> Wallet
         </a>
-        <p class="account__tab">
-          <i class="fi fi-rs-settings-sliders"></i> Change Password
-        </p>
-        <p class="account__tab"><i class="fi fi-rs-exit"></i> Logout</p>
+        <a href="/forgot-password" class="account__tab">
+          <i class="fi fi-rs-key"></i> Change Password
+        </a>
+        <a href="/logout" class="account__tab">
+          <i class="fi fi-rs-exit"></i> Logout
+        </a>
       </div>
       <div class="tabs__content">
         <div class="tab__content active-tab" content id="wallet">
@@ -147,7 +148,7 @@
               <h2>Wallet Balance</h2>
               <div class="balance-amount">
                 <span class="currency">₹</span>
-                <span class="amount"> <%= walletData.balance %> </span>
+                <span class="amount"><%= walletData.balance %></span>
               </div>
               <button class="add-money-btn" id="addMoneyBtn">
                 <span class="plus-icon">+</span>
@@ -155,95 +156,85 @@
               </button>
             </div>
 
-            <!-- Add Money Modal -->
-            <div class="modal" id="addMoneyModal">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h3>Add Money to Wallet</h3>
-                  <span class="close-modal">&times;</span>
-                </div>
-                <form action="" onsubmit="validateAndSubmit(event)">
-                  <div class="modal-body">
-                    <div class="input-group">
-                      <span class="currency-symbol">₹</span>
-                      <input
-                        type="number"
-                        id="amount"
-                        min="1"
-                        placeholder="Enter amount"
-                        class="amount-input"
-                      />
-                      <span id="errorMessage" class="text-danger"></span>
-                    </div>
-                    <div class="amount-buttons">
-                      <button class="quick-amount" data-amount="500">
-                        ₹500
-                      </button>
-                      <button class="quick-amount" data-amount="1000">
-                        ₹1000
-                      </button>
-                      <button class="quick-amount" data-amount="2000">
-                        ₹2000
-                      </button>
-                    </div>
-                    <button type="submit" class="proceed-btn">
-                      Proceed to Add Money
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-
             <div class="transactions-section">
               <div class="transaction-header">
                 <h3>Transaction History</h3>
                 <div class="transaction-type-filter">
                   <button class="type-btn active" data-type="all">All</button>
-                  <button class="type-btn" data-type="credit">Credit</button>
-                  <button class="type-btn" data-type="debit">Debit</button>
+                  <button class="type-btn" data-type="credit">Credits</button>
+                  <button class="type-btn" data-type="debit">Debits</button>
                 </div>
               </div>
-              <% if(walletData.transactions.length > 0) {%>
 
-              <div class="transactions-list">
-                <% walletData.transactions.forEach(transaction => { %>
-                  <div class="transaction-item" data-type="<%= transaction.type %>">
-                    <div class="transaction-info">
-                      <span class="transaction-title"><%= transaction.description %></span>
-                      <span class="transaction-date">
-                        <%= transaction.date.toLocaleDateString("en-GB") %>
-                      </span>
+              <div class="transaction-list">
+                <% if (walletData.transactions && walletData.transactions.length > 0) { %>
+                  <% walletData.transactions.forEach(transaction => { %>
+                    <div class="transaction-item">
+                      <div class="transaction-info">
+                        <span class="transaction-title"><%= transaction.description %></span>
+                        <span class="transaction-date"><%= new Date(transaction.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) %></span>
+                      </div>
+                      <div class="transaction-amount <%= transaction.type === 'credit' ? 'amount-credited' : 'amount-debited' %>">
+                        <span class="currency">₹</span>
+                        <%= transaction.type === 'credit' ? '+' : '-' %><%= Math.abs(transaction.amount) %>
+                      </div>
                     </div>
-                    <div class="transaction-type <%= transaction.type %>">
-                      <span class="type-icon"><%= transaction.type === 'debit' ? '−' : '+' %></span>
-                      <span class="type-text"><%= transaction.type === 'debit' ? 'Debit' : 'Credit' %></span>
+                  <% }); %>
+                  <% if (pagination.totalPages > 1) { %>
+                    <div class="pagination">
+                      <% if (pagination.hasPrevPage) { %>
+                        <a href="?page=<%= pagination.currentPage - 1 %>" class="page-link">&laquo; Previous</a>
+                      <% } %>
+                      
+                      <% for(let i = 1; i <= pagination.totalPages; i++) { %>
+                        <a href="?page=<%= i %>" class="page-link <%= i === pagination.currentPage ? 'active' : '' %>">
+                          <%= i %>
+                        </a>
+                      <% } %>
+                      
+                      <% if (pagination.hasNextPage) { %>
+                        <a href="?page=<%= pagination.currentPage + 1 %>" class="page-link">Next &raquo;</a>
+                      <% } %>
                     </div>
-                    <span class="transaction-amount <%= transaction.type %>">
-                      <%= transaction.type === 'debit' ? '-' : '+' %>₹<%= transaction.amount.toFixed(2) %>
-                    </span>
-                  </div>
-                <% }) %>
-
-                <% if (pagination.totalPages > 1) { %>
-                  <div class="pagination">
-                    <% if (pagination.hasPrevPage) { %>
-                      <a href="?page=<%= pagination.currentPage - 1 %>" class="page-link">&laquo; Previous</a>
-                    <% } %>
-                    
-                    <% for(let i = 1; i <= pagination.totalPages; i++) { %>
-                      <a href="?page=<%= i %>" class="page-link <%= i === pagination.currentPage ? 'active' : '' %>">
-                        <%= i %>
-                      </a>
-                    <% } %>
-                    
-                    <% if (pagination.hasNextPage) { %>
-                      <a href="?page=<%= pagination.currentPage + 1 %>" class="page-link">Next &raquo;</a>
-                    <% } %>
+                  <% } %>
+                <% } else { %>
+                  <div class="no-transactions">
+                    <p>No transactions found.</p>
                   </div>
                 <% } %>
-              <% } else {%>
-                <p class="no-transactions">No transactions yet</p>
-              <%}%>
+              </div>
+            </div>
+
+
+
+          <!-- Add Money Modal -->
+          <div class="modal" id="addMoneyModal">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h3>Add Money to Wallet</h3>
+                <span class="close-modal">&times;</span>
+              </div>
+              <form action="" onsubmit="validateAndSubmit(event)">
+                <div class="modal-body">
+                  <div class="input-group">
+                    <span class="currency-symbol">₹</span>
+                    <input
+                      type="number"
+                      id="amount"
+                      min="1"
+                      placeholder="Enter amount"
+                      class="amount-input"
+                    />
+                    <span id="errorMessage" class="text-danger"></span>
+                  </div>
+                  <div class="amount-buttons">
+                    <button type="button" class="quick-amount" data-amount="500">₹500</button>
+                    <button type="button" class="quick-amount" data-amount="1000">₹1000</button>
+                    <button type="button" class="quick-amount" data-amount="2000">₹2000</button>
+                  </div>
+                  <button type="submit" class="proceed-btn">Proceed to Add Money</button>
+                </div>
+              </form>
             </div>
           </div>
         </div>

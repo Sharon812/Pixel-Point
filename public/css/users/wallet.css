@@ -1,83 +1,117 @@
-:root {
-  --primary-blue: #2563eb;
-  --light-blue: #3b82f6;
-  --lighter-blue: #eff6ff;
-  --white: #ffffff;
+/* Wallet Page Styles */
+.accounts__container {
+  gap: 2rem;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Inter", sans-serif;
+.account__tabs {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
 }
 
+.account__tab {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: 8px;
+  color: #64748b;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.account__tab:hover {
+  background: #f8fafc;
+  color: #0066ff;
+}
+
+.account__tab.active-tab {
+  background: #f0f7ff;
+  color: #0066ff;
+  font-weight: 600;
+}
+
+.account__tab i {
+  font-size: 1.2rem;
+}
+
+/* Tab Content Styles */
+.tab__content {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+  padding: 2rem;
+}
+
+/* Wallet Container */
 .wallet-container {
-  max-width: 800px;
-  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 
+/* Balance Card */
 .balance-card {
-  background: var(--white);
+  background: linear-gradient(135deg, #0066ff, #0052cc);
   border-radius: 16px;
   padding: 2rem;
+  color: white;
   text-align: center;
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-  margin-bottom: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 102, 255, 0.2);
 }
 
 .balance-card h2 {
-  color: var(--gray-700);
   font-size: 1.25rem;
   margin-bottom: 1rem;
+  font-weight: 500;
 }
 
 .balance-amount {
   font-size: 3rem;
   font-weight: 700;
-  color: var(--primary-blue);
   margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
 .currency {
   font-size: 2rem;
-  margin-right: 0.25rem;
 }
 
 .add-money-btn {
-  background: var(--primary-blue);
-  color: var(--white);
-  border: none;
-  padding: 0.75rem 2rem;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: white;
+  padding: 0.75rem 1.5rem;
   border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
+  transition: all 0.3s ease;
   display: inline-flex;
   align-items: center;
-  transition: background-color 0.2s;
+  gap: 0.5rem;
 }
 
 .add-money-btn:hover {
-  background: var(--light-blue);
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
 }
 
 .plus-icon {
-  margin-right: 0.5rem;
-  font-size: 1.25rem;
+  font-size: 1.2rem;
+  font-weight: 600;
 }
 
+/* Transactions Section */
 .transactions-section {
-  background: var(--white);
-  border-radius: 16px;
+  background: #fff;
+  border-radius: 12px;
   padding: 1.5rem;
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-}
-
-.transactions-section h3 {
-  color: var(--gray-700);
-  font-size: 1.25rem;
-  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .transaction-header {
@@ -87,35 +121,41 @@
   margin-bottom: 1.5rem;
 }
 
+.transaction-header h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+}
+
 .transaction-type-filter {
   display: flex;
   gap: 0.5rem;
-  background: var(--gray-100);
-  padding: 0.25rem;
-  border-radius: 8px;
 }
 
 .type-btn {
-  background: transparent;
-  border: none;
   padding: 0.5rem 1rem;
+  border: 1px solid #e2e8f0;
   border-radius: 6px;
-  font-size: 0.875rem;
+  background: #fff;
+  color: #64748b;
   font-weight: 500;
-  color: var(--gray-700);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
 }
 
-.type-btn:hover {
-  background: var(--white);
-  color: var(--primary-blue);
-}
-
+.type-btn:hover,
 .type-btn.active {
-  background: var(--white);
-  color: var(--primary-blue);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  background: #0066ff;
+  color: white;
+  border-color: #0066ff;
+}
+
+/* Transaction List */
+.transaction-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .transaction-item {
@@ -123,64 +163,44 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
-  border-bottom: 1px solid var(--gray-200);
-  gap: 1rem;
+  background: #f8fafc;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.transaction-item:hover {
+  transform: translateX(4px);
 }
 
 .transaction-info {
   display: flex;
   flex-direction: column;
-  flex: 1;
-}
-
-.transaction-type {
-  display: flex;
-  align-items: center;
   gap: 0.25rem;
-  padding: 0.25rem 0.75rem;
-  border-radius: 1rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
-.transaction-type.credit {
-  background-color: rgba(22, 163, 74, 0.1);
-  color: #16a34a;
-}
-
-.transaction-type.debit {
-  background-color: rgba(220, 38, 38, 0.1);
-  color: #dc2626;
-}
-
-.type-icon {
-  font-weight: bold;
-  font-size: 1rem;
 }
 
 .transaction-title {
-  color: var(--gray-700);
   font-weight: 500;
-  margin-bottom: 0.25rem;
+  color: #1e293b;
 }
 
 .transaction-date {
-  color: var(--gray-500);
   font-size: 0.875rem;
+  color: #64748b;
 }
 
 .transaction-amount {
   font-weight: 600;
-  min-width: 100px;
-  text-align: right;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 
-.transaction-amount.debit {
-  color: #dc2626;
-}
-
-.transaction-amount.credit {
+.amount-credited {
   color: #16a34a;
+}
+
+.amount-debited {
+  color: #dc2626;
 }
 
 /* Modal Styles */
@@ -191,39 +211,50 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  justify-content: center;
-  align-items: center;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
   z-index: 1000;
 }
 
+.modal.show {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .modal-content {
-  background-color: var(--white);
+  background: #fff;
   border-radius: 16px;
   width: 90%;
-  max-width: 400px;
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  max-width: 480px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  animation: slideUp 0.3s ease;
 }
 
 .modal-header {
   padding: 1.5rem;
-  border-bottom: 1px solid var(--gray-200);
+  border-bottom: 1px solid #e2e8f0;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
 .modal-header h3 {
-  color: var(--gray-700);
   font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
   margin: 0;
 }
 
 .close-modal {
   font-size: 1.5rem;
-  color: var(--gray-500);
+  color: #64748b;
   cursor: pointer;
-  line-height: 1;
+  transition: color 0.3s ease;
+}
+
+.close-modal:hover {
+  color: #1e293b;
 }
 
 .modal-body {
@@ -240,104 +271,103 @@
   left: 1rem;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--gray-500);
-  font-size: 1.25rem;
+  color: #64748b;
+  font-weight: 500;
 }
 
 .amount-input {
   width: 100%;
   padding: 0.75rem 1rem 0.75rem 2.5rem;
-  border: 1px solid var(--gray-200);
+  border: 1px solid #e2e8f0;
   border-radius: 8px;
-  font-size: 1.25rem;
-  outline: none;
-  transition: border-color 0.2s;
+  font-size: 1rem;
+  transition: all 0.3s ease;
 }
 
 .amount-input:focus {
-  border-color: var(--primary-blue);
+  border-color: #0066ff;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.1);
 }
 
 .amount-buttons {
-  display: flex;
-  gap: 0.5rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
   margin-bottom: 1.5rem;
 }
 
 .quick-amount {
-  flex: 1;
-  padding: 0.5rem;
-  border: 1px solid var(--gray-200);
+  padding: 0.75rem;
+  border: 1px solid #e2e8f0;
   border-radius: 8px;
-  background: transparent;
-  color: var(--gray-700);
+  background: #fff;
+  color: #1e293b;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
 }
 
 .quick-amount:hover {
-  background: var(--lighter-blue);
-  border-color: var(--primary-blue);
-  color: var(--primary-blue);
+  border-color: #0066ff;
+  color: #0066ff;
 }
 
 .proceed-btn {
   width: 100%;
-  padding: 0.75rem;
-  background: var(--primary-blue);
-  color: var(--white);
+  padding: 0.875rem;
+  background: #0066ff;
+  color: white;
   border: none;
   border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.proceed-btn:hover {
-  background: var(--light-blue);
-}
-
-/* Pagination Styles */
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  margin-top: 2rem;
-  padding: 1rem 0;
-}
-
-.page-link {
-  padding: 8px 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  color: #333;
-  text-decoration: none;
   transition: all 0.3s ease;
 }
 
-.page-link:hover {
-  background-color: #f5f5f5;
-  border-color: #ccc;
+.proceed-btn:hover {
+  background: #0052cc;
 }
 
-.page-link.active {
-  background-color: #007bff;
-  color: white;
-  border-color: #007bff;
+.text-danger {
+  color: #dc2626;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
 }
 
-.no-transactions {
-  text-align: center;
-  color: #666;
-  padding: 2rem 0;
-  font-size: 1.1rem;
+/* Animations */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-@media (max-width: 640px) {
-  body {
+/* Responsive Styles */
+@media screen and (max-width: 768px) {
+  .accounts__container {
+    gap: 1rem;
+  }
+
+  .account__tabs {
     padding: 1rem;
+  }
+
+  .account__tab {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .tab__content {
+    padding: 1.5rem;
+  }
+
+  .balance-card {
+    padding: 1.5rem;
   }
 
   .balance-amount {
@@ -346,5 +376,61 @@
 
   .currency {
     font-size: 1.75rem;
+  }
+
+  .transactions-section {
+    padding: 1rem;
+  }
+
+  .transaction-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .transaction-type-filter {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .type-btn {
+    flex: 1;
+    text-align: center;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .account__tab {
+    font-size: 0.85rem;
+  }
+
+  .tab__content {
+    padding: 1rem;
+  }
+
+  .balance-card {
+    padding: 1.25rem;
+  }
+
+  .balance-amount {
+    font-size: 2rem;
+  }
+
+  .currency {
+    font-size: 1.5rem;
+  }
+
+  .amount-buttons {
+    grid-template-columns: 1fr;
+  }
+
+  .transaction-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .transaction-amount {
+    align-self: flex-end;
   }
 }
