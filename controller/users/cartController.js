@@ -22,11 +22,12 @@ const getCart = async (req, res) => {
         },
       })
       .lean();
-
+    let stockMessage = false
     if (!cartData) {
       return res.render("cart", {
         cart: cartData,
         user: userData,
+        stockMessage:false
       });
     }
     cartData.items = cartData.items.map((item) => {
@@ -34,14 +35,20 @@ const getCart = async (req, res) => {
         const specificCombo = item.productId.combos.find(
           (combo) => combo._id.toString() === item.comboId.toString()
         );
+        if (specificCombo && specificCombo.quantity <= 0) {
+          stockMessage = true;
+        }
+
         return { ...item, combo: specificCombo || null };
       }
+      
       return item;
     });
 
     res.render("cart", {
       cart: cartData,
       user: userData,
+      stockMessage
     });
   } catch (error) {
     console.error("Error fetching cart:", error);

@@ -148,6 +148,9 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                     <div class="item__content">
                       <div class="item__details">
                         <h4 class="item__name"><%= item.productId.productName %></h4>
+                        <% if( item.comboDetails.quantity < 1 ) {%>
+                        <span class="text-danger mx-0" >Product Out of stock</span>
+                        <% } %>
                         <div class="item__meta">
                           <span class="item__color"><%= item.productId.combos[0].color %></span>
                           <span class="item__divider">•</span>

@@ -150,6 +150,7 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                 <h3 class="cart__item-title">
                   <%= item.productId.productName || "Unknown Product" %>
                 </h3>
+                <% let stockMessage = item.combo.quantity <= 0 ? true : false; %>
                 <% if(item.combo.quantity <= 0) {%>
                 <span class="text-danger h5">Item is out of stock</span>
                 <% } %>
@@ -216,9 +217,11 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
              <td class="cart__total-price">&#8377; <%= cart.totalPrice %> </td>
            </tr>
          </table>
-       
-         <a href="/checkout" disabled="disabled" class="btn">Proceed to Checkout</a>
-       
+       <% if(stockMessage) {%>
+         <button href="/checkout"disabled class="btn">Proceed to Checkout</button>
+       <% }else{ %>
+        <a href="/checkout"  class="btn">Proceed to Checkout</a>
+<% } %>
        </div>
      </div>
      <% } else { %>

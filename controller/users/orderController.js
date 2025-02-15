@@ -46,11 +46,13 @@ const processCheckout = async (req, res) => {
 
     const address = addresses.flatMap((doc) => doc.address);
     const validCartItems = cart.items.filter((item) => item.quantity > 0);
-
     for (const item of validCartItems) {
       const availableQuantity = item.comboDetails
         ? item.comboDetails.quantity
         : item.productId.stock;
+        if(availableQuantity < 1){
+          outofstock = true
+        }
     }
     const totalPrice = validCartItems.reduce(
       (sum, item) =>
@@ -115,35 +117,41 @@ const placeOrder = async (req, res) => {
       });
     }
 
-    const orderItems = await Promise.all(
-      cart.items.map(async (item) => {
-        const selectedCombo = item.productId.combos.find(
-          (combo) => combo._id.toString() === item.comboId.toString()
+    const orderItems = [];
+
+    for (const item of cart.items) {
+      const selectedCombo = item.productId.combos.find(
+        (combo) => combo._id.toString() === item.comboId.toString()
+      );
+    
+      if (!selectedCombo) {
+        throw new Error(
+          `Combo not found for product: ${item.productId.productName}`
         );
-
-        if (!selectedCombo) {
-          throw new Error(
-            `Combo not found for product: ${item.productId.productName}`
-          );
-        }
-
-        return {
-          product: item.productId._id,
-          productName: item.productId.productName,
-          quantity: item.quantity,
-          price: selectedCombo.salePrice,
-          totalPrice: item.quantity * selectedCombo.salePrice,
-          dicountPrice: discountPerProduct,
-          finalAmount:
-            item.quantity * selectedCombo.salePrice - discountPerProduct,
-          RAM: selectedCombo.ram,
-          Storage: selectedCombo.storage,
-          color: selectedCombo.color[0],
-          status: "Pending",
-        };
-      })
-    );
-
+      }
+    
+      if (selectedCombo.quantity < 1) {
+        return res.status(400).json({ success: false, message: ` ${item.productId.productName} is out of stock` });
+      }
+    
+    
+      orderItems.push({
+        product: item.productId._id,
+        productName: item.productId.productName,
+        quantity: item.quantity,
+        price: selectedCombo.salePrice,
+        totalPrice: item.quantity * selectedCombo.salePrice,
+        dicountPrice: discountPerProduct,
+        finalAmount:
+          item.quantity * selectedCombo.salePrice - discountPerProduct,
+        RAM: selectedCombo.ram,
+        Storage: selectedCombo.storage,
+        color: selectedCombo.color[0],
+        status: "Pending",
+      });
+    }
+    
+    
     const totalAmount = orderItems.reduce(
       (acc, item) => acc + item.totalPrice,
       0

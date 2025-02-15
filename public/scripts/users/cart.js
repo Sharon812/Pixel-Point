@@ -139,3 +139,7 @@ async function decreaseQuantity(comboId,quantity) {
     });
   }
 }
+
+async function goToCheckout(){
+  
+}
