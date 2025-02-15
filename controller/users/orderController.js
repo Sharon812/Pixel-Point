@@ -1,5 +1,4 @@
 const User = require("../../models/userSchema");
-const nodemailer = require("nodemailer");
 const mongoose = require("mongoose");
 const env = require("dotenv").config();
 const crypto = require("crypto");
@@ -181,6 +180,8 @@ const placeOrder = async (req, res) => {
         couponData.usesCount += 1;
         await couponData.save();
       }
+      console.log(newOrder,"neworder")
+
       return res.json({
         success: true,
         message: "COD order placed successfully",
@@ -216,18 +217,16 @@ const placeOrder = async (req, res) => {
       }
       await updateInventory(orderItems, userId);
 
-      return res.status(200).json({ success: true, message: "Order Placed" });
+      return res.status(200).json({ success: true, message: "Order Placed", order: newOrder, });
     }
     console.log(finalAmount, "finalamount");
     if (paymentMethod === "razorpay") {
-      console.log("hey");
       const razorpayOrder = await razorpay.orders.create({
         amount: Math.round(finalAmount * 100),
         currency: "INR",
         receipt: newOrder._id.toString(),
         payment_capture: 1,
       });
-      console.log(razorpayOrder, "raxor");
       if (discount > 0) {
         console.log("under");
         const couponData = await Coupons.findOne({ name: couponCode });
@@ -339,7 +338,15 @@ const verifyPayment = async (req, res) => {
 
 const orderPlaced = async (req, res) => {
   try {
-    res.render("orderPlaced");
+    const {orderId} = req.query
+    const order = await Order.findOne({orderId:orderId})
+    if(!orderId){
+      return res.status(400).json({success:false,message:"unable to find orderdetails"})
+    }
+    console.log(order)
+    res.render("orderPlaced",{
+      order:order
+    });
   } catch (error) {
     console.log(error, "errror at rendering order placed page");
     res.redirect("/page-not-found");

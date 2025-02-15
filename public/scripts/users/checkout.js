@@ -112,7 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const razorpayInstance = new Razorpay(razorpayOptions);
         razorpayInstance.open();
       } else if (result.success) {
-        window.location.href = "/orderplaced";
+        window.location.href = `/orderplaced/?orderId=${result.order.orderId}`;
       }
     } catch (error) {
       console.error("Order Error:", error);

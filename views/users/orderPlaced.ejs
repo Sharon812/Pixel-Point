@@ -16,23 +16,38 @@
         <div class="order-details">
             <h4>Order Details</h4>
             <div class="mb-3">
-                <strong>Order ID:</strong> <span>#ORD123456</span>
+                <strong>Order ID:</strong> <span>#<%= order.orderId %></span>
             </div>
             <div class="mb-3">
-                <strong>Order Date:</strong> <span>January 15, 2025</span>
+                <strong>Order Date:</strong> <span> <%= order.createdAt.toLocaleDateString() %> </span>
             </div>
             <div class="mb-3">
                 <strong>Delivery Address:</strong>
                 <p class="mb-0">123 Sample Street</p>
                 <p class="mb-0">City, State 12345</p>
             </div>
+            <div class="mb-3">
+                <strong>Payment Details</strong>
+                <div>
+                <span class="mb-0">Total Amount : </span> <span> <%= order.totalPrice %> </span>
+            </div>
+            <div>
+                <span class="mb-0">Discount Amount : </span> <span> <%= order.discount ? order.discount :0 %> </span>
+            </div>
+            <div>
+                <strong class="mb-0">FInal Amount : </strong> <span> <%= order.FinalAmount ? order.FinalAmount :0 %> </span>
+            </div>
+            </div>
         </div>
+      
+
 
         <div class="delivery-time">
             <i class="fas fa-truck"></i>
             Expected Delivery: Within 3-5 Business Days
         </div>
 
+      
         <a href="/orders" class="btn btn-primary btn-lg btn-view-orders">
             View My Orders
         </a>
