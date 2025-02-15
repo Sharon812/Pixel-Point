@@ -49,8 +49,7 @@ const loaddashboard = async (req, res) => {
     const totalProducts = await Products.countDocuments();
     const totalUsers = await User.countDocuments();
 
-    const orders = await Order.find();
-
+    const orders = await Order.find({ paymentStatus: { $ne: "Pending Payment" } });
     const totalOrderedItems = orders.reduce((total, order) => {
       const activeItems = order.orderedItems.filter(
         (item) => !["Cancelled", "Returned"].includes(item.status)
@@ -480,6 +479,7 @@ const generateDailyReport = async (req, res) => {
     const today = moment().startOf("day");
 
     const orders = await Order.find({
+      paymentStatus: { $ne: "Pending Payment" } ,
       createdAt: {
         $gte: today.toDate(),
         $lte: moment().endOf("day").toDate(),
@@ -507,6 +507,7 @@ const generateWeeklyReport = async (req, res) => {
   try {
     const startOfWeek = moment().startOf("week");
     const orders = await Order.find({
+       paymentStatus: { $ne: "Pending Payment" } ,
       createdAt: {
         $gte: startOfWeek.toDate(),
         $lte: moment().endOf("week").toDate(),
@@ -533,6 +534,7 @@ const generateYearlyReport = async (req, res) => {
   try {
     const startOfYear = moment().startOf("year");
     const orders = await Order.find({
+      paymentStatus: { $ne: "Pending Payment" } ,
       createdAt: {
         $gte: startOfYear.toDate(),
         $lte: moment().endOf("year").toDate(),
@@ -564,6 +566,7 @@ const generateCustomReport = async (req, res) => {
     const endDate = moment(end).endOf("day");
 
     const orders = await Order.find({
+      paymentStatus: { $ne: "Pending Payment" } ,
       createdAt: {
         $gte: startDate.toDate(),
         $lte: endDate.toDate(),
