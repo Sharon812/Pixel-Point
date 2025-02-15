@@ -18,6 +18,10 @@ const userSchema = new Schema({
     sparse: true,
     default: null,
   },
+  profilePhoto:{
+    type:String,
+    default:""
+  },
   googleId: {
     type: String,
     required: false, //here its false because of google sign in

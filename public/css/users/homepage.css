@@ -243,9 +243,7 @@ table {
   padding-block: 2rem;
 }
 
-.section--lg {
-  padding-block: 4rem;
-}
+
 
 .section__title {
   font-size: var(--h4-font-size);
@@ -2583,3 +2581,17 @@ table {
 /* .img-zoom-lens, .img-zoom-result {
   display: none;
 } */
+
+.banner {
+  display: grid;
+  place-items: center; /* Centers both horizontally and vertically */
+}
+
+
+.profile-bubble {
+  width: 40px;  /* Adjust size */
+  height: 40px;
+  border-radius: 50%; /* Makes it a circle */
+  object-fit: cover; /* Ensures the image fills the circle */
+  border: 2px solid #ddd; /* Optional border */
+}

@@ -95,8 +95,8 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
         </a>
         <% if(locals.user){ %>
         <div class="dropdown" >
-            <a href=""><%= locals.user.name %></a>
-            <div class="dropdown-content" >
+          <img src="<%= user.profilePhoto %>" alt="Profile" class="profile-bubble">
+          <div class="dropdown-content" >
                 <a href="/accountDetails">Profile</a>
                 <a href="/orders">Orders</a>
                 <a href="/address">Addresses</a>
@@ -117,25 +117,13 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
   <!--=============== MAIN ===============-->
   <main class="main">
     <!--=============== HOME ===============-->
-    <section class="home section--lg">
-      <div class="home__container container grid">
-        <div class="home__content">
-          <span class="home__subtitle"> Sale</span>
-          <h1 class="home__title">
-            Newest Laptops <span>At Best Prices</span>
-          </h1>
-          <p class="home__description">
-            Save more with coupons & up tp 20% off
-          </p>
-          <a href="/shop" class="btn">Shop Now</a>
-        </div>
-        <img src="/img/bannerimagee.webp" class="home__img" alt="hats" />
-      </div>
+    <section class="banner">
+     <video style="width: 100%; height: 60vh; object-fit: fill;" src="/videos/videoplayback.webm" autoplay muted loop></video>
     </section>
 
     <!--=============== CATEGORIES ===============-->
-    <section class="categories container section">
-      <h3 class="section__title"><span>Popular</span> Brands</h3>
+    <!-- <section class="categories container section"> -->
+      <!-- <h3 class="section__title"><span>Popular</span> Brands</h3> -->
       <!-- <div class="categories__container swiper">
         <div class="swiper-wrapper">
           <a href="shop.html" class="category__item swiper-slide">
@@ -211,7 +199,7 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
           <i class="fi fi-rs-angle-right"></i>
         </div>
       </div> -->
-    </section>
+    <!-- </section> -->
 
     <!--=============== PRODUCTS ===============-->
     <section class="products container section">
