@@ -1,0 +1,218 @@
+/* Address Details Page Styles */
+.accounts__container {
+  gap: 2rem;
+}
+
+.account__tabs {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+}
+
+.account__tab {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: 8px;
+  color: #64748b;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.account__tab:hover {
+  background: #f8fafc;
+  color: #0066ff;
+}
+
+.account__tab.active-tab {
+  background: #f0f7ff;
+  color: #0066ff;
+  font-weight: 600;
+}
+
+.account__tab i {
+  font-size: 1.2rem;
+}
+
+/* Tab Content Styles */
+.tab__content {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+  padding: 2rem;
+}
+
+.tab__header {
+  margin-bottom: 2rem;
+}
+
+.tab__header h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+}
+
+.tab__header a {
+  padding: 0.75rem 1.5rem;
+  background: #0066ff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.tab__header a:hover {
+  background: #0052cc;
+  transform: translateY(-1px);
+}
+
+/* Address Cards */
+.addresses-container {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.address-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  position: relative;
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+}
+
+.address-card:hover {
+  border-color: #0066ff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.address {
+  font-style: normal;
+  line-height: 1.6;
+  color: #475569;
+  margin-bottom: 1rem;
+}
+
+.type {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background: #f0f7ff;
+  color: #0066ff;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+.address-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.edit, .delete {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.edit {
+  background: #f0f7ff;
+  color: #0066ff;
+}
+
+.edit:hover {
+  background: #0066ff;
+  color: white;
+}
+
+.delete {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.delete:hover {
+  background: #dc2626;
+  color: white;
+}
+
+/* Responsive Styles */
+@media screen and (max-width: 768px) {
+  .accounts__container {
+    gap: 1rem;
+  }
+
+  .account__tabs {
+    padding: 1rem;
+  }
+
+  .account__tab {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .tab__content {
+    padding: 1.5rem;
+  }
+
+  .tab__header h3 {
+    font-size: 1.25rem;
+  }
+
+  .tab__header a {
+    padding: 0.6rem 1.25rem;
+  }
+
+  .addresses-container {
+    grid-template-columns: 1fr;
+  }
+
+  .address-card {
+    padding: 1.25rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .account__tab {
+    font-size: 0.85rem;
+  }
+
+  .tab__content {
+    padding: 1rem;
+  }
+
+  .tab__header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .tab__header a {
+    width: 100%;
+    text-align: center;
+  }
+
+  .address-card {
+    padding: 1rem;
+  }
+
+  .address-actions {
+    flex-direction: column;
+  }
+
+  .edit, .delete {
+    width: 100%;
+    text-align: center;
+  }
+}

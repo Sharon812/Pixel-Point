@@ -12,6 +12,7 @@
 
 <!--=============== CSS ===============-->
 <link rel="stylesheet" href="/css/users/homepage.css" />
+<link rel="stylesheet" href="/css/users/addressDetails.css" />
 <header class="header">
   <% if(!locals.user){ %>
   <div class="header__top">
@@ -119,70 +120,68 @@
   <section class="accounts section--lg">
     <div class="accounts__container container grid">
       <div class="account__tabs">
-        <a
-          href="/accountDetails"
-          class="account__tab"
-          data-target="#accountDetails"
-        >
+        <a href="/accountDetails" class="account__tab">
           <i class="fi fi-rs-settings"></i> Account details
         </a>
-        <a class="account__tab" href="/orders" data-target="#orders">
+        <a href="/orders" class="account__tab">
           <i class="fi fi-rs-shopping-bag"></i> Orders
         </a>
-
-        <p class="account__tab active-tab" data-target="#address">
-          <i class="fi fi-rs-marker active-tab"></i> My Address
-        </p>
-        <a class="account__tab" href="/wallet"  data-target="#wallet">
-          <i class="fi fi-rs-marker"></i> wallet
+        <a href="/address" class="account__tab active-tab">
+          <i class="fi fi-rs-marker"></i> My Address
         </a>
-        <a class="account__tab" href="/forgot-password">
-          <i class="fi fi-rs-settings-sliders"></i> Change Password
+        <a href="/wallet" class="account__tab">
+          <i class="fi fi-rs-wallet"></i> Wallet
         </a>
-        <a class="account__tab" href="/logout"
-          ><i class="fi fi-rs-exit"></i> Logout</a
-        >
+        <a href="/forgot-password" class="account__tab">
+          <i class="fi fi-rs-key"></i> Change Password
+        </a>
+        <a href="/logout" class="account__tab">
+          <i class="fi fi-rs-exit"></i> Logout
+        </a>
       </div>
       <div class="tabs__content">
         <div class="tab__content active-tab" content id="address">
-          <div class="tab__header d-flex justify-content-between">
-            <h3 class="">Shipping Address</h3>
-            <a href="/add-address">Add address</a>
-          </div>
-          <div class="addresses-container">
-            <% if (addresses && addresses.length > 0) { %> <% for (let i = 0; i
-            < addresses.length; i++) { %> <% for (let j = 0; j <
-            addresses[i].address.length; j++) { %>
-            <div class="tab__body address-card">
-              <address class="address">
-                <%= addresses[i].address[j].name %> <br />
-                <%= addresses[i].address[j].city %> <br />
-                <%= addresses[i].address[j].landMark %>. <br />
-                <%= addresses[i].address[j].pincode %> <br />
-                <%= addresses[i].address[j].phone %> , <%=
-                addresses[i].address[j].alternatePhone %> <br />
-                <%=addresses[i].address[j].pincode %>
-
-                <p class="city"><%= addresses[i].address[j].state %></p>
-              </address>
-              <p class="type"><%= addresses[i].address[j].addressType %></p>
-
-              <a
-                href="/editAddress/<%= addresses[i].address[j]._id %> "
-                class="edit"
-                >Edit</a
-              >
-              <a
-                onclick="deleteAddress('<%= addresses[i].address[j]._id %>')"
-                class="delete"
-                >delete</a
-              >
+          <div class="tab__header">
+            <div class="d-flex justify-content-between align-items-center">
+              <h3>Shipping Address</h3>
+              <a href="/add-address" class="add-address-btn">
+                <i class="fi fi-rs-plus"></i> Add New Address
+              </a>
             </div>
-            <% } %> <% } %>
           </div>
-          <% } else { %>
-          <p>No addresses found.</p>
-          <% } %>
+          
+          <div class="addresses-container">
+            <% if (addresses && addresses.length > 0) { %>
+              <% for (let i = 0; i < addresses.length; i++) { %>
+                <% for (let j = 0; j < addresses[i].address.length; j++) { %>
+                  <div class="address-card">
+                    <div class="type"><%= addresses[i].address[j].addressType %></div>
+                    <address class="address">
+                      <strong><%= addresses[i].address[j].name %></strong><br />
+                      <%= addresses[i].address[j].city %><br />
+                      <%= addresses[i].address[j].landMark %><br />
+                      <%= addresses[i].address[j].state %> - <%= addresses[i].address[j].pincode %><br />
+                      <strong>Phone:</strong> <%= addresses[i].address[j].phone %><br />
+                      <strong>Alternate:</strong> <%= addresses[i].address[j].alternatePhone %>
+                    </address>
+                    
+                    <div class="address-actions">
+                      <a href="/editAddress/<%= addresses[i].address[j]._id %>" class="edit">
+                        <i class="fi fi-rs-edit"></i> Edit
+                      </a>
+                      <a onclick="deleteAddress('<%= addresses[i].address[j]._id %>')" class="delete">
+                        <i class="fi fi-rs-trash"></i> Delete
+                      </a>
+                    </div>
+                  </div>
+                <% } %>
+              <% } %>
+            <% } else { %>
+              <div class="no-address">
+                <p>No addresses found. Add a new address to get started.</p>
+              </div>
+            <% } %>
+          </div>
         </div>
       </div>
     </div>
