@@ -162,54 +162,84 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
               <% if(orders){ %>
               <div class="tab__body">
                 <% orders.forEach(order => { %>
-                    <% order.orderedItems.forEach(item => { %>
                 <div class="orders-container">
                   <div class="order-card">
-                    <img src="<%= item.product.productImage[0] %> " alt="Product Image" class="order-image">
-                    <div class="order-content">
-                      <div class="order-header">
-                        <span class="order-number"> <%= item.productName %>  </span>
-                        <span class="order-date"> <%= order.createdAt.toLocaleDateString() %> </span>
+                    <div class="order-header">
+                      <div id="firstDiv" >
+                      <p class="order-number">OrderID #<%= order._id %></p>
+                      <div class="my-1">
+                        <strong>Order Date : </strong>
+                        <span class="order-date"><%= order.createdAt.toLocaleDateString() %></span>
                       </div>
-                      <div class="order-details">
-                        <div class="order-info">
-                            <span class="order-label">Quantity</span>
-                            <span class="order-status"> <%= item.quantity %> </span>
-                          </div>
-                        <div class="order-info">
-                          <span class="order-label">Status</span>
-                          <% if(item.status === "Pending" ||item.status === "Processing"||item.status === "Shipped" || item.status === "Cancelled"|| item.status === "Returned" || item.status === "Return Requested" ) {%>
-                          <span class="order-status status-processing"> <%= item.status %> </span>
-                          <% } else{ %>
-                            <span class="order-status status-completed"> <%= item.status %> </span>
-                        <% } %>
-                        </div>
-                        <div class="order-info">
-                          <span class="order-label">Total</span>
-                          <span class="order-value">&#8377;<%=item.finalAmount %> </span>
-                        </div>
-                        <% if(item.status !== "Cancelled" && item.status !== "Returned" && item.status !== "Return Requested") {%>
-                        <div class="order-actions">
-                          <a href="/orderDetails/?orderId=<%= item._id %>" class="view-order-btn">View Order</a>
-                          <% if(item.status !== "Delivered" && item.status !== "Shipped") {%>
-                          <button class="cancel-order-btn" onclick="openCancelModal('<%= item._id %>','<%=order._id%>')">Cancel Order</button>
-                        </div>
-                        <% } else {%>
-                         <button class="cancel-order-btn" onclick="openReturnModal('<%= item._id %>','<%=order._id%>')">Return</button>
-                        <% } %>
-                     <% } else{ %>
-                      <a  href="/orderDetails/?orderId=<%= item._id %>" class="view-order-btn text-center">View Order</a>
-
-                      <button class="cancel-order-btn" disabled> <%= item.status %> </button>
-                    <% } %>
+                      <div>
+                        <strong>payment-status : </strong>
+                        <span class="order-date payment-status <%= order.paymentStatus === 'Confirmed' ? 'status-confirmed' : order.paymentStatus === 'Pending Payment' ? 'status-pending' : '' %>"><%= order.paymentStatus %></span>
+                      </div>
+                      <div class="my-1">
+                        <strong>Total Products : </strong>
+                        <span class="order-date"><%= order.orderedItems.length %></span>
                       </div>
                     </div>
+                    <div id="secondDiv">
+                      <div>
+                        <p class="order-amount">&#8377;<%= order.FinalAmount %></p>
+                      </div>
+                      <div>
+                        <strong>payment-method : </strong>
+                        <span class="order-date"><%= order.paymentMethod %></span>
+                      </div>
+                      <button class="view-order-btn" >Download Invoice</button>
+                    </div>
                   </div>
+                 
+                 
+                    <div class="ordered-items">
+                      <% order.orderedItems.forEach(item => { %>
+                        <div class="order-item">
+                          <div class="item-image">
+                            <img src="<%= item.product.productImage[0] %>" alt="Product Image" class="order-image">
+                          </div>
+                          <div class="item-details">
+                            <h4 class="item-name"><%= item.productName %></h4>
+                            <div class="item-info">
+                              <div class="info-group">
+                                <span class="order-label">Quantity:</span>
+                                <span class="order-value"><%= item.quantity %></span>
+                              </div>
+                              <div class="info-group">
+                                <span class="order-label">Status:</span>
+                                <% if(item.status === "Pending" ||item.status === "Processing"||item.status === "Shipped" || item.status === "Cancelled"|| item.status === "Returned" || item.status === "Return Requested" ) {%>
+                                <span class="order-status status-processing"><%= item.status %></span>
+                                <% } else{ %>
+                                <span class="order-status status-completed"><%= item.status %></span>
+                                <% } %>
+                              </div>
+                              <div class="info-group">
+                                <span class="order-label">Price:</span>
+                                <span class="order-value">&#8377;<%= item.finalAmount %></span>
+                              </div>
+                            </div>
+                            <div class="item-actions">
+                              <% if(item.status !== "Cancelled" && item.status !== "Returned" && item.status !== "Return Requested") {%>
+                                <a href="/orderDetails/?orderId=<%= item._id %>" class="view-order-btn">View Order</a>
+                                <% if(item.status !== "Delivered" && item.status !== "Shipped") {%>
+                                  <button class="cancel-order-btn" onclick="openCancelModal('<%= item._id %>','<%=order._id%>')">Cancel Order</button>
+                                <% } else { %>
+                                  <button class="cancel-order-btn" onclick="openReturnModal('<%= item._id %>','<%=order._id%>')">Return</button>
+                                <% } %>
+                              <% } else { %>
+                                <a href="/orderDetails/?orderId=<%= item._id %>" class="view-order-btn text-center">View Order</a>
+                              <% } %>
+                            </div>
+                          </div>
+                        </div>
+                      <% }) %>
+                    </div>
                   </div>
-                  <% }); %>
-                  <% }); %>
                 </div>
-                <% if (totalPages > 1) { %>
+                <% }) %>
+              </div>
+              <% if (totalPages > 1) { %>
                 <div class="pagination" style="display: flex; justify-content: center; gap: 10px; margin-top: 20px;">
                   <% if (currentPage > 1) { %>
                     <a href="?page=<%= currentPage - 1 %>" style="padding: 8px 12px; border: 1px solid #ddd; text-decoration: none; color: #333;">&laquo; Previous</a>
