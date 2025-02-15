@@ -73,7 +73,6 @@ const loadShopPage = async (req, res) => {
         productName: { $regex: searchQuery, $options: "i" },
       });
     }
-    console.log(filterConditions);
 
     if (filterConditions.length > 0) {
       matchStage.$and = filterConditions;
@@ -112,8 +111,10 @@ const loadShopPage = async (req, res) => {
       { $unwind: "$brand" },
       { $unwind: "$category" },
       ...(Object.keys(sortStage).length ? [{ $sort: sortStage }] : []),
+      { $sort: { createdAt: -1 } },
       { $skip: skip },
       { $limit: limit },
+
     ]);
 
     const [colors, rams, storages] = await Promise.all([
