@@ -1,0 +1,163 @@
+/* Account Details Page Styles */
+.accounts__container {
+  gap: 2rem;
+}
+
+.account__tabs {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+}
+
+.account__tab {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: 8px;
+  color: #64748b;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.account__tab:hover {
+  background: #f8fafc;
+  color: #0066ff;
+}
+
+.account__tab.active-tab {
+  background: #f0f7ff;
+  color: #0066ff;
+  font-weight: 600;
+}
+
+.account__tab i {
+  font-size: 1.2rem;
+}
+
+/* Tab Content Styles */
+.tab__content {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+  padding: 2rem;
+}
+
+.tab__header {
+  margin-bottom: 2rem;
+}
+
+.tab__header h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+}
+
+#editBtn {
+  padding: 0.75rem 1.5rem;
+  background: #0066ff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#editBtn:hover {
+  background: #0052cc;
+}
+
+/* Form Styles */
+.form {
+  display: grid;
+  gap: 1rem;
+}
+
+.form span {
+  color: #475569;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.form__input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  color: #1e293b;
+  transition: all 0.3s ease;
+}
+
+.form__input:focus {
+  border-color: #0066ff;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.1);
+}
+
+.form__input:read-only {
+  background-color: #f8fafc;
+  cursor: not-allowed;
+}
+
+.form__input:disabled {
+  background-color: #f1f5f9;
+  cursor: not-allowed;
+}
+
+.text-danger {
+  color: #dc2626;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+/* Responsive Styles */
+@media screen and (max-width: 768px) {
+  .accounts__container {
+    gap: 1rem;
+  }
+
+  .account__tabs {
+    padding: 1rem;
+  }
+
+  .account__tab {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .tab__content {
+    padding: 1.5rem;
+  }
+
+  .tab__header h2 {
+    font-size: 1.25rem;
+  }
+
+  #editBtn {
+    padding: 0.6rem 1.25rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .account__tab {
+    font-size: 0.85rem;
+  }
+
+  .tab__content {
+    padding: 1rem;
+  }
+
+  .tab__header {
+    margin-bottom: 1.5rem;
+  }
+
+  .form__input {
+    padding: 0.6rem 0.875rem;
+    font-size: 0.9rem;
+  }
+}
