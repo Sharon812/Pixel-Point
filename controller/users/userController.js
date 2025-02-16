@@ -7,6 +7,7 @@ const nodemailer = require("nodemailer");
 const env = require("dotenv").config();
 const bycrypt = require("bcrypt");
 
+
 //function to render page 404
 const loadPageNotFound = async (req, res) => {
   try {
@@ -190,12 +191,14 @@ const verifyOtp = async (req, res) => {
     if (otp === req.session.userOtp) {
       const user = req.session.userData;
       const passwordHash = await securePassword(user.password);
-
+      const profilePhoto = await getPlaceholderImage(user.name)
+      console.log(profilePhoto,'prof')
       const saveUserData = new User({
         name: user.name,
         phone: user.phone,
         email: user.email,
         password: passwordHash,
+        profilePhoto:profilePhoto
       });
       await saveUserData.save();
 
@@ -208,6 +211,13 @@ const verifyOtp = async (req, res) => {
     console.error("error verifying otp", error);
     res.status(400).json({ success: false, message: "an error try again" });
   }
+};
+
+//function to generate placeholdderimage
+const getPlaceholderImage = (name) => {
+  const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  const encodedInitials = encodeURIComponent(initials); // Fixes any special character issues
+  return `https://res.cloudinary.com/dbufv0x2p/image/upload/l_text:Arial_100_bold:${encodedInitials},co_rgb:ffffff,w_200,h_200,c_fit,bo_2px_solid_black,b_rgb:000000/v1/placeholder.jpg`;
 };
 
 //function for resending otp
