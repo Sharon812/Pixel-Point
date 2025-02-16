@@ -88,9 +88,8 @@ const addToCart = async (req, res) => {
     }
     let cart = await Cart.findOne({ userId: user });
 
-    const itemCount = cart.items.length;
-    if (itemCount >= 5) {
-      return res.json({ success: false, message: "Max limit reached" });
+    if(cart.items.length >=5){
+      return res.status(400).json({success:false,message:"Can add 5 products at a time"})
     }
 
     if (cart) {
@@ -103,6 +102,10 @@ const addToCart = async (req, res) => {
           return res
             .status(404)
             .json({ success: false, message: "Only one product remaining" });
+        }
+         
+        if(existingItem.quantity >= 5){
+          return res.status(400).json({success:false,message:"can add 5 products of same stock"})
         }
       }
 
@@ -229,6 +232,9 @@ const addquantity = async (req, res) => {
     }
 
     const combo = productWithCombo.combos[0];
+    if(product.quantity >= combo.quantity){      
+      return res.status(400).json({success:false,message:`Only ${combo.quantity} available`})
+    }
     if(product.quantity >5){
       return 
     }

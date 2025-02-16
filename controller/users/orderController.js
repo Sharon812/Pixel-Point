@@ -132,6 +132,12 @@ const placeOrder = async (req, res) => {
       if (selectedCombo.quantity < 1) {
         return res.status(400).json({ success: false, message: ` ${item.productId.productName} is out of stock` });
       }
+
+      const addressData = await Address.findOne({userId:userId})
+      const addressDetails = addressData.address.filter((address) => {
+        address.id.toString() === selectedAddress.toString()
+      })
+      console.log(addressDetails,"adders")
     
     
       orderItems.push({
@@ -158,6 +164,13 @@ const placeOrder = async (req, res) => {
 
     const finalAmount = req.body.discountedTotal || totalAmount;
 
+    if (paymentMethod === 'Cash on Delivery' && finalAmount > 10000) {
+      return res.status(400).json({
+        success: false,
+        message: "Cash on Delivery is not available for orders above ₹10,000"
+      });
+    }
+
     const newOrder = new Order({
       userId: userId,
       address: selectedAddress,
@@ -168,7 +181,7 @@ const placeOrder = async (req, res) => {
       FinalAmount: finalAmount,
       couponCode: couponCode || null,
       paymentStatus:
-        paymentMethod === "Cash on Delivery" ? "Confirmed" : "Pending Payment",
+        paymentMethod === "Cash on Delivery" || "wallet" ? "Confirmed" : "Pending Payment",
     });
     await newOrder.save();
 
@@ -233,6 +246,7 @@ const placeOrder = async (req, res) => {
         couponData.usesCount += 1;
         await couponData.save();
       }
+      await Cart.findOneAndUpdate({ userId }, { $set: { items: [] } });
 
       return res.json({
         success: true,

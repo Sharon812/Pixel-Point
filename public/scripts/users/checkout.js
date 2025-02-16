@@ -92,13 +92,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 );
               });
           },
-          modal: {
-            ondismiss: function () {
-              alert(
-                "Payment cancelled. Your order is saved but pending payment. Please complete payment to process your order."
-              );
-            },
-          },
           prefill: {
             name: "Customer Name",
             email: "customer@example.com",
