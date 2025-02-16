@@ -13,6 +13,22 @@ db();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+const resetCoupons = require("./helpers/couponReset")
+const cron = require("node-cron")
+
+cron.schedule("* * * * *",async () => {
+  try {
+    const date = new Date()
+    console.log(`cron job started ${date} `)
+
+    await resetCoupons()
+
+  } catch (error) {
+    console.error("error at cron in index.js",error)
+  }
+})
+
 //configuring session
 app.use(
   session({

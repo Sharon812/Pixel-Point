@@ -138,7 +138,7 @@ const loaddashboard = async (req, res) => {
 
     const formattedRecentOrders = recentOrders.map((order) => ({
       orderId: order.orderId,
-      customerName: order.userId.name,
+      customerName: order.userId.name || "",
       productName: order.items[0]?.productName || "Multiple Products",
       amount: order.totalAmount,
       status: order.items[0]?.status || "Processing",

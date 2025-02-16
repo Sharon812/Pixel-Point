@@ -214,7 +214,7 @@
                 recentOrders.forEach(order => { %>
                 <tr>
                   <td>#<%= order.orderId %></td>
-                  <td><%= order.customerName %></td>
+                  <td><%= order.customerName ? order.customerName : " " %></td>
                   <td class="d-none d-md-table-cell">
                     <%= order.productName %>
                   </td>
