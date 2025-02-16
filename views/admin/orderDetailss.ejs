@@ -129,18 +129,43 @@
                         <input type="hidden" name="productId" value="<%= order.productId %>" />
                         <div class="d-flex gap-2">
                           <select name="status" class="form-select form-select-sm" style="width: auto;">
-                            <option value="Pending" <%= order.itemStatus === 'Pending' ? 'selected' : '' %>>Pending</option>
-                            <option value="Processing" <%= order.itemStatus === 'Processing' ? 'selected' : '' %>>Processing</option>
-                            <option value="Shipped" <%= order.itemStatus === 'Shipped' ? 'selected' : '' %>>Shipped</option>
-                            <option value="Delivered" <%= order.itemStatus === 'Delivered' ? 'selected' : '' %>>Delivered</option>
-                            <option value="Cancelled" <%= order.itemStatus === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
-                            <!-- <option value="Returned" <%= order.status === 'Returned' ? 'selected' : '' %>>Returned</option> -->
+                            <option value="Pending" <%= order.itemStatus === 'Pending' ? 'selected' : '' %> 
+                              <%= ['Processing', 'Shipped', 'Delivered', 'Cancelled'].includes(order.itemStatus) ? 'disabled' : '' %>>
+                              Pending
+                            </option>
+                            
+                            <option value="Processing" <%= order.itemStatus === 'Processing' ? 'selected' : '' %> 
+                              <%= ['Shipped', 'Delivered', 'Cancelled'].includes(order.itemStatus) ? 'disabled' : '' %>>
+                              Processing
+                            </option>
+                            
+                            <option value="Shipped" <%= order.itemStatus === 'Shipped' ? 'selected' : '' %> 
+                              <%= ['Delivered', 'Cancelled'].includes(order.itemStatus) ? 'disabled' : '' %>>
+                              Shipped
+                            </option>
+                            
+                            <option value="Delivered" <%= order.itemStatus === 'Delivered' ? 'selected' : '' %> 
+                              <%= order.itemStatus === 'Cancelled' ? 'disabled' : '' %>>
+                              Delivered
+                            </option>
+                            
+                            <option value="Cancelled" <%= order.itemStatus === 'Cancelled' ? 'selected' : '' %>>
+                              Cancelled
+                            </option>
+                            <option value="Return Requested" <%= order.itemStatus === 'Return Requested' ? 'selected disabled' : 'hidden' %>>
+                              Return Requested
+                            </option>
+                            <option value="Returned" <%= order.itemStatus === 'Returned' ? 'selected disabled' : 'hidden' %>>
+                              Returned
+                            </option>
+                        
                           </select>
                           <button type="submit" class="btn btn-primary btn-sm">
                             <i class="fas fa-check"></i>
                           </button>
                         </div>
                       </form>
+                      
                     </td>
                   </tr>
                   <% }) %>
