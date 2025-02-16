@@ -77,20 +77,45 @@ document.addEventListener("DOMContentLoaded", () => {
             })
               .then((res) => res.json())
               .then((verificationResult) => {
+                console.log(verificationResult,"res")
                 if (verificationResult.success) {
                   sessionStorage.removeItem("checkoutTotal");
                   sessionStorage.removeItem("appliedCoupon");
-                  window.location.href = "/orderplaced";
+                  window.location.href = `/orderplaced/?orderId=${verificationResult.order}`;
                 } else {
-                  alert("Payment verification failed. Please contact support.");
-                }
+                  sessionStorage.removeItem("checkoutTotal");
+                  sessionStorage.removeItem("appliedCoupon");
+                  Swal.fire({
+                    toast: true,
+                    position: "top-end",
+                    icon: "error",
+                    text: error.message || "Payment verification failed please call support",
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    customClass: {
+                      popup: "colored-toast error-toast",
+                      icon: "error-icon",
+                    },
+                  });                }
               })
               .catch((error) => {
+                sessionStorage.removeItem("checkoutTotal");
+                sessionStorage.removeItem("appliedCoupon");
                 console.error("Payment verification error:", error);
                 alert(
                   "Error verifying payment. Please check your order status or contact support."
                 );
               });
+          },
+          modal: {
+            ondismiss: function () {
+              sessionStorage.removeItem("checkoutTotal");
+              sessionStorage.removeItem("appliedCoupon");
+              alert(
+                "Payment cancelled. Your order is saved but pending payment. Please complete payment to process your order."
+              );
+            },
           },
           prefill: {
             name: "Customer Name",
@@ -105,9 +130,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const razorpayInstance = new Razorpay(razorpayOptions);
         razorpayInstance.open();
       } else if (result.success) {
+        sessionStorage.removeItem("checkoutTotal");
+        sessionStorage.removeItem("appliedCoupon");
         window.location.href = `/orderplaced/?orderId=${result.order.orderId}`;
       }
     } catch (error) {
+      sessionStorage.removeItem("checkoutTotal");
+      sessionStorage.removeItem("appliedCoupon");
       console.error("Order Error:", error);
       Swal.fire({
         toast: true,

@@ -164,7 +164,7 @@ const placeOrder = async (req, res) => {
 
     const finalAmount = req.body.discountedTotal || totalAmount;
 
-    if (paymentMethod === 'Cash on Delivery' && finalAmount > 10000) {
+    if (paymentMethod === 'Cash on Delivery' && finalAmount > 100000) {
       return res.status(400).json({
         success: false,
         message: "Cash on Delivery is not available for orders above ₹10,000"
@@ -331,9 +331,10 @@ const verifyPayment = async (req, res) => {
       );
       await updateInventory(order.orderedItems, order.userId);
 
-      return res.json({
+      return res.status(200).json({
         success: true,
         message: "Payment verified successfully",
+        order:order.orderId,
       });
     } else {
       return res.status(400).json({

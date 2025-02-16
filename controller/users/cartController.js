@@ -170,7 +170,7 @@ const deleteCartItem = async (req, res) => {
         .json({ success: false, message: "Item not found in cart" });
     }
 
-    const itemTotalPrice = itemToDelete.price || 0;
+    const itemTotalPrice = itemToDelete.totalPrice || 0;
     cart.totalPrice = Math.max(0, cart.totalPrice - itemTotalPrice);
 
     cart.items = cart.items.filter((item) => item._id.toString() !== itemId);
