@@ -15,6 +15,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const resetCoupons = require("./helpers/couponReset")
+const resetCategoryOffer = require("./helpers/offerReset")
 const cron = require("node-cron")
 
 cron.schedule("* * * * *",async () => {
@@ -23,6 +24,7 @@ cron.schedule("* * * * *",async () => {
     console.log(`cron job started ${date} `)
 
     await resetCoupons()
+    await resetCategoryOffer()
 
   } catch (error) {
     console.error("error at cron in index.js",error)
