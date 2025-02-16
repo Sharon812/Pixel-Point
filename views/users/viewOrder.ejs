@@ -177,8 +177,16 @@
   </div>
 
   <div class="payment-info">
+    <% if(orderData.paymentMethod == "razorpay") {%>
     <i class="fas fa-credit-card payment-method-icon"></i>
-    <span>Paid COD</span>
+    <span>Razorpay</span>
+    <% } else if(orderData.paymentMethod  == "Cash on Delivery") {%>
+      <i class="fa-solid fa-money-bill"></i>
+      <span>Cash On Delivery</span>
+      <% }else if(orderData.paymentMethod == "wallet")  {%>
+        <i class="fa-solid fa-wallet"></i>
+        <span>Wallet</span>
+        <% } %>
   </div>
 
   <div class="order-timeline mt-4">
