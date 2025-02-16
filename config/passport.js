@@ -23,7 +23,7 @@ passport.use(
             name: profile.displayName,
             email: email,
             googleId: profile.id,
-            profilePhoto:profile.photos[0]?.value || getPlaceholderImage(profile.displayName) 
+            profilePhoto:profile.photos[0]?.value 
           });
           await user.save();
           return done(null, user);
@@ -49,9 +49,4 @@ passport.deserializeUser((id, done) => {
       done(err, null);
     });
 });
-
-const getPlaceholderImage = (name) => {
-  const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
-  return `https://res.cloudinary.com/dbufv0x2p/image/upload/l_text:arial_100_bold:${initials},co_rgb:ffffff,w_200,h_200,c_fit,bo_2px_solid_black/v1/placeholder.jpg`;
-};
 module.exports = passport;
