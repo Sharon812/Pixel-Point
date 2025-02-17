@@ -374,13 +374,40 @@ const generateExcelReport = async (
   }
 
   const totalAmount = orders.reduce((sum, order) => {
-    const deliveredAmount = order.orderedItems
-      .filter((item) => item.status === "Delivered")
-      .reduce((itemSum, item) => itemSum + item.finalAmount, 0);
+    if (!Array.isArray(order.orderedItems)) return sum; 
+
+    const deliveredItems = order.orderedItems.filter(
+      (item) => item.status === "Delivered"
+    );
+    console.log(deliveredItems,"items")
+
+    const deliveredAmount = deliveredItems.reduce(
+      (itemSum, item) => itemSum + (item.totalPrice || 0),
+      0
+    );
+    console.log(deliveredAmount,"amt")
 
     return sum + deliveredAmount;
   }, 0);
-  const totalOrders = orders.length;
+  const discountAmount = orders.reduce((sum, order) => {
+    if (!Array.isArray(order.orderedItems)) return sum; 
+
+    const deliveredItems = order.orderedItems.filter(
+      (item) => item.status === "Delivered"
+    );
+
+    const deliveredAmount = deliveredItems.reduce(
+      (itemSum, item) => itemSum + (item.dicountPrice || 0),
+      0
+    );
+
+    return sum + deliveredAmount;
+  }, 0);
+
+  const totalOrders = orders.reduce((count, order) => 
+    count + order.orderedItems.filter((item) => item.status === "Delivered").length, 0
+  );
+  
   const successfulOrders = orders.filter((order) =>
     order.orderedItems.some((item) => item.status === "Delivered")
   ).length;
@@ -397,17 +424,15 @@ const generateExcelReport = async (
   worksheet.getCell("A7").font = { size: 12 };
 
   worksheet.mergeCells("A8:B8");
-  worksheet.getCell("A8").value = `Successful Orders: ${successfulOrders}`;
+  worksheet.getCell("A8").value = `Discounted Price: ${discountAmount}`;
   worksheet.getCell("A8").font = { size: 12 };
 
   worksheet.mergeCells("A9:B9");
-  worksheet.getCell("A9").value = `Returned Orders: ${returnedOrders}`;
+  worksheet.getCell("A9").value = `Total Revenue before discount: ${totalAmount}`;
   worksheet.getCell("A9").font = { size: 12 };
 
   worksheet.mergeCells("A10:B10");
-  worksheet.getCell("A10").value = `Total Revenue: ₹${totalAmount.toLocaleString(
-    "en-IN"
-  )}`;
+  worksheet.getCell("A10").value = `Total Revenue: ₹${totalAmount - discountAmount}`;
   worksheet.getCell("A10").font = { size: 12 };
 
   worksheet.mergeCells("A12:E12");
@@ -434,14 +459,15 @@ const generateExcelReport = async (
 
   let rowIndex = 15;
   orders.forEach((order) => {
+    order.orderedItems.forEach((item) => {
     worksheet.getRow(rowIndex).values = [
       order.orderId,
       moment(order.createdAt).format("DD/MM/YYYY"),
       order.userId.name,
-      order.orderedItems[0]?.status || "Delivered",
-      order.FinalAmount,
+      item.status || "Delivered",
+      item.finalAmount,
     ];
-
+ 
     worksheet.getCell(`E${rowIndex}`).numFmt = "₹#,##0.00";
 
     worksheet.getRow(rowIndex).eachCell((cell) => {
@@ -455,7 +481,7 @@ const generateExcelReport = async (
 
     rowIndex++;
   });
-
+})
   worksheet.columns.forEach((column) => {
     column.width = 20;
   });
