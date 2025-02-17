@@ -188,7 +188,13 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                         <strong>payment-method : </strong>
                         <span class="order-date"><%= order.paymentMethod %></span>
                       </div>
-                      <button class="view-order-btn" >Download Invoice</button>
+                      <div>
+                        <% if(order.paymentStatus == "Pending Payment")  {%>
+                          <button class="view-order-btn text-center">Pay Now</button>
+                          <% } %>
+  
+                      </div>
+                       
                     </div>
                   </div>
                  

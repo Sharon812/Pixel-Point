@@ -15,7 +15,7 @@ const getOrderDetails = async (req, res) => {
     const totalOrders = await Order.countDocuments();
     const totalPages = Math.ceil(totalOrders / limit);
 
-    const orders = await Order.find()
+    const orders = await Order.find({ paymentStatus: { $ne: "Pending Payment" } })
       .populate("userId", "name")
       .populate("orderedItems.product", "productName price _id")
       .sort({ createdAt: -1 })
