@@ -181,10 +181,10 @@ const placeOrder = async (req, res) => {
       FinalAmount: finalAmount,
       couponCode: couponCode || null,
       paymentStatus:
-        paymentMethod === "Cash on Delivery" || "wallet" ? "Confirmed" : "Pending Payment",
+      paymentMethod === "Cash on Delivery" || paymentMethod === "wallet" ? "Confirmed" : "Pending Payment"
     });
     await newOrder.save();
-
+console.log(newOrder,"iodjfiodsjfoij")
     if (paymentMethod === "Cash on Delivery") {
       await updateInventory(orderItems, userId);
       await Cart.findOneAndUpdate({ userId }, { $set: { items: [] } });
@@ -308,21 +308,29 @@ const verifyPayment = async (req, res) => {
       order_id,
     } = req.body;
 
+    if (!razorpay_payment_id) {
+
+      console.log("Payment failed, updating order status.");
+
+      return res.status(400).json({
+        success: false,
+        message: "Payment failed or user canceled",
+        order: order.orderId,
+      });
+    }
     const sign = razorpay_order_id + "|" + razorpay_payment_id;
     const expectedSign = crypto
       .createHmac("sha256", process.env.RAZORPAY_SECRET_KEY)
       .update(sign.toString())
       .digest("hex");
-
+    const order = await Order.findById(order_id);
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found",
+      });
+    }
     if (razorpay_signature === expectedSign) {
-      const order = await Order.findById(order_id);
-      if (!order) {
-        return res.status(404).json({
-          success: false,
-          message: "Order not found",
-        });
-      }
-
       order.paymentStatus = "Confirmed";
       await order.save();
       await Cart.findOneAndUpdate(
@@ -330,16 +338,17 @@ const verifyPayment = async (req, res) => {
         { $set: { items: [] } }
       );
       await updateInventory(order.orderedItems, order.userId);
-
       return res.status(200).json({
         success: true,
         message: "Payment verified successfully",
         order:order.orderId,
       });
     } else {
+      console.log("here,sdnojdiovcsne")
       return res.status(400).json({
         success: false,
         message: "Invalid signature",
+        order:order.orderId,
       });
     }
   } catch (error) {
@@ -358,8 +367,23 @@ const orderPlaced = async (req, res) => {
     if(!orderId){
       return res.status(400).json({success:false,message:"unable to find orderdetails"})
     }
-    console.log(order)
     res.render("orderPlaced",{
+      order:order
+    });
+  } catch (error) {
+    console.log(error, "errror at rendering order placed page");
+    res.redirect("/page-not-found");
+  }
+};
+
+const orderPending = async (req, res) => {
+  try {
+    const {orderId} = req.query
+    const order = await Order.findOne({_id:orderId})
+    if(!orderId){
+      return res.status(400).json({success:false,message:"unable to find orderdetails"})
+    }
+    res.render("orderPending",{
       order:order
     });
   } catch (error) {
@@ -373,4 +397,5 @@ module.exports = {
   placeOrder,
   orderPlaced,
   verifyPayment,
+  orderPending
 };
