@@ -180,10 +180,10 @@ const placeOrder = async (req, res) => {
       discount: discount,
       FinalAmount: finalAmount,
       couponCode: couponCode || null,
-      paymentStatus:
-      paymentMethod === "Cash on Delivery" || paymentMethod === "wallet" ? "Confirmed" : "Pending Payment"
+      paymentStatus: paymentMethod === "Cash on Delivery" || paymentMethod === "wallet" ? "Confirmed" : "Pending Payment"
     });
     await newOrder.save();
+console.log(newOrder,"iodjfiodsjfoij")
 console.log(newOrder,"iodjfiodsjfoij")
     if (paymentMethod === "Cash on Delivery") {
       await updateInventory(orderItems, userId);
@@ -318,6 +318,16 @@ const verifyPayment = async (req, res) => {
         order: order.orderId,
       });
     }
+    if (!razorpay_payment_id) {
+
+      console.log("Payment failed, updating order status.");
+
+      return res.status(400).json({
+        success: false,
+        message: "Payment failed or user canceled",
+        order: order.orderId,
+      });
+    }
     const sign = razorpay_order_id + "|" + razorpay_payment_id;
     const expectedSign = crypto
       .createHmac("sha256", process.env.RAZORPAY_SECRET_KEY)
@@ -345,9 +355,11 @@ const verifyPayment = async (req, res) => {
       });
     } else {
       console.log("here,sdnojdiovcsne")
+      console.log("here,sdnojdiovcsne")
       return res.status(400).json({
         success: false,
         message: "Invalid signature",
+        order:order.orderId,
         order:order.orderId,
       });
     }
@@ -358,7 +370,7 @@ const verifyPayment = async (req, res) => {
       message: "Error verifying payment",
     });
   }
-};
+}
 
 const orderPlaced = async (req, res) => {
   try {
@@ -391,6 +403,8 @@ const orderPending = async (req, res) => {
     res.redirect("/page-not-found");
   }
 };
+
+
 
 module.exports = {
   processCheckout,
