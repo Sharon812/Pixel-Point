@@ -95,7 +95,7 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
         </a>
         <% if(locals.user){ %>
         <div class="dropdown" >
-          <img src="<%= user.profilePhoto %>" alt="Profile" class="profile-bubble">
+          <img src="<%=user.profilePhoto%>" alt="Profile" class="profile-bubble">
           <div class="dropdown-content" >
                 <a href="/accountDetails">Profile</a>
                 <a href="/orders">Orders</a>

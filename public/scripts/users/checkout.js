@@ -20,7 +20,19 @@ document.addEventListener("DOMContentLoaded", () => {
       )?.id;
 
       if (!selectedAddress || !paymentMethod) {
-        return alert("Please select a delivery address and payment method.");
+        return  Swal.fire({
+          toast: true,
+          position: "top-end",
+          icon: "error",
+          text: "Address or Payment method not selected",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          customClass: {
+            popup: "colored-toast error-toast",
+            icon: "error-icon",
+          },
+        });    
       }
 
       let discountedTotal = null;
@@ -53,6 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!response.ok) {
         throw new Error(result.message || "Order placement failed");
       }
+      let verificationRes = null;
 
       if (paymentMethod === "razorpay" && result.razorpayOrder) {
         const razorpayOptions = {
@@ -63,6 +76,13 @@ document.addEventListener("DOMContentLoaded", () => {
           description: "Purchase from Pixel Point",
           order_id: result.razorpayOrder.id,
           handler: function (razorpayResponse) {
+            if (!razorpayResponse.razorpay_payment_id) {
+              console.log("Payment failed in Razorpay UI.");
+              sessionStorage.removeItem("checkoutTotal");
+              sessionStorage.removeItem("appliedCoupon");
+              window.location.href = `/orderPending?orderId=${result.order._id}`;
+              return;
+            }
             fetch("/verify-payment", {
               method: "POST",
               headers: {
@@ -77,7 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
             })
               .then((res) => res.json())
               .then((verificationResult) => {
-                console.log(verificationResult,"res")
+                // verificationRes = verificationResult
                 if (verificationResult.success) {
                   sessionStorage.removeItem("checkoutTotal");
                   sessionStorage.removeItem("appliedCoupon");
@@ -85,19 +105,22 @@ document.addEventListener("DOMContentLoaded", () => {
                 } else {
                   sessionStorage.removeItem("checkoutTotal");
                   sessionStorage.removeItem("appliedCoupon");
-                  Swal.fire({
-                    toast: true,
-                    position: "top-end",
-                    icon: "error",
-                    text: error.message || "Payment verification failed please call support",
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                    customClass: {
-                      popup: "colored-toast error-toast",
-                      icon: "error-icon",
-                    },
-                  });                }
+                  window.location.href = `/orderPending?orderId=${verificationRes.order}`
+
+                  // Swal.fire({
+                  //   toast: true,
+                  //   position: "top-end",
+                  //   icon: "error",
+                  //   text: error.message || "Payment verification failed please call support",
+                  //   showConfirmButton: false,
+                  //   timer: 3000,
+                  //   timerProgressBar: true,
+                  //   customClass: {
+                  //     popup: "colored-toast error-toast",
+                  //     icon: "error-icon",
+                  //   },
+                  // });               
+                   }
               })
               .catch((error) => {
                 sessionStorage.removeItem("checkoutTotal");
@@ -112,11 +135,10 @@ document.addEventListener("DOMContentLoaded", () => {
             ondismiss: function () {
               sessionStorage.removeItem("checkoutTotal");
               sessionStorage.removeItem("appliedCoupon");
-              alert(
-                "Payment cancelled. Your order is saved but pending payment. Please complete payment to process your order."
-              );
+              console.log("Payment dismissed by user.");
+              window.location.href = `/orderPending?orderId=${result.order._id}`;
             },
-          },
+          },          
           prefill: {
             name: "Customer Name",
             email: "customer@example.com",

@@ -35,6 +35,7 @@ const getCart = async (req, res) => {
         const specificCombo = item.productId.combos.find(
           (combo) => combo._id.toString() === item.comboId.toString()
         );
+        console.log(specificCombo,"specificcombos")
         if (specificCombo && specificCombo.quantity <= 0) {
           stockMessage = true;
         }
@@ -44,6 +45,7 @@ const getCart = async (req, res) => {
       
       return item;
     });
+    console.log(cartData,"cart")
 
     res.render("cart", {
       cart: cartData,
