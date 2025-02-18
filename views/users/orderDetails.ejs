@@ -229,20 +229,20 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                               </div>
                             </div>
                             <div class="item-actions">
+                              <a href="/orderDetails/?orderId=<%= item._id %>" class="view-order-btn">View Order</a>
+                              
+                              <% if(order.paymentStatus !== "Pending Payment") {%>
                               <% if(item.status !== "Cancelled" && item.status !== "Returned" && item.status !== "Return Requested") {%>
-                                <a href="/orderDetails/?orderId=<%= item._id %>" class="view-order-btn">View Order</a>
                                 <% if(item.status !== "Delivered" && item.status !== "Shipped") {%>
                                   <button class="cancel-order-btn" onclick="openCancelModal('<%= item._id %>','<%=order._id%>')">Cancel Order</button>
                                 <% } else { %>
                                   <button class="cancel-order-btn" onclick="openReturnModal('<%= item._id %>','<%=order._id%>')">Return Order</button>
-
-
                                   <%}%>
-                              
                               <% } %>
                               <% if(item.status === "Delivered") {%>
                                 <button class="view-order-btn" onclick="downloadInvoice('<%= item._id %>', '<%=order._id%>' )">Download Invoice</button>
                                  <% } %>
+                                <% } %> 
                             </div>
                           </div>
                         </div>

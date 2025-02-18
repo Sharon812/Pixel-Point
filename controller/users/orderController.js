@@ -635,7 +635,7 @@ const generateInvoice = async (req, res) => {
       .text("Invoice Details:", rightColumn, doc.y - doc.currentLineHeight());
     doc
       .fillColor(accentColor)
-      .text(`Order-ID #: ${orderId}`, rightColumn)
+      .text(`OrderID #: ${orderId}`, rightColumn)
       .text(
         `Date: ${new Date(order.createdAt).toLocaleDateString()}`,
         rightColumn
