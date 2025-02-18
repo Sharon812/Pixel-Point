@@ -15,7 +15,9 @@ const getOrderDetails = async (req, res) => {
     const totalOrders = await Order.countDocuments();
     const totalPages = Math.ceil(totalOrders / limit);
 
-    const orders = await Order.find({ paymentStatus: { $ne: "Pending Payment" } })
+    const orders = await Order.find({
+      paymentStatus: { $ne: "Pending Payment" },
+    })
       .populate("userId", "name")
       .populate("orderedItems.product", "productName price _id")
       .sort({ createdAt: -1 })
@@ -70,8 +72,7 @@ const getOrderDetails = async (req, res) => {
       prevPage: page - 1,
       lastPage: totalPages,
       returnedProducts: returnRequestedProducts,
-      currentPage:"orders"
-
+      currentPage: "orders",
     });
   } catch (error) {
     console.error("Error fetching orders:", error);
@@ -134,11 +135,34 @@ const confirmReturnOrder = async (req, res) => {
         .json({ success: false, message: "Item not found in order" });
     }
 
+    orderItem = Array.isArray(orderItem) ? orderItem : [orderItem];
+
+    console.log(orderItem, "orderitem");
+
+    await Promise.all(
+      orderItem.map(async (item) => {
+        const product = await Product.findById(item.product);
+        const comboIndex = product.combos.findIndex(
+          (combo) =>
+            combo.ram === item.RAM &&
+            combo.storage === item.Storage &&
+            combo.color.includes(item.color)
+        );
+
+        product.combos[comboIndex].quantity += item.quantity;
+        if (product.combos[comboIndex].quantity > 0) {
+          product.combos[comboIndex].status = "Available";
+        }
+
+        await product.save();
+      })
+    );
+
     if (
       order.paymentMethod === "razorpay" ||
       order.paymentMethod === "wallet"
     ) {
-      refundAmount = orderItem.finalAmount;
+      refundAmount = orderItem[0].finalAmount;
       let wallet = await Wallet.findOne({ user: order.userId });
 
       if (!wallet) {
@@ -155,13 +179,13 @@ const confirmReturnOrder = async (req, res) => {
         type: "credit",
         amount: refundAmount,
         date: new Date(),
-        description: `Refund of product ${orderItem.productName}`,
+        description: `Refund of product ${orderItem[0].productName}`,
       });
 
       await wallet.save();
     }
 
-    orderItem.status = "Returned";
+    orderItem[0].status = "Returned";
     await order.save();
 
     res
