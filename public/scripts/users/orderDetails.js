@@ -297,3 +297,48 @@ async function retryPayment(orderId) {
     console.log(error, "error at retrypayment function");
   }
 }
+
+async function downloadInvoice(itemId, orderId) {
+  try {
+    const response = await fetch(`/invoice/${itemId}/${orderId}`);
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Failed to download invoice");
+    }
+
+    // Get the blob from the response
+    const blob = await response.blob();
+
+    // Create a temporary URL for the blob
+    const url = window.URL.createObjectURL(blob);
+
+    // Create a temporary link element
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `invoice-${itemId}.pdf`;
+
+    // Append to body, click and remove
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    // Clean up the temporary URL
+    window.URL.revokeObjectURL(url);
+
+    // Show success message
+    Swal.fire({
+      icon: "success",
+      title: "Success",
+      text: "Invoice downloaded successfully!",
+      timer: 2000,
+      showConfirmButton: false,
+    });
+  } catch (error) {
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: error.message || "Failed to download invoice",
+    });
+  }
+}

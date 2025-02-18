@@ -11,6 +11,7 @@ const Category = require("../../models/categorySchema");
 const Order = require("../../models/orderSchema");
 const Wallet = require("../../models/walletSchema");
 const Coupons = require("../../models/couponSchema");
+const PDFDocument = require("pdfkit");
 
 const processCheckout = async (req, res) => {
   try {
@@ -544,12 +545,253 @@ const verifyRetryPayment = async (req, res) => {
   }
 };
 
+const generateInvoice = async (req, res) => {
+  try {
+    const orderId = req.params.orderId;
+    const itemId = req.params.itemId;
+    const order = await Order.findOne({
+      _id: orderId,
+      orderedItems: { $elemMatch: { _id: itemId } },
+    });
+    if (!order) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not found" });
+    }
+
+    // Create PDF document
+    // Create PDF document
+    // Create PDF document
+    const doc = new PDFDocument({
+      margin: 50,
+      size: "A4",
+    });
+    const chunks = [];
+
+    // Collect the PDF data
+    doc.on("data", (chunk) => chunks.push(chunk));
+    doc.on("end", () => {
+      const pdfData = Buffer.concat(chunks);
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename=invoice-${orderId}.pdf`
+      );
+      res.send(pdfData);
+    });
+
+    // Define colors
+    const primaryColor = "#2563eb"; // Blue
+    const secondaryColor = "#64748b"; // Gray
+    const accentColor = "#1e293b"; // Dark blue
+
+    // Add shop logo/name at top with modern design
+    doc
+      .fillColor(primaryColor)
+      .fontSize(32)
+      .font("Helvetica-Bold")
+      .text("PixelPoint", { align: "center" });
+
+    doc
+      .fontSize(13)
+      .fillColor(accentColor)
+      .font("Helvetica-Bold")
+      .text("Your all in one shop for premium laptops", { align: "center" });
+
+    // Add a decorative line
+    doc.moveDown(0.5);
+    const pageWidth = doc.page.width - 100;
+    doc
+      .moveTo(50, doc.y)
+      .lineTo(doc.page.width - 50, doc.y)
+      .strokeColor(primaryColor)
+      .lineWidth(2)
+      .stroke();
+
+    // Add invoice header
+    doc.moveDown(2);
+    doc
+      .fontSize(20)
+      .fillColor(accentColor)
+      .font("Helvetica-Bold")
+      .text("INVOICE", { align: "left" });
+
+    // Add invoice details in a modern layout
+    doc.moveDown(1);
+    doc.fontSize(12).font("Helvetica").fillColor(secondaryColor);
+
+    // Create two-column layout for invoice details
+    const leftColumn = 50;
+    const rightColumn = 350;
+
+    doc.text("Billed To:", leftColumn, doc.y);
+    doc.moveDown(0.5);
+    doc
+      .fillColor(accentColor)
+      .text(order.customerName || "Valued Customer", leftColumn, doc.y);
+
+    doc
+      .fillColor(secondaryColor)
+      .text("Invoice Details:", rightColumn, doc.y - doc.currentLineHeight());
+    doc
+      .fillColor(accentColor)
+      .text(`Order-ID #: ${orderId}`, rightColumn)
+      .text(
+        `Date: ${new Date(order.createdAt).toLocaleDateString()}`,
+        rightColumn
+      );
+
+    // Add items table with modern styling
+    doc.moveDown(2);
+
+    // Table headers with background
+    const tableTop = doc.y;
+    doc
+      .fillColor(primaryColor)
+      .rect(50, tableTop, doc.page.width - 100, 30)
+      .fill();
+
+    doc.fillColor("#ffffff").fontSize(12).font("Helvetica-Bold");
+
+    // Define column positions
+    const itemX = 70;
+    const quantityX = 280;
+    const priceX = 380;
+    const totalX = 480;
+
+    // Add table headers
+    doc
+      .text("ITEM", itemX, tableTop + 10)
+      .text("QTY", quantityX, tableTop + 10)
+      .text("PRICE", priceX, tableTop + 10)
+      .text("TOTAL", totalX, tableTop + 10);
+
+    // Add table rows
+    let rowY = tableTop + 40;
+    doc.font("Helvetica").fillColor(accentColor);
+
+    order.orderedItems.forEach((item) => {
+      // Zebra striping
+      if (((rowY - tableTop) / 30) % 2 === 0) {
+        doc
+          .fillColor("#f8fafc")
+          .rect(50, rowY - 5, doc.page.width - 100, 25)
+          .fill();
+      }
+
+      doc
+        .fillColor(accentColor)
+        .text(item.productName, itemX, rowY)
+        .text(item.quantity.toString(), quantityX, rowY)
+        .text(`₹${item.price}`, priceX, rowY)
+        .text(`₹${item.totalPrice}`, totalX, rowY);
+
+      rowY += 30;
+    });
+
+    const requiredSpace = 120;
+    const bottomMargin = 50;
+    const availableSpace = doc.page.height - doc.y - bottomMargin;
+    if (availableSpace < requiredSpace) {
+      doc.addPage();
+    }
+
+    // Add total section with modern styling
+    doc.moveDown(2);
+    const totalsX = 350;
+    const valuesX = 480;
+
+    // Add a line above totals
+    doc
+      .moveTo(totalsX, doc.y)
+      .lineTo(doc.page.width - 50, doc.y)
+      .strokeColor(secondaryColor)
+      .lineWidth(0.5)
+      .stroke();
+
+    doc.moveDown(0.5);
+
+    // Subtotal
+    doc
+      .font("Helvetica")
+      .fillColor(secondaryColor)
+      .text("Subtotal:", totalsX)
+      .font("Helvetica")
+      .fillColor(accentColor)
+      .text(
+        `INR${order.orderedItems[0].totalPrice}`,
+        valuesX,
+        doc.y - doc.currentLineHeight(),
+        { align: "right" }
+      );
+
+    // Discount
+    doc
+      .moveDown(0.5)
+      .font("Helvetica")
+      .fillColor(secondaryColor)
+      .text("Discount:", totalsX)
+      .font("Helvetica")
+      .fillColor(accentColor)
+      .text(
+        `INR${order.orderedItems[0].dicountPrice || 0}`,
+        valuesX,
+        doc.y - doc.currentLineHeight(),
+        { align: "right" }
+      );
+
+    // Final total with background highlight
+    doc.moveDown(0.5);
+    doc
+      .fillColor(primaryColor)
+      .rect(totalsX - 10, doc.y - 5, doc.page.width - totalsX - 30, 30)
+      .fill();
+
+    doc
+      .font("Helvetica-Bold")
+      .fillColor("#ffffff")
+      .text("TOTAL:", totalsX, doc.y - doc.currentLineHeight() + 8)
+      .text(
+        `₹${order.orderedItems[0].finalAmount}`,
+        valuesX,
+        doc.y - doc.currentLineHeight(),
+        { align: "right" }
+      );
+
+    const footerHeight = 40;
+    const footerY = doc.page.height - bottomMargin - footerHeight;
+
+    doc
+      .fontSize(10)
+      .font("Helvetica")
+      .fillColor(secondaryColor)
+      .text(
+        "Thank you for shopping with PixelPoint!\nFor any questions, please contact our support team.",
+        50,
+        footerY,
+        {
+          align: "center",
+          width: doc.page.width - 100,
+        }
+      );
+
+    // Finalize PDF
+    doc.end();
+  } catch (error) {
+    console.error("Error generating invoice:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Error generating invoice" });
+  }
+};
+
 module.exports = {
   processCheckout,
   placeOrder,
   orderPlaced,
-  verifyPayment,
   orderPending,
   retryPayment,
   verifyRetryPayment,
+  generateInvoice,
+  verifyPayment,
 };

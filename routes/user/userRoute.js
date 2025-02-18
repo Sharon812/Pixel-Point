@@ -154,6 +154,13 @@ userRoute.patch(
 );
 userRoute.patch("/returnorder", accountController.returnOrder);
 
+//for invoice download
+userRoute.get(
+  "/invoice/:itemId/:orderId",
+  userAuth.userCheck,
+  orderController.generateInvoice
+);
+
 //for wishlist
 userRoute.get("/wishlist", wishlistController.getWishlist);
 userRoute.post("/addToWishlist", wishlistController.addToWishlist);
