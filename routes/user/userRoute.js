@@ -119,8 +119,26 @@ userRoute.post(
 
 //for order placed
 userRoute.get("/orderplaced", userAuth.userCheck, orderController.orderPlaced);
-userRoute.get("/orderPending",userAuth.userCheck,orderController.orderPending)
-userRoute.post("/verify-payment",userAuth.userCheck, orderController.verifyPayment);
+userRoute.get(
+  "/orderPending",
+  userAuth.userCheck,
+  orderController.orderPending
+);
+userRoute.post(
+  "/verify-payment",
+  userAuth.userCheck,
+  orderController.verifyPayment
+);
+userRoute.post(
+  "/retry-payment",
+  userAuth.userCheck,
+  orderController.retryPayment
+);
+userRoute.post(
+  "/verify-retry-payment",
+  userAuth.userCheck,
+  orderController.verifyRetryPayment
+);
 
 //for userorder details
 userRoute.get("/orders", userAuth.userCheck, accountController.getOrders);

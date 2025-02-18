@@ -166,7 +166,7 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                   <div class="order-card">
                     <div class="order-header">
                       <div id="firstDiv" >
-                      <p class="order-number">OrderID #<%= order._id %></p>
+                      <p class="order-number">OrderID #<%= order.orderId %></p>
                       <div class="my-1">
                         <strong>Order Date : </strong>
                         <span class="order-date"><%= order.createdAt.toLocaleDateString() %></span>
@@ -190,7 +190,7 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                       </div>
                       <div>
                         <% if(order.paymentStatus == "Pending Payment")  {%>
-                          <button class="view-order-btn text-center">Pay Now</button>
+                          <button onclick="retryPayment('<%=order.orderId%>')" class="view-order-btn text-center">Pay Now</button>
                           <% } %>
   
                       </div>
@@ -203,7 +203,10 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                       <% order.orderedItems.forEach(item => { %>
                         <div class="order-item">
                           <div class="item-image">
-                            <img src="<%= item.product.productImage[0] %>" alt="Product Image" class="order-image">
+                            <a href="/productDetails/<%=item.product._id%>">                  
+                              <img src="<%= item.product.productImage[0] %>" alt="Product Image" class="order-image">
+
+                            </a>
                           </div>
                           <div class="item-details">
                             <h4 class="item-name"><%= item.productName %></h4>
@@ -235,6 +238,9 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
                                 <% } %>
                               <% } else { %>
                                 <a href="/orderDetails/?orderId=<%= item._id %>" class="view-order-btn text-center">View Order</a>
+                              <% } %>
+                              <% if(item.status === "Delivered") {%>
+                              <button class="view-order-btn" >Download Invoice</button>
                               <% } %>
                             </div>
                           </div>
@@ -405,6 +411,7 @@ href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
     <p class="copyright">&copy; 2024 Pixel-Point. All right reserved</p>
   </div>
 </footer>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <!--=============== SWIPER JS ===============-->
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
