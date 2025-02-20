@@ -59,7 +59,8 @@ router.patch("/remove-product-offer", productCont.removeOffer);
 //for brands section
 router.get("/brands", brandController.getBrandPage);
 router.post("/addbrands", uploads.single("image"), brandController.addBrand);
-router.get("/blockBrand", brandController.blockBrand);
+router.patch("/blockBrand", brandController.blockBrand);
+router.patch("/unblockBrand", brandController.unblockBrand);
 
 //for orders
 router.get("/orders", orderController.getOrderDetails);

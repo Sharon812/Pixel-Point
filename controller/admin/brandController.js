@@ -21,8 +21,7 @@ const getBrandPage = async (req, res) => {
       currentPage: page,
       totalPages: totalPages,
       totalBrands: totalBrands,
-      currentPage:"brands"
-
+      currentPage: "brands",
     });
   } catch (error) {
     console.log("error at brandpage", error);
@@ -59,13 +58,42 @@ const addBrand = async (req, res) => {
 const blockBrand = async (req, res) => {
   try {
     const id = req.query.id;
-    await brand.updateOne({ _id: id }, { $set: { isBlocked: true } });
-    res.redirect("/admin/brands");
-  } catch (error) {}
+    const updatedBrand = await brand.findOneAndUpdate(
+      { _id: id },
+      { $set: { isBlocked: true } },
+      { new: true }
+    );
+    console.log(updatedBrand, "updatedbrand");
+    res
+      .status(200)
+      .json({ success: true, message: "Blocked successfully", updatedBrand });
+  } catch (error) {
+    console.log("error blocking brands", error);
+    res.status(500).json({ success: false, message: "internal server error" });
+  }
+};
+
+const unblockBrand = async (req, res) => {
+  try {
+    const id = req.query.id;
+    console.log(id);
+    const updatedBrand = await brand.findOneAndUpdate(
+      { _id: id },
+      { $set: { isBlocked: false } },
+      { new: true }
+    );
+    res
+      .status(200)
+      .json({ success: true, message: "unBlocked successfully", updatedBrand });
+  } catch (error) {
+    console.log(error, "error at unblocking brands");
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
 };
 
 module.exports = {
   getBrandPage,
   addBrand,
   blockBrand,
+  unblockBrand,
 };
