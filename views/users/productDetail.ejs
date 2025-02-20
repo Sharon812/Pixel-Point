@@ -2,6 +2,187 @@
 
 <!--=============== CSS ===============-->
 <link rel="stylesheet" href="/css/users/homepage.css" />
+<style>
+  .details__container {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  }
+  
+  .details__img {
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+  }
+  
+  .details__small-img {
+    border-radius: 6px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .details__small-img:hover {
+    border-color: #113c7c;
+    transform: scale(1.05);
+  }
+  
+  .details__title {
+    color: #113c7c;
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+  }
+  
+  .details__brand {
+    color: #666;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .details__brand span {
+    color: #113c7c;
+    font-weight: 600;
+  }
+  
+  .new__price {
+    color: #113c7c;
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+  
+  .old__price {
+    color: #999;
+    text-decoration: line-through;
+    margin-left: 1rem;
+  }
+  
+  .offer-badge {
+    background: #113c7c !important;
+    padding: 4px 8px !important;
+    border-radius: 6px !important;
+    font-size: 0.875rem !important;
+  }
+  
+  .products__list {
+    background: #f8fafc;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin: 1.5rem 0;
+  }
+  
+  .list__item {
+    color: #113c7c;
+    margin-bottom: 0.75rem;
+    font-size: 0.95rem;
+  }
+  
+  .list__item i {
+    color: #113c7c;
+    margin-right: 0.5rem;
+  }
+  
+  .size__link {
+    background: white;
+    border: 2px solid #e2e8f0;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    color: #64748b;
+    transition: all 0.3s ease;
+  }
+  
+  .size__link:hover {
+    border-color: #113c7c;
+    color: #113c7c;
+  }
+  
+  .size-active {
+    background: #113c7c;
+    border-color: #113c7c;
+    color: white;
+  }
+  
+  .quantity {
+    border: 2px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 0.5rem;
+    width: 80px;
+    margin-right: 1rem;
+  }
+  
+  .btn--sm {
+    background: #113c7c;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+  }
+  
+  .btn--sm:hover {
+    background: #0d2d5e;
+    transform: translateY(-2px);
+  }
+  
+  .wishlist__btnpro {
+    background: white;
+    border: 2px solid #e2e8f0;
+    padding: 0.75rem;
+    border-radius: 6px;
+    color: #64748b;
+    transition: all 0.3s ease;
+  }
+  
+  .wishlist__btnpro:hover {
+    border-color: #113c7c;
+    color: red;
+  }
+  
+  .wishlist__btnpro.active {
+    background: red;
+    border-color: red;
+    color: white;
+  }
+  
+  .breadcrumb {
+    background: #f8fafc;
+    padding: 1rem 0;
+    margin-bottom: 2rem;
+  }
+  
+  .breadcrumb__link {
+    color: #64748b;
+    font-size: 0.95rem;
+  }
+  
+  .breadcrumb__link:hover {
+    color: #113c7c;
+  }
+  
+  .details__meta {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: #f8fafc;
+    border-radius: 6px;
+  }
+  
+  .meta__list {
+    color: #64748b;
+  }
+  
+  .meta__list span {
+    margin-right: 0.5rem;
+  }
+  
+  .details__tab {
+    margin-top: 3rem;
+  }
+  
+  .detail__tabs {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  }
+</style>
 
 <!--=============== MAIN ===============-->
 <main class="main">
@@ -166,7 +347,7 @@
               <i class="fi fi-rs-heart"></i>
             </button>
           <% }else{ %>
-            <button class="wishlist__btnpro "
+            <button class="wishlist__btnpro"
             data-id='<%=product._id %>'
             aria-label="Add to Wishlist">
             <i class="fi fi-rs-heart"></i>

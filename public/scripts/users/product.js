@@ -150,7 +150,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-  document.querySelectorAll(".wishlist__btn").forEach((icon) => {
+  document.querySelectorAll(".wishlist__btnpro").forEach((icon) => {
     icon.addEventListener("click", async function () {
       const route = `/addToWishlist`;
       const productId = this.dataset.id;
