@@ -29,21 +29,30 @@ const processCheckout = async (req, res) => {
 
     for (const item of cart.items) {
       if (item.comboId) {
+        console.log(item.comboId, "itembcoboit");
         const product = await Product.findById(item.productId);
+        console.log(product, "product in checkout");
+        if (!product) {
+          return res.status(404).json({
+            success: false,
+            message: "Product not available",
+          });
+        }
+
         const combo = product.combos.find(
           (combo) => combo._id.toString() === item.comboId.toString()
         );
-
+        console.log(combo, "combohere");
         if (!combo) {
-          return res
-            .status(404)
-            .json({ sucess: false, message: "combos not available" });
+          res.status(400).json({
+            success: false,
+            message: "Combo not available",
+          });
         }
 
         item.comboDetails = combo;
       }
     }
-
     const address = addresses.flatMap((doc) => doc.address);
     const validCartItems = cart.items.filter((item) => item.quantity > 0);
     for (const item of validCartItems) {
@@ -549,13 +558,14 @@ const generateInvoice = async (req, res) => {
   try {
     const orderId = req.params.orderId;
     const itemId = req.params.itemId;
-    const order = await Order.findOne({
-      _id: orderId,
-      orderedItems: { $elemMatch: { _id: itemId } },
-    },
-    { "orderedItems.$": 1 , createdAt: 1}, 
-  );
-    console.log(order,"ordersldlk")
+    const order = await Order.findOne(
+      {
+        _id: orderId,
+        orderedItems: { $elemMatch: { _id: itemId } },
+      },
+      { "orderedItems.$": 1, createdAt: 1 }
+    );
+    console.log(order, "ordersldlk");
     if (!order) {
       return res
         .status(404)
@@ -684,10 +694,16 @@ const generateInvoice = async (req, res) => {
 
       doc
         .fillColor(accentColor)
-        .text(item.productName.length > 25 ? item.productName.slice(0, 25) + '...' : item.productName, itemX, rowY)
+        .text(
+          item.productName.length > 25
+            ? item.productName.slice(0, 25) + "..."
+            : item.productName,
+          itemX,
+          rowY
+        )
         .text(item.quantity.toString(), quantityX, rowY)
-        .text(`₹${item.price.toLocaleString('en-IN')}`, priceX, rowY)
-        .text(`₹${item.totalPrice.toLocaleString('en-IN')}`, totalX, rowY);
+        .text(`₹${item.price.toLocaleString("en-IN")}`, priceX, rowY)
+        .text(`₹${item.totalPrice.toLocaleString("en-IN")}`, totalX, rowY);
 
       rowY += 30;
     });
@@ -722,7 +738,7 @@ const generateInvoice = async (req, res) => {
       .font("Helvetica")
       .fillColor(accentColor)
       .text(
-        `INR${order.orderedItems[0].totalPrice.toLocaleString('en-IN')}`,
+        `INR${order.orderedItems[0].totalPrice.toLocaleString("en-IN")}`,
         valuesX,
         doc.y - doc.currentLineHeight(),
         { align: "right" }
@@ -737,7 +753,7 @@ const generateInvoice = async (req, res) => {
       .font("Helvetica")
       .fillColor(accentColor)
       .text(
-        `INR${order.orderedItems[0].dicountPrice.toLocaleString('en-IN') || 0}`,
+        `INR${order.orderedItems[0].dicountPrice.toLocaleString("en-IN") || 0}`,
         valuesX,
         doc.y - doc.currentLineHeight(),
         { align: "right" }
@@ -755,7 +771,7 @@ const generateInvoice = async (req, res) => {
       .fillColor("#ffffff")
       .text("TOTAL:", totalsX, doc.y - doc.currentLineHeight() + 8)
       .text(
-        `₹${order.orderedItems[0].finalAmount.toLocaleString('en-IN')}`,
+        `₹${order.orderedItems[0].finalAmount.toLocaleString("en-IN")}`,
         valuesX,
         doc.y - doc.currentLineHeight(),
         { align: "right" }

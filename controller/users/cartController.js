@@ -89,11 +89,12 @@ const addToCart = async (req, res) => {
         .json({ success: false, message: "Combo not found" });
     }
     let cart = await Cart.findOne({ userId: user });
-
-    if (cart.items.length >= 5) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Can add 5 products at a time" });
+    if (cart) {
+      if (cart.items.length >= 5) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Can add 5 products at a time" });
+      }
     }
 
     if (cart) {
