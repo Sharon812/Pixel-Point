@@ -181,13 +181,13 @@
         </a>
         <% if (wishlistProducts.includes(products[i]._id.toString())) { %>
           <button class="wishlist__btn active"
-            onclick="removeFromWishlist('<%=products[i]._id %>')"
-            aria-label="Add to Wishlist">
+          data-id='<%=products[i]._id %>'
+          aria-label="Add to Wishlist">
             <i class="fi fi-rs-heart"></i>
           </button>
         <% }else{ %>
           <button class="wishlist__btn "
-          onclick="toggleWishlist('<%=products[i]._id %>')"
+          data-id='<%=products[i]._id %>'
           aria-label="Add to Wishlist">
           <i class="fi fi-rs-heart"></i>
         </button>

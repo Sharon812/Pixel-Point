@@ -46,7 +46,20 @@ const addToWishlist = async (req, res) => {
     }
 
     let wishlistData = await Wishlist.findOne({ userId: user });
-
+    console.log(wishlistData, "wishlistdata");
+    const product = wishlistData.product.find(
+      (item) => item.productId.toString() === productId
+    );
+    if (product) {
+      await Wishlist.updateOne(
+        { userId: user },
+        { $pull: { product: { productId: productId } } }
+      );
+      console.log("Product removed from wishlist");
+      return res
+        .status(200)
+        .json({ success: true, message: "Item removed from wishlist" });
+    }
     if (!wishlistData) {
       wishlistData = new Wishlist({
         userId: user,
@@ -71,47 +84,7 @@ const addToWishlist = async (req, res) => {
   }
 };
 
-const removeFromWishlist = async (req, res) => {
-  try {
-    const { productId } = req.body;
-    const user = req.session.user;
-
-    if (!productId) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Product ID is required" });
-    }
-
-    const wishlistData = await Wishlist.findOne({ userId: user });
-
-    if (!wishlistData) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Wishlist not found" });
-    }
-
-    // Remove only the matching product from the wishlist array
-    const updatedWishlist = await Wishlist.findOneAndUpdate(
-      { userId: user },
-      { $pull: { product: { productId: productId } } }, // Removes the specific product
-      { new: true }
-    );
-
-    res.status(200).json({
-      success: true,
-      message: "Item removed from wishlist",
-      wishlist: updatedWishlist,
-    });
-  } catch (error) {
-    console.log(error, "error at removing wishlist item");
-    res
-      .status(500)
-      .json({ success: false, message: "Unable to remove product" });
-  }
-};
-
 module.exports = {
   getWishlist,
   addToWishlist,
-  removeFromWishlist,
 };

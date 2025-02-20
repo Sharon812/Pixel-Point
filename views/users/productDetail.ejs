@@ -161,13 +161,13 @@
           <button id="addToCart" onclick="addToCart('<%= product._id %>','<%=product.combos[0]._id%>')"  class="btn btn--sm">Add To Cart</button>
           <% if (wishlistProducts.includes(product._id.toString())) { %>
             <button class="wishlist__btnpro active"
-              onclick="removeFromWishlist('<%=product._id %>')"
+            data-id='<%=product._id %>'
               aria-label="Add to Wishlist">
               <i class="fi fi-rs-heart"></i>
             </button>
           <% }else{ %>
             <button class="wishlist__btnpro "
-            onclick="toggleWishlist('<%=product._id %>')"
+            data-id='<%=product._id %>'
             aria-label="Add to Wishlist">
             <i class="fi fi-rs-heart"></i>
           </button>

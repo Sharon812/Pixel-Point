@@ -123,13 +123,14 @@
 
                 <% if (wishlistProducts.includes(newArrivals[i]._id.toString())) { %>
                 <button class="wishlist__btn active"
-                  onclick="removeFromWishlist('<%=newArrivals[i]._id %>')"
+                id="wishlistActive"
+                data-id='<%=newArrivals[i]._id %>'
                   aria-label="Add to Wishlist">
                   <i class="fi fi-rs-heart"></i>
                 </button>
               <% }else{ %>
                 <button class="wishlist__btn "
-                onclick="toggleWishlist('<%=newArrivals[i]._id %>')"
+                data-id='<%=newArrivals[i]._id %>'
                 aria-label="Add to Wishlist">
                 <i class="fi fi-rs-heart"></i>
               </button>
@@ -210,13 +211,13 @@
                   </a>
                   <% if (wishlistProducts.includes(laptops[i]._id.toString())) { %>
                     <button class="wishlist__btn active"
-                      onclick="removeFromWishlist('<%=laptops[i]._id %>')"
+                    data-id='<%=laptops[i]._id %>'
                       aria-label="Add to Wishlist">
                       <i class="fi fi-rs-heart"></i>
                     </button>
                   <% }else{ %>
                     <button class="wishlist__btn "
-                    onclick="toggleWishlist('<%=laptops[i]._id %>')"
+                    data-id='<%=laptops[i]._id %>'
                     aria-label="Add to Wishlist">
                     <i class="fi fi-rs-heart"></i>
                   </button>
@@ -297,19 +298,18 @@
                     />
                   </a>
                   <button class="wishlist__btn <%= refurbishedLaptops[i].isInWishlist ? 'active' : '' %>" 
-                    onclick="toggleWishlist('<%=refurbishedLaptops[i]._id%>','<%=refurbishedLaptops[i].combos[0]._id  %>')"
+                    data-id='<%=refurbishedLaptops[i]._id %>'
                     aria-label="Add to Wishlist">
                     <i class="fi fi-rs-heart"></i>
                   </button>
                   <% if (wishlistProducts.includes(refurbishedLaptops[i]._id.toString())) { %>
                     <button class="wishlist__btn active"
-                      onclick="removeFromWishlist('<%=refurbishedLaptops[i]._id %>')"
                       aria-label="Add to Wishlist">
                       <i class="fi fi-rs-heart"></i>
                     </button>
                   <% }else{ %>
-                    <button class="wishlist__btn "
-                    onclick="toggleWishlist('<%=refurbishedLaptops[i]._id %>')"
+                    <button class="wishlist__btn " 
+                    data-id='<%=refurbishedLaptops[i]._id %>'
                     aria-label="Add to Wishlist">
                     <i class="fi fi-rs-heart"></i>
                   </button>
@@ -396,7 +396,10 @@
       </div>
     </section>
   </main>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@7.12.15/dist/sweetalert2.all.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <!--=============== MAIN JS ===============-->
