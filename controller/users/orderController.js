@@ -552,7 +552,10 @@ const generateInvoice = async (req, res) => {
     const order = await Order.findOne({
       _id: orderId,
       orderedItems: { $elemMatch: { _id: itemId } },
-    });
+    },
+    { "orderedItems.$": 1 , createdAt: 1}, 
+  );
+    console.log(order,"ordersldlk")
     if (!order) {
       return res
         .status(404)
@@ -681,10 +684,10 @@ const generateInvoice = async (req, res) => {
 
       doc
         .fillColor(accentColor)
-        .text(item.productName, itemX, rowY)
+        .text(item.productName.length > 25 ? item.productName.slice(0, 25) + '...' : item.productName, itemX, rowY)
         .text(item.quantity.toString(), quantityX, rowY)
-        .text(`₹${item.price}`, priceX, rowY)
-        .text(`₹${item.totalPrice}`, totalX, rowY);
+        .text(`₹${item.price.toLocaleString('en-IN')}`, priceX, rowY)
+        .text(`₹${item.totalPrice.toLocaleString('en-IN')}`, totalX, rowY);
 
       rowY += 30;
     });
@@ -719,7 +722,7 @@ const generateInvoice = async (req, res) => {
       .font("Helvetica")
       .fillColor(accentColor)
       .text(
-        `INR${order.orderedItems[0].totalPrice}`,
+        `INR${order.orderedItems[0].totalPrice.toLocaleString('en-IN')}`,
         valuesX,
         doc.y - doc.currentLineHeight(),
         { align: "right" }
@@ -734,7 +737,7 @@ const generateInvoice = async (req, res) => {
       .font("Helvetica")
       .fillColor(accentColor)
       .text(
-        `INR${order.orderedItems[0].dicountPrice || 0}`,
+        `INR${order.orderedItems[0].dicountPrice.toLocaleString('en-IN') || 0}`,
         valuesX,
         doc.y - doc.currentLineHeight(),
         { align: "right" }
@@ -752,7 +755,7 @@ const generateInvoice = async (req, res) => {
       .fillColor("#ffffff")
       .text("TOTAL:", totalsX, doc.y - doc.currentLineHeight() + 8)
       .text(
-        `₹${order.orderedItems[0].finalAmount}`,
+        `₹${order.orderedItems[0].finalAmount.toLocaleString('en-IN')}`,
         valuesX,
         doc.y - doc.currentLineHeight(),
         { align: "right" }
