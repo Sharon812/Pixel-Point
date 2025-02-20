@@ -57,7 +57,7 @@ const loaddashboard = async (req, res) => {
       return total + activeItems.length;
     }, 0);
 
-    const totalRevenue = orders.reduce((acc, order) => {
+    const totalAmount = orders.reduce((acc, order) => {
       const activeItemsRevenue = order.orderedItems.reduce((itemAcc, item) => {
         if (!["Cancelled", "Returned"].includes(item.status)) {
           return itemAcc + (item.finalAmount || 0);
@@ -67,6 +67,15 @@ const loaddashboard = async (req, res) => {
       return acc + activeItemsRevenue;
     }, 0);
 
+    const totalRevenue = orders.reduce((acc, order) => {
+      const activeItemsRevenue = order.orderedItems.reduce((itemAcc, item) => {
+        if (["Delivered"].includes(item.status)) {
+          return itemAcc + (item.finalAmount || 0);
+        }
+        return itemAcc;
+      }, 0);
+      return acc + activeItemsRevenue;
+    }, 0);
     const last7Days = Array.from({ length: 7 }, (_, i) => {
       return moment().subtract(i, "days").format("YYYY-MM-DD");
     }).reverse();
@@ -84,6 +93,7 @@ const loaddashboard = async (req, res) => {
       },
       {
         $match: {
+          paymentStatus: { $ne: "Pending Payment" }, 
           "orderedItems.status": { $nin: ["Cancelled", "Returned"] },
         },
       },
@@ -113,6 +123,7 @@ const loaddashboard = async (req, res) => {
       },
       {
         $match: {
+          paymentStatus: { $ne: "Pending Payment" }, 
           "orderedItems.status": { $nin: ["Cancelled", "Returned"] },
         },
       },
@@ -149,14 +160,15 @@ const loaddashboard = async (req, res) => {
       totalProducts,
       users: totalUsers,
       totalOrders: totalOrderedItems,
-      totalRevenue,
+      totalAmount,
       chartData: {
         labels: last7Days.map((date) => moment(date).format("MMM DD")),
         orderData,
         revenueData,
       },
       recentOrders: formattedRecentOrders,
-      currentPage:"dashboard"
+      currentPage:"dashboard",
+      totalRevenue
     });
   } catch (error) {
     console.log(error);
@@ -261,18 +273,18 @@ console.log(orders,"orderin here below")
     count + order.orderedItems.filter((item) => item.status === "Delivered").length, 0
   );
   
-  
+  const finalAmount = totalAmount - discountAmount
   // const returnedOrders = orders.filter((order) =>
   //   order.orderedItems.some((item) => item.status === "Returned")
   // ).length;
 
   doc.fontSize(14).text("Summary", { underline: true });
   doc.moveDown(0.5);
-  doc.fontSize(12).text(`Total Orders: ${totalOrders}`);
+  doc.fontSize(12).text(`Total Orders: ${totalOrders.toLocaleString('en-IN')}`);
   // doc.fontSize(12).text(`Successful Orders: ${successfulOrders}`);
-  doc.fontSize(12).text(`Discounted Price: ${discountAmount}`);
-  doc.fontSize(12).text(`Total Money: ₹${totalAmount}`);
-  doc.fontSize(12).text(`Final Amount after discount: ₹${totalAmount - discountAmount}`);
+  doc.fontSize(12).text(`Discounted Price: INR${discountAmount.toLocaleString('en-IN')}`);
+  doc.fontSize(12).text(`Total Money: INR${totalAmount.toLocaleString('en-IN')}`);
+  doc.fontSize(12).text(`Final Amount after discount: INR${finalAmount.toLocaleString('en-IN')}`);
 
   doc.moveDown();
 
@@ -297,7 +309,6 @@ console.log(orders,"orderin here below")
     .lineTo(startX + 470, currentY)
     .stroke();
   doc.moveDown();
-console.log(orders,"orderinsalejf")
   orders.forEach((order) => {
     order.orderedItems.forEach((item) => {
 
@@ -323,7 +334,7 @@ console.log(orders,"orderinsalejf")
       currentY
     );
     doc.text(
-      `₹${item.finalAmount}`,
+      `INR${item.finalAmount.toLocaleString('en-IN')}`,
       startX + 400,
       currentY
     );
@@ -615,6 +626,92 @@ const generateCustomReport = async (req, res) => {
   }
 };
 
+// Get Filtered Chart Data
+const getFilteredChartData = async (req, res) => {
+  try {
+    const filter = req.params.filter;
+    let startDate;
+    let labels;
+    let format;
+
+    switch (filter) {
+      case 'weekly':
+        startDate = moment().subtract(6, 'days').startOf('day');
+        labels = Array.from({ length: 7 }, (_, i) => {
+          return moment().subtract(6 - i, 'days').format('MMM DD');
+        });
+        format = '%Y-%m-%d';
+        break;
+      case 'monthly':
+        startDate = moment().subtract(29, 'days').startOf('day');
+        labels = Array.from({ length: 30 }, (_, i) => {
+          return moment().subtract(29 - i, 'days').format('MMM DD');
+        });
+        format = '%Y-%m-%d';
+        break;
+      case 'yearly':
+        startDate = moment().subtract(11, 'months').startOf('month');
+        labels = Array.from({ length: 12 }, (_, i) => {
+          return moment().subtract(11 - i, 'months').format('MMM YYYY');
+        });
+        format = '%Y-%m';
+        break;
+      default:
+        return res.status(400).json({ error: 'Invalid filter type' });
+    }
+
+    const orders = await Order.aggregate([
+      {
+        $match: {
+          paymentStatus: { $ne: "Pending Payment" }, 
+          createdAt: { $gte: startDate.toDate() }
+        }
+      },
+      {
+        $unwind: '$orderedItems'
+      },
+      {
+        $match: {
+          'orderedItems.status': { $nin: ['Cancelled', 'Returned'] }
+        }
+      },
+      {
+        $group: {
+          _id: { $dateToString: { format: format, date: '$createdAt' } },
+          count: { $sum: 1 },
+          revenue: { $sum: '$orderedItems.totalPrice' }
+        }
+      },
+      { $sort: { _id: 1 } }
+    ]);
+
+    const orderData = labels.map(label => {
+      const dateStr = filter === 'yearly' 
+        ? moment(label, 'MMM YYYY').format('YYYY-MM')
+        : moment(label, 'MMM DD').format('YYYY-MM-DD');
+      const dayData = orders.find(d => d._id === dateStr);
+      return dayData ? dayData.count : 0;
+    });
+
+    const revenueData = labels.map(label => {
+      const dateStr = filter === 'yearly'
+        ? moment(label, 'MMM YYYY').format('YYYY-MM')
+        : moment(label, 'MMM DD').format('YYYY-MM-DD');
+      const dayData = orders.find(d => d._id === dateStr);
+      return dayData ? dayData.revenue : 0;
+    });
+
+    res.json({
+      labels,
+      orderData,
+      revenueData
+    });
+  } catch (error) {
+    console.error('Error getting filtered chart data:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
 module.exports = {
   loadlogin,
   loginverification,
@@ -624,4 +721,5 @@ module.exports = {
   generateWeeklyReport,
   generateYearlyReport,
   generateCustomReport,
+  getFilteredChartData
 };

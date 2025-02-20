@@ -74,6 +74,9 @@ router.get("/sales-report/weekly", adminController.generateWeeklyReport);
 router.get("/sales-report/yearly", adminController.generateYearlyReport);
 router.get("/sales-report/custom", adminController.generateCustomReport);
 
+// Chart Data Route
+router.get("/chart-data/:filter", adminController.getFilteredChartData);
+
 //for coupons
 router.get("/coupons", couponController.getCoupons);
 router.post("/addcoupons", couponController.addCoupon);
