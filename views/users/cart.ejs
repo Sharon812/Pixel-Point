@@ -46,25 +46,23 @@
                   <span class="cart__item-stock-mobile">In Stock</span>
                   <div class="cart__item-specs">
                     <span class="cart__item-storage">Ram/storage: <%= item.combo.ram %>GB/<%= item.combo.storage %>GB</span>
-                    <span class="cart__item-color">Color: <%= item.combo.color[0] %></span>
+                    <span  class="cart__item-color">Color: <%= item.combo.color[0] %></span>
                   </div>
                 </div>
                 <div class="cart__item-prices">
-                  <p class="cart__item-price">&#8377;<%= item.totalPrice %></p>
+                  <p>
+                   
+                  </p>
+                  <p id="itemTotalPrice-<%=item._id%>" class="cart__item-price">&#8377;<%= item.totalPrice %></p>
                 </div>
               </div>
               <div class="cart__item-controls">
                 <div class="cart__quantity">
-                  <% if(item.quantity > 1) {%>
-                  <button onclick="decreaseQuantity( '<%=item.combo._id%>' )" class="cart__quantity-btn minus">
+                  <button onclick="decreaseQuantity( '<%=item.combo._id%>','<%=item.quantity -1 %>' )" class="cart__quantity-btn minus">
                     <i class="fi fi-rs-minus-small"></i>
                   </button>
-                  <% }else{ %>
-                    <button  onclick="decreaseQuantity( '<%=item.combo._id%>','<%=item.quantity%>' )" class="cart__quantity-btn minus" disabled>
-                      <i class="fi fi-rs-minus-small"></i>
-                    </button>
-                    <% } %>
-                  <input type="number" value="<%= item.quantity %>" min="1" max="5" class="cart__quantity-input" />
+              
+                  <input type="number" id="productQuantity-<%=item._id%>" value="<%= item.quantity %>" + max="5" class="cart__quantity-input" />
 
                   <button onclick="updateQuantity( '<%=item.combo._id%>' )" class="cart__quantity-btn plus" >
                     <i class="fi fi-rs-plus-small"></i>
@@ -94,7 +92,7 @@
          <table class="cart__total-table">
            <tr>
              <td class="cart__total-title">Subtotal:</td>
-             <td class="cart__total-price">&#8377; <%= cart.totalPrice %></td>
+             <td  id="subTotal" class="cart__total-price">&#8377; <%= cart.totalPrice %></td>
            </tr>
            <!-- <tr>
              <td class="cart__total-title">Shipping:</td>
@@ -102,7 +100,7 @@
            </tr> -->
            <tr>
              <td class="cart__total-title">Total:</td>
-             <td class="cart__total-price">&#8377; <%= cart.totalPrice %> </td>
+             <td id="totalAmount" class="cart__total-price">&#8377; <%= cart.totalPrice %> </td>
            </tr>
          </table>
        <% if(stockMessage) {%>
