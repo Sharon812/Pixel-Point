@@ -92,10 +92,26 @@ const updateStatus = async (req, res) => {
     const product = order.orderedItems.find(
       (item) => item.product.toString() === productId
     );
-
     if (!product) {
       console.error("Product not found in order");
       return res.status(404).send("Product not found in order");
+    }
+
+    if (status === "Cancelled") {
+      const productData = await Product.findById(product.product);
+      const comboIndex = productData.combos.findIndex(
+        (combo) =>
+          combo.ram === product.RAM &&
+          combo.storage === product.Storage &&
+          combo.color.includes(product.color)
+      );
+
+      productData.combos[comboIndex].quantity += product.quantity;
+      if (productData.combos[comboIndex].quantity > 0) {
+        productData.combos[comboIndex].status = "Available";
+      }
+
+      await productData.save();
     }
 
     product.status = status;
