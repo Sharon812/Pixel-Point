@@ -164,3 +164,9 @@ async function unblockBrand(brandid) {
     console.error("Error adding to cart:", error);
   }
 }
+
+document.getElementById("openModalBtn").addEventListener("click", function () {
+  const dataId = this.getAttribute("data-id"); // Get data-id from button
+  document.getElementById("modalData").textContent = dataId; // Insert into modal
+  document.getElementById("myModal").style.display = "block"; // Show modal
+});
