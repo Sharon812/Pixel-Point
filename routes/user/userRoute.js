@@ -178,4 +178,7 @@ userRoute.post(
   walletController.verifyPayment
 );
 
+//for referal offer
+userRoute.get("/referaldetails", accountController.getReferallPage);
+
 module.exports = userRoute;

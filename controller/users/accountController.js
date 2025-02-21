@@ -637,6 +637,15 @@ const returnOrder = async (req, res) => {
   }
 };
 
+const getReferallPage = async (req, res) => {
+  try {
+    res.render("referallPage");
+  } catch (error) {
+    console.log(error, "error at loading referal page in user side");
+    res.staus(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+
 module.exports = {
   getForgotPassword,
   forgotPasswordOtp,
@@ -655,4 +664,5 @@ module.exports = {
   getOrderDetails,
   cancelOrder,
   returnOrder,
+  getReferallPage,
 };
