@@ -97,10 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
             })
               .then((res) => res.json())
               .then((verificationResult) => {
-<<<<<<< HEAD
-=======
                 // verificationRes = verificationResult
->>>>>>> secondary_main
                 if (verificationResult.success) {
                   sessionStorage.removeItem("checkoutTotal");
                   sessionStorage.removeItem("appliedCoupon");
@@ -108,11 +105,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 } else {
                   sessionStorage.removeItem("checkoutTotal");
                   sessionStorage.removeItem("appliedCoupon");
-<<<<<<< HEAD
-                  // window.location.href = `/orderPending?orderId=${verificationRes.order}`
-=======
                   window.location.href = `/orderPending?orderId=${verificationRes.order}`
->>>>>>> secondary_main
 
                   // Swal.fire({
                   //   toast: true,
@@ -142,13 +135,8 @@ document.addEventListener("DOMContentLoaded", () => {
             ondismiss: function () {
               sessionStorage.removeItem("checkoutTotal");
               sessionStorage.removeItem("appliedCoupon");
-<<<<<<< HEAD
-              // console.log(verificationRes,"redknm")
-              // window.location.href = `/orderPending?orderId=${verificationRes.order}`
-=======
               console.log("Payment dismissed by user.");
               window.location.href = `/orderPending?orderId=${result.order._id}`;
->>>>>>> secondary_main
             },
           },          
           prefill: {
