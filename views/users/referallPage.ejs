@@ -1,0 +1,173 @@
+<%- include("../layouts/users/header.ejs") %>
+
+<!--=============== CSS ===============-->
+<link rel="stylesheet" href="/css/users/homepage.css" />
+<link rel="stylesheet" href="/css/users/referallPage.css" />
+
+<!--=============== MAIN ===============-->
+<main class="main">
+  <!--=============== BREADCRUMB ===============-->
+  <section class="breadcrumb">
+    <ul class="breadcrumb__list flex container">
+      <li><a href="/" class="breadcrumb__link">Home</a></li>
+      <li><span class="breadcrumb__link">></span></li>
+      <li><span class="breadcrumb__link">Referral</span></li>
+    </ul>
+  </section>
+
+  <!--=============== ACCOUNTS ===============-->
+  <section class="accounts section--lg">
+    <div class="accounts__container container grid">
+      <div class="account__tabs">
+        <a href="/accountDetails" class="account__tab" data-target="#accountDetails">
+          <i class="fi fi-rs-settings"></i> Account details
+        </a>
+        <a href="/orders" class="account__tab">
+          <i class="fi fi-rs-shopping-bag"></i> Orders
+        </a>
+        <a href="/address" class="account__tab">
+          <i class="fi fi-rs-marker"></i> My Address
+        </a>
+        <a href="/wallet" class="account__tab">
+          <i class="fi fi-rs-wallet"></i> Wallet
+        </a>
+        <a href="/referral" class="account__tab active-tab" data-target="#referral">
+          <i class="fi fi-rs-users"></i> Referral
+        </a>
+        <a href="/forgot-password" class="account__tab">
+          <i class="fi fi-rs-key"></i> Change Password
+        </a>
+        <a href="/logout" class="account__tab">
+          <i class="fi fi-rs-exit"></i> Logout
+        </a>
+      </div>
+
+      <div class="tabs__content">
+        <div class="tab__content active-tab" content id="referral">
+          <div class="tab__header">
+            <div class="d-flex justify-content-between align-items-center">
+              <h2>Referral Program</h2>
+            </div>
+          </div>
+
+          <div class="tab__body">
+            <div class="referral-container">
+              <!-- Referral Code Section -->
+              <div class="referral-code-section">
+                <h2 class="referral-code-title">Share & Earn Rewards</h2>
+                <p>Share your referral code with friends and earn rewards when they make a purchase</p>
+                <div class="referral-code-display">
+                  <div class="referral-code">PIXEL2024</div>
+                  <button class="copy-btn" id="copyBtn">
+                    <i class="fi fi-rs-copy"></i> Copy Code
+                  </button>
+                </div>
+                <button class="share-btn">
+                  <i class="fi fi-rs-share"></i> Share Link
+                </button>
+              </div>
+
+              <!-- Stats Section -->
+              <div class="referral-stats">
+                <div class="stat-card">
+                  <div class="stat-value">5</div>
+                  <div class="stat-label">Total Referrals</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-value">₹2,500</div>
+                  <div class="stat-label">Total Earnings</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-value">₹500</div>
+                  <div class="stat-label">Reward per Referral</div>
+                </div>
+              </div>
+
+              <!-- Referral List -->
+              <div class="referral-list">
+                <div class="referral-list-header">
+                  <div>Referred User</div>
+                  <div>Join Date</div>
+                  <div>Earnings</div>
+                </div>
+                <!-- Sample referral items -->
+                <div class="referral-item">
+                  <div class="referral-user">
+                    <div class="user-avatar">JD</div>
+                    <div class="user-info">
+                      <div class="user-name">John Doe</div>
+                      <div class="join-date">Feb 15, 2024</div>
+                    </div>
+                  </div>
+                  <div class="join-date">Feb 15, 2024</div>
+                  <div class="earning-amount">₹500</div>
+                </div>
+                <div class="referral-item">
+                  <div class="referral-user">
+                    <div class="user-avatar">AS</div>
+                    <div class="user-info">
+                      <div class="user-name">Alice Smith</div>
+                      <div class="join-date">Feb 10, 2024</div>
+                    </div>
+                  </div>
+                  <div class="join-date">Feb 10, 2024</div>
+                  <div class="earning-amount">₹500</div>
+                </div>
+                <div class="referral-item">
+                  <div class="referral-user">
+                    <div class="user-avatar">RJ</div>
+                    <div class="user-info">
+                      <div class="user-name">Robert Johnson</div>
+                      <div class="join-date">Feb 5, 2024</div>
+                    </div>
+                  </div>
+                  <div class="join-date">Feb 5, 2024</div>
+                  <div class="earning-amount">₹500</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!--=============== JAVASCRIPT ===============-->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const copyBtn = document.getElementById('copyBtn');
+    const referralCode = document.querySelector('.referral-code');
+    const shareBtn = document.querySelector('.share-btn');
+
+    copyBtn.addEventListener('click', function() {
+      navigator.clipboard.writeText(referralCode.textContent)
+        .then(() => {
+          copyBtn.innerHTML = '<i class="fi fi-rs-check"></i> Copied!';
+          setTimeout(() => {
+            copyBtn.innerHTML = '<i class="fi fi-rs-copy"></i> Copy Code';
+          }, 2000);
+        })
+        .catch(err => {
+          console.error('Failed to copy text: ', err);
+        });
+    });
+
+    shareBtn.addEventListener('click', function() {
+      if (navigator.share) {
+        navigator.share({
+          title: 'Join me on Pixel Point!',
+          text: 'Use my referral code PIXEL2024 to get started!',
+          url: window.location.origin + '/signup?ref=PIXEL2024'
+        })
+        .catch(err => {
+          console.error('Share failed:', err);
+        });
+      } else {
+        alert('Web Share API not supported in your browser');
+      }
+    });
+  });
+</script>
+
+<%- include("../layouts/users/footer.ejs") %>

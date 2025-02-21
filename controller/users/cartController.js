@@ -8,7 +8,7 @@ const Address = require("../../models/addressSchema");
 const Product = require("../../models/productSchema");
 const Cart = require("../../models/cartSchema");
 const { response } = require("express");
-const _  = require("lodash")
+const _ = require("lodash");
 
 const getCart = async (req, res) => {
   try {
@@ -22,12 +22,12 @@ const getCart = async (req, res) => {
         },
       })
       .lean();
-    let stockMessage = false
+    let stockMessage = false;
     if (!cartData) {
       return res.render("cart", {
         cart: cartData,
         user: userData,
-        stockMessage:false
+        stockMessage: false,
       });
     }
     cartData.items = cartData.items.map((item) => {
@@ -35,22 +35,22 @@ const getCart = async (req, res) => {
         const specificCombo = item.productId.combos.find(
           (combo) => combo._id.toString() === item.comboId.toString()
         );
-        console.log(specificCombo,"specificcombos")
+        console.log(specificCombo, "specificcombos");
         if (specificCombo && specificCombo.quantity <= 0) {
           stockMessage = true;
         }
 
         return { ...item, combo: specificCombo || null };
       }
-      
+
       return item;
     });
-    console.log(cartData,"cart")
+    console.log(cartData, "cart");
 
     res.render("cart", {
       cart: cartData,
       user: userData,
-      stockMessage
+      stockMessage,
     });
   } catch (error) {
     console.error("Error fetching cart:", error);
@@ -89,9 +89,12 @@ const addToCart = async (req, res) => {
         .json({ success: false, message: "Combo not found" });
     }
     let cart = await Cart.findOne({ userId: user });
-
-    if(cart.items.length >=5){
-      return res.status(400).json({success:false,message:"Can add 5 products at a time"})
+    if (cart) {
+      if (cart.items.length >= 5) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Can add 5 products at a time" });
+      }
     }
 
     if (cart) {
@@ -105,9 +108,12 @@ const addToCart = async (req, res) => {
             .status(404)
             .json({ success: false, message: "Only one product remaining" });
         }
-         
-        if(existingItem.quantity >= 5){
-          return res.status(400).json({success:false,message:"can add 5 products of same stock"})
+
+        if (existingItem.quantity >= 5) {
+          return res.status(400).json({
+            success: false,
+            message: "can add 5 products of same stock",
+          });
         }
       }
 
@@ -234,11 +240,13 @@ const addquantity = async (req, res) => {
     }
 
     const combo = productWithCombo.combos[0];
-    if(product.quantity >= combo.quantity){      
-      return res.status(400).json({success:false,message:`Only ${combo.quantity} available`})
+    if (product.quantity >= combo.quantity) {
+      return res
+        .status(400)
+        .json({ success: false, message: `Only ${combo.quantity} available` });
     }
-    if(product.quantity >5){
-      return 
+    if (product.quantity > 5) {
+      return;
     }
 
     product.quantity += 1;
@@ -254,7 +262,7 @@ const addquantity = async (req, res) => {
 
     return res
       .status(200)
-      .json({ success: true, message: "Quantity updated", cart });
+      .json({ success: true, message: "Quantity updated", product, cart });
   } catch (error) {
     console.error("Error updating quantity:", error);
     return res
@@ -263,9 +271,7 @@ const addquantity = async (req, res) => {
   }
 };
 
-
-
-const decreaseQuantity = _.throttle(async (req, res) => {
+const decreaseQuantity = async (req, res) => {
   try {
     const user = req.session.user;
     const { comboId } = req.query;
@@ -304,36 +310,36 @@ const decreaseQuantity = _.throttle(async (req, res) => {
     }
 
     console.log(product.quantity, "ifi");
-    if (product.quantity < 1) {
+    if (product.quantity <= 1) {
       console.log("belloo");
       return res.status(400).json({
         success: false,
         message: "Quantity cannot be less than one.",
       });
+    } else {
+      const combo = productWithCombo.combos[0];
+      product.quantity -= 1;
+      product.totalPrice = product.quantity * combo.salePrice;
+
+      cart.totalPrice = cart.items.reduce(
+        (sum, item) => sum + item.totalPrice,
+        0
+      );
+
+      await cart.save();
+
+      return res
+        .status(200)
+        .json({ success: true, message: "Quantity updated", product, cart });
     }
-
-    const combo = productWithCombo.combos[0];
-
-    product.quantity -= 1;
-    product.totalPrice = product.quantity * combo.salePrice;
-
-    cart.totalPrice = cart.items.reduce(
-      (sum, item) => sum + item.totalPrice,
-      0
-    );
-
-    await cart.save();
-
-    return res
-      .status(200)
-      .json({ success: true, message: "Quantity updated", cart });
   } catch (error) {
     console.error("Error updating quantity:", error);
     return res
       .status(500)
       .json({ success: false, message: "Internal server error" });
   }
-}, 2000); // 2 seconds throttle time
+};
+// 2 seconds throttle time
 
 module.exports = {
   getCart,

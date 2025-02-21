@@ -11,12 +11,11 @@ const getProductInfo = async (req, res) => {
     res.render("addProduct", {
       cat: category,
       brand: brand,
-      currentPage:"addProduct"
-
+      currentPage: "addProduct",
     });
   } catch (error) {
-    console.log(error,"error at getting product page")
-    res.redirect("/page-not-found")
+    console.log(error, "error at getting product page");
+    res.redirect("/page-not-found");
   }
 };
 
@@ -107,6 +106,25 @@ const getAllProducts = async (req, res) => {
     const categories = await Category.find({ isListed: true });
     const brands = await Brand.find({ isBlocked: false });
 
+    const topSellingProducts = await Product.aggregate([
+      {
+        $match: { isBlocked: false }, // Only include non-blocked products
+      },
+      {
+        $addFields: {
+          totalSoldCount: { $sum: "$combos.soldCount" }, // Sum all soldCount values in combos
+        },
+      },
+      {
+        $sort: { totalSoldCount: -1 }, // Sort by totalSoldCount in descending order
+      },
+      {
+        $limit: 5, // Get top 5 products
+      },
+    ]);
+
+    console.log(topSellingProducts);
+
     if (categories && brands) {
       res.render("products", {
         productData,
@@ -114,8 +132,8 @@ const getAllProducts = async (req, res) => {
         totalPages: Math.ceil(count / limit),
         categories,
         brands,
-        currentPage:"products"
-
+        currentPage: "products",
+        topSellingProducts,
       });
     } else {
       res.redirect("/page-not-found");
@@ -162,8 +180,7 @@ const getEditProducts = async (req, res) => {
       product: product,
       cat: category,
       brand: brand,
-      currentPage:"products"
-
+      currentPage: "products",
     });
   } catch (error) {
     console.log("Error found in the loading Edit Product side: ", error);
@@ -174,7 +191,6 @@ const getEditProducts = async (req, res) => {
 const editProduct = async (req, res) => {
   try {
     const id = req.params.id;
-    // const product = await Product.findOne({ _id: id });
     const data = req.body;
 
     const existingProduct = await Product.findOne({
@@ -190,11 +206,10 @@ const editProduct = async (req, res) => {
     }
 
     const images = [];
-
     if (req.files && req.files.length > 0) {
       for (let i = 0; i < req.files.length; i++) {
         const result = await cloudinary.uploader.upload(req.files[i].path, {
-          quailty: "100",
+          quality: "100",
         });
 
         images.push(result.secure_url);
@@ -204,9 +219,30 @@ const editProduct = async (req, res) => {
     // Ensure combos are parsed as an array of objects
     let combosArray = [];
     if (typeof data.combos === "string") {
-      combosArray = JSON.parse(data.combos); // Convert the string to an array of objects
+      combosArray = JSON.parse(data.combos);
     } else if (Array.isArray(data.combos)) {
-      combosArray = data.combos; // If it's already an array, no need to parse
+      combosArray = data.combos;
+    }
+
+    // Fetch existing product
+    const existingProductData = await Product.findById(id);
+
+    if (existingProductData) {
+      combosArray = combosArray.map((newCombo) => {
+        // Try to find an existing combo with the same RAM & storage (or another identifier)
+        const existingCombo = existingProductData.combos.find(
+          (combo) =>
+            combo.ram === newCombo.ram && combo.storage === newCombo.storage
+        );
+
+        // If it exists, retain its properties (including the `_id`)
+        if (existingCombo) {
+          return { ...existingCombo.toObject(), ...newCombo };
+        }
+
+        // If it's a new combo, assign a new ObjectId manually
+        return { ...newCombo, _id: new mongoose.Types.ObjectId() };
+      });
     }
 
     const brand = await Brand.findOne({ brandName: data.brand });

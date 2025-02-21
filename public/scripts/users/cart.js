@@ -78,7 +78,25 @@ async function updateQuantity(comboId) {
     const result = await response.json();
     console.log(result);
     if (result.success) {
-      location.reload();
+      document.getElementById(`productQuantity-${result.product._id}`).value =
+        result.product.quantity;
+      document.getElementById(
+        `itemTotalPrice-${result.product._id}`
+      ).textContent = `₹${result.product.totalPrice}`;
+      document.getElementById(
+        "subTotal"
+      ).textContent = `₹${result.cart.totalPrice}`;
+      document.getElementById(
+        "totalAmount"
+      ).textContent = `₹${result.cart.totalPrice}`;
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "success",
+        title: result.message || "quantity added successfully!",
+        showConfirmButton: false,
+        timer: 2000,
+      });
     } else {
       Swal.fire({
         toast: true,
@@ -101,10 +119,7 @@ async function updateQuantity(comboId) {
   }
 }
 
-async function decreaseQuantity(comboId,quantity) {
-  if(quantity < 1){
-    return
-  }
+async function decreaseQuantity(comboId, quantity) {
   try {
     const response = await fetch(`/decreaseQuantity?comboId=${comboId}`, {
       method: "PATCH",
@@ -124,7 +139,25 @@ async function decreaseQuantity(comboId,quantity) {
     const result = await response.json();
 
     if (result.success) {
-      location.reload();
+      document.getElementById(`productQuantity-${result.product._id}`).value =
+        result.product.quantity;
+      document.getElementById(
+        `itemTotalPrice-${result.product._id}`
+      ).textContent = `₹${result.product.totalPrice}`;
+      document.getElementById(
+        "subTotal"
+      ).textContent = `₹${result.cart.totalPrice}`;
+      document.getElementById(
+        "totalAmount"
+      ).textContent = `₹${result.cart.totalPrice}`;
+      Swal.fire({
+        toast: true,
+        position: "top-end",
+        icon: "success",
+        title: result.message || "quantity decreased successfully!",
+        showConfirmButton: false,
+        timer: 2000,
+      });
     } else {
       throw new Error(result.message || "An error occurred.");
     }
@@ -138,8 +171,4 @@ async function decreaseQuantity(comboId,quantity) {
       showConfirmButton: false,
     });
   }
-}
-
-async function goToCheckout(){
-  
 }

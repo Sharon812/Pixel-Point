@@ -15,7 +15,9 @@ const getOrderDetails = async (req, res) => {
     const totalOrders = await Order.countDocuments();
     const totalPages = Math.ceil(totalOrders / limit);
 
-    const orders = await Order.find({ paymentStatus: { $ne: "Pending Payment" } })
+    const orders = await Order.find({
+      paymentStatus: { $ne: "Pending Payment" },
+    })
       .populate("userId", "name")
       .populate("orderedItems.product", "productName price _id")
       .sort({ createdAt: -1 })
@@ -70,8 +72,7 @@ const getOrderDetails = async (req, res) => {
       prevPage: page - 1,
       lastPage: totalPages,
       returnedProducts: returnRequestedProducts,
-      currentPage:"orders"
-
+      currentPage: "orders",
     });
   } catch (error) {
     console.error("Error fetching orders:", error);
@@ -88,16 +89,94 @@ const updateStatus = async (req, res) => {
       return res.status(404).send("Order not found");
     }
 
-    const product = order.orderedItems.find(
+    const orderedItem = order.orderedItems.find(
       (item) => item.product.toString() === productId
     );
-
-    if (!product) {
+    if (!orderedItem) {
       console.error("Product not found in order");
       return res.status(404).send("Product not found in order");
     }
+    const productData = await Product.findById(orderedItem.product)
+      .populate("brand")
+      .populate("category");
 
-    product.status = status;
+    const brand = productData.brand;
+    const category = productData.category;
+
+    const comboIndex = productData.combos.findIndex(
+      (combo) =>
+        combo.ram === orderedItem.RAM &&
+        combo.storage === orderedItem.Storage &&
+        combo.color.includes(orderedItem.color)
+    );
+    switch (status) {
+      case "Processing":
+        orderedItem.processing_at = new Date();
+        break;
+      case "Shipped":
+        orderedItem.shipped_at = new Date();
+        break;
+      case "Delivered":
+        orderedItem.delivered_at = new Date();
+
+        brand.soldCount = brand.soldCount || 0;
+        category.soldCount = category.soldCount || 0;
+        productData.combos[comboIndex].soldCount += orderedItem.quantity;
+        brand.soldCount += orderedItem.quantity;
+        category.soldCount += orderedItem.quantity;
+
+        await Promise.all([brand.save(), category.save(), productData.save()]);
+        break;
+
+      case "Cancelled":
+        orderedItem.canceled_at = new Date();
+
+        productData.combos[comboIndex].quantity += orderedItem.quantity;
+        productData.combos[comboIndex].soldCount += orderedItem.quantity;
+        if (productData.combos[comboIndex].quantity > 0) {
+          productData.combos[comboIndex].status = "Available";
+        }
+        brand.soldCount = brand.soldCount || 0;
+        category.soldCount = category.soldCount || 0;
+        productData.combos[comboIndex].soldCount += orderedItem.quantity;
+        brand.soldCount -= orderedItem.quantity;
+        category.soldCount -= orderedItem.quantity;
+
+        await Promise.all([brand.save(), category.save(), productData.save()]);
+        if (
+          order.paymentMethod === "razorpay" ||
+          order.paymentMethod === "wallet"
+        ) {
+          refundAmount = orderedItem.finalAmount;
+          let wallet = await Wallet.findOne({ user: order.userId });
+
+          if (!wallet) {
+            wallet = new Wallet({
+              user: order.userId,
+              balance: refundAmount,
+              transactions: [],
+            });
+          } else {
+            wallet.balance += refundAmount;
+          }
+
+          wallet.transactions.push({
+            type: "credit",
+            amount: refundAmount,
+            date: new Date(),
+            description: `Refund of product ${orderedItem.productName}`,
+          });
+
+          await wallet.save();
+        }
+        break;
+      default:
+        return res
+          .status(400)
+          .json({ success: false, message: "Invalid order status." });
+    }
+
+    orderedItem.status = status;
 
     await order.save();
 
@@ -134,11 +213,34 @@ const confirmReturnOrder = async (req, res) => {
         .json({ success: false, message: "Item not found in order" });
     }
 
+    orderItem = Array.isArray(orderItem) ? orderItem : [orderItem];
+
+    console.log(orderItem, "orderitem");
+
+    await Promise.all(
+      orderItem.map(async (item) => {
+        const product = await Product.findById(item.product);
+        const comboIndex = product.combos.findIndex(
+          (combo) =>
+            combo.ram === item.RAM &&
+            combo.storage === item.Storage &&
+            combo.color.includes(item.color)
+        );
+
+        product.combos[comboIndex].quantity += item.quantity;
+        if (product.combos[comboIndex].quantity > 0) {
+          product.combos[comboIndex].status = "Available";
+        }
+
+        await product.save();
+      })
+    );
+
     if (
       order.paymentMethod === "razorpay" ||
       order.paymentMethod === "wallet"
     ) {
-      refundAmount = orderItem.finalAmount;
+      refundAmount = orderItem[0].finalAmount;
       let wallet = await Wallet.findOne({ user: order.userId });
 
       if (!wallet) {
@@ -155,13 +257,13 @@ const confirmReturnOrder = async (req, res) => {
         type: "credit",
         amount: refundAmount,
         date: new Date(),
-        description: `Refund of product ${orderItem.productName}`,
+        description: `Refund of product ${orderItem[0].productName}`,
       });
 
       await wallet.save();
     }
 
-    orderItem.status = "Returned";
+    orderItem[0].status = "Returned";
     await order.save();
 
     res

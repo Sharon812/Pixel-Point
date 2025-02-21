@@ -34,7 +34,6 @@
   </nav>
 
   <div class="d-flex">
-
     <!-- Main Content -->
     <div class="main-content flex-grow-1">
       <div class="container-fluid p-4">
@@ -75,7 +74,14 @@
             </form>
           </div>
         </div>
-
+        <button
+          class="btn btn-primary d-flex align-items-center"
+          data-bs-toggle="modal"
+          data-bs-target="#categorySalesModal"
+        >
+          <i class="fas fa-chart-bar"></i>
+          <span>Top Products</span>
+        </button>
         <!-- Products Table -->
         <div class="card shadow-sm">
           <div class="card-body">
@@ -104,7 +110,7 @@
                     <td>
                       <%= productData[i].offerEndDate ?
                       productData[i].offerEndDate.toLocaleDateString('en-GB') :
-                      'N/A' %> 
+                      'N/A' %>
                     </td>
                     <td>
                       <div class="d-flex gap-2">
@@ -239,6 +245,75 @@
         </button>
         <button type="button" class="btn btn-primary" onclick="submitOffer()">
           Add Offer
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div
+  class="modal fade"
+  id="categorySalesModal"
+  tabindex="-1"
+  aria-labelledby="categorySalesModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0 bg-light">
+        <h5 class="modal-title" id="categorySalesModalLabel">
+          <i class="fas fa-chart-pie me-2 text-primary"></i>
+          Product Top Sellers
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body p-4">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle">
+            <thead class="table-light">
+              <tr>
+                <th scope="col" class="ps-4">Product Name</th>
+                <th scope="col" class="text-end pe-4">Products Sold</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% topSellingProducts.forEach(topSellingProducts => { %>
+              <tr>
+                <td class="ps-4">
+                  <div class="d-flex align-items-center">
+                    <div
+                      class="category-icon bg-primary bg-opacity-10 text-primary rounded p-2 me-3"
+                    >
+                      <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <div>
+                      <h6 class="mb-0"><%=topSellingProducts.productName%></h6>
+                    </div>
+                  </div>
+                </td>
+                <td class="text-end pe-4">
+                  <div
+                    class="d-flex align-items-center justify-content-end gap-2"
+                  >
+                    <span class="badge bg-success px-3 py-2"
+                      >+<%=topSellingProducts.totalSoldCount ?
+                      topSellingProducts.totalSoldCount: 0%>
+                    </span>
+                  </div>
+                </td>
+              </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer border-0 bg-light">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
         </button>
       </div>
     </div>

@@ -119,8 +119,31 @@ userRoute.post(
 
 //for order placed
 userRoute.get("/orderplaced", userAuth.userCheck, orderController.orderPlaced);
+<<<<<<< HEAD
 userRoute.get("/orderPending",userAuth.userCheck,orderController.orderPending)
 userRoute.post("/verify-payment",userAuth.userCheck, orderController.verifyPayment);
+=======
+userRoute.get(
+  "/orderPending",
+  userAuth.userCheck,
+  orderController.orderPending
+);
+userRoute.post(
+  "/verify-payment",
+  userAuth.userCheck,
+  orderController.verifyPayment
+);
+userRoute.post(
+  "/retry-payment",
+  userAuth.userCheck,
+  orderController.retryPayment
+);
+userRoute.post(
+  "/verify-retry-payment",
+  userAuth.userCheck,
+  orderController.verifyRetryPayment
+);
+>>>>>>> secondary_main
 
 //for userorder details
 userRoute.get("/orders", userAuth.userCheck, accountController.getOrders);
@@ -136,10 +159,16 @@ userRoute.patch(
 );
 userRoute.patch("/returnorder", accountController.returnOrder);
 
+//for invoice download
+userRoute.get(
+  "/invoice/:itemId/:orderId",
+  userAuth.userCheck,
+  orderController.generateInvoice
+);
+
 //for wishlist
 userRoute.get("/wishlist", wishlistController.getWishlist);
 userRoute.post("/addToWishlist", wishlistController.addToWishlist);
-userRoute.post("/removeFromWishlist", wishlistController.removeFromWishlist);
 
 //for wallet
 userRoute.get("/wallet", userAuth.userCheck, walletController.getWallet);
@@ -153,5 +182,8 @@ userRoute.post(
   userAuth.userCheck,
   walletController.verifyPayment
 );
+
+//for referal offer
+userRoute.get("/referaldetails", accountController.getReferallPage);
 
 module.exports = userRoute;

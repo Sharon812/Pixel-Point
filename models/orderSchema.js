@@ -70,9 +70,28 @@ const orderSchema = new Schema(
             "Return Requested",
             "Returned",
           ],
+          default: "Pending",
         },
         cancellationReason: {
           type: String,
+        },
+        processing_at: {
+          type: Date,
+        },
+        shipped_at: {
+          type: Date,
+        },
+        return_reqested_at: {
+          type: Date,
+        },
+        canceled_at: {
+          type: Date,
+        },
+        returned_at: {
+          type: Date,
+        },
+        delivered_at: {
+          type: Date,
         },
       },
     ],

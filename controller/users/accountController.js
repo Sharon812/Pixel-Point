@@ -8,6 +8,7 @@ const Address = require("../../models/addressSchema");
 const Cart = require("../../models/cartSchema");
 const Order = require("../../models/orderSchema");
 const Wallet = require("../../models/walletSchema");
+const Product = require("../../models/productSchema");
 
 //for forgot password
 const getForgotPassword = async (req, res) => {
@@ -443,25 +444,25 @@ const getOrders = async (req, res) => {
   try {
     const user = req.session.user;
     const userData = await User.findById(user);
-    
+
     const page = parseInt(req.query.page) || 1;
     const limit = 4;
     const skip = (page - 1) * limit;
-    
+
     const totalOrders = await Order.countDocuments({ userId: user });
     const totalPages = Math.ceil(totalOrders / limit);
-    
+
     const orders = await Order.find({ userId: user })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .populate("orderedItems.product");
-      
+
     res.render("orderDetails", {
       user: userData,
       orders: orders,
       currentPage: page,
-      totalPages: totalPages
+      totalPages: totalPages,
     });
   } catch (error) {
     console.log(
@@ -543,12 +544,35 @@ const cancelOrder = async (req, res) => {
         .status(400)
         .json({ success: false, message: "Item not found in order" });
     }
+    orderItem = Array.isArray(orderItem) ? orderItem : [orderItem];
+
+    console.log(orderItem, "orderitem");
+
+    await Promise.all(
+      orderItem.map(async (item) => {
+        const product = await Product.findById(item.product);
+        const comboIndex = product.combos.findIndex(
+          (combo) =>
+            combo.ram === item.RAM &&
+            combo.storage === item.Storage &&
+            combo.color.includes(item.color)
+        );
+
+        product.combos[comboIndex].quantity += item.quantity;
+        if (product.combos[comboIndex].quantity > 0) {
+          product.combos[comboIndex].status = "Available";
+        }
+
+        await product.save();
+      })
+    );
 
     if (
       order.paymentMethod === "razorpay" ||
       order.paymentMethod === "wallet"
     ) {
-      refundAmount = orderItem.finalAmount;
+      refundAmount = orderItem[0].finalAmount;
+      console.log(refundAmount, "redunddam");
       let wallet = await Wallet.findOne({ user: order.userId });
 
       if (!wallet) {
@@ -565,14 +589,14 @@ const cancelOrder = async (req, res) => {
         type: "credit",
         amount: refundAmount,
         date: new Date(),
-        description: `Refund of product ${orderItem.productName}`,
+        description: `Refund of product ${orderItem[0].productName}`,
       });
 
       await wallet.save();
     }
 
-    orderItem.status = "Cancelled";
-    orderItem.cancellationReason = reason
+    orderItem[0].status = "Cancelled";
+    orderItem[0].cancellationReason = reason;
     await order.save();
 
     return res
@@ -587,7 +611,7 @@ const cancelOrder = async (req, res) => {
 const returnOrder = async (req, res) => {
   try {
     const { itemId, orderId, reason } = req.body;
-    console.log(req.body,"reqbody")
+    console.log(req.body, "reqbody");
     const order = await Order.findOneAndUpdate(
       { _id: orderId, "orderedItems._id": itemId },
       {
@@ -613,6 +637,15 @@ const returnOrder = async (req, res) => {
   }
 };
 
+const getReferallPage = async (req, res) => {
+  try {
+    res.render("referallPage");
+  } catch (error) {
+    console.log(error, "error at loading referal page in user side");
+    res.staus(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+
 module.exports = {
   getForgotPassword,
   forgotPasswordOtp,
@@ -631,4 +664,5 @@ module.exports = {
   getOrderDetails,
   cancelOrder,
   returnOrder,
+  getReferallPage,
 };

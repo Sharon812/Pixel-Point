@@ -57,6 +57,10 @@ const productSchema = new Schema(
           required: true,
           default: "Available",
         },
+        soldCount: {
+          type: Number,
+          default: 0,
+        },
       },
     ],
     productImage: {

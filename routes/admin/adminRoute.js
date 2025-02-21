@@ -59,7 +59,8 @@ router.patch("/remove-product-offer", productCont.removeOffer);
 //for brands section
 router.get("/brands", brandController.getBrandPage);
 router.post("/addbrands", uploads.single("image"), brandController.addBrand);
-router.get("/blockBrand", brandController.blockBrand);
+router.patch("/blockBrand", brandController.blockBrand);
+router.patch("/unblockBrand", brandController.unblockBrand);
 
 //for orders
 router.get("/orders", orderController.getOrderDetails);
@@ -72,6 +73,9 @@ router.get("/sales-report/daily", adminController.generateDailyReport);
 router.get("/sales-report/weekly", adminController.generateWeeklyReport);
 router.get("/sales-report/yearly", adminController.generateYearlyReport);
 router.get("/sales-report/custom", adminController.generateCustomReport);
+
+// Chart Data Route
+router.get("/chart-data/:filter", adminController.getFilteredChartData);
 
 //for coupons
 router.get("/coupons", couponController.getCoupons);

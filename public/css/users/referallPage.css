@@ -1,0 +1,274 @@
+/* Account Sidebar Styles */
+.accounts__container {
+  gap: 2rem;
+}
+
+.account__tabs {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+}
+
+.account__tab {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: 8px;
+  color: #64748b;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.account__tab:hover {
+  background: #f8fafc;
+  color: #0066ff;
+}
+
+.account__tab.active-tab {
+  background: #f0f7ff;
+  color: #0066ff;
+  font-weight: 600;
+}
+
+.account__tab i {
+  font-size: 1.2rem;
+}
+
+/* Tab Content Styles */
+.tab__content {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+  padding: 2rem;
+}
+
+.tab__header {
+  margin-bottom: 2rem;
+}
+
+.tab__header h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+}
+
+/* Referral Page Specific Styles */
+.referral-container {
+  padding: 2rem;
+  background-color: var(--container-color);
+  border-radius: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.referral-code-section {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding: 2rem;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  border-radius: 1rem;
+  color: white;
+}
+
+.referral-code-title {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.referral-code-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.referral-code {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.copy-btn {
+  background: white;
+  color: var(--title-color);
+  border: none;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.copy-btn:hover {
+  background: var(--first-color);
+  color: white;
+}
+
+.share-btn {
+  background: var(--first-color);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 1rem;
+}
+
+.share-btn:hover {
+  background: var(--first-color-alt);
+}
+
+.referral-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: var(--body-color);
+  padding: 1.5rem;
+  border-radius: 1rem;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--title-color);
+  margin-bottom: 0.5rem;
+}
+
+.stat-label {
+  color: var(--text-color);
+  font-size: 0.9rem;
+}
+
+.referral-list {
+  background: var(--body-color);
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.referral-list-header {
+  padding: 1rem 1.5rem;
+  background: var(--first-color-lighter);
+  color: var(--title-color);
+  font-weight: 600;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 1rem;
+}
+
+.referral-item {
+  padding: 1rem 1.5rem;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  align-items: center;
+}
+
+.referral-item:last-child {
+  border-bottom: none;
+}
+
+.referral-user {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--first-color-lighter);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: var(--first-color);
+}
+
+.user-info {
+  text-align: left;
+}
+
+.user-name {
+  font-weight: 600;
+  color: var(--title-color);
+}
+
+.join-date {
+  font-size: 0.85rem;
+  color: var(--text-color-light);
+}
+
+.earning-amount {
+  font-weight: 600;
+  color: #22c55e;
+}
+
+/* Responsive Styles */
+@media screen and (max-width: 768px) {
+  .accounts__container {
+    gap: 1rem;
+  }
+
+  .account__tabs {
+    padding: 1rem;
+  }
+
+  .account__tab {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .tab__content {
+    padding: 1.5rem;
+  }
+
+  .tab__header h2 {
+    font-size: 1.25rem;
+  }
+
+  .referral-list-header,
+  .referral-item {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .join-date {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .account__tab {
+    font-size: 0.85rem;
+  }
+
+  .tab__content {
+    padding: 1rem;
+  }
+
+  .tab__header {
+    margin-bottom: 1.5rem;
+  }
+
+  .referral-code-display {
+    flex-direction: column;
+  }
+  
+  .referral-stats {
+    grid-template-columns: 1fr;
+  }
+}
