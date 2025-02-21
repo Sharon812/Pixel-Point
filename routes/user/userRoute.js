@@ -119,10 +119,6 @@ userRoute.post(
 
 //for order placed
 userRoute.get("/orderplaced", userAuth.userCheck, orderController.orderPlaced);
-<<<<<<< HEAD
-userRoute.get("/orderPending",userAuth.userCheck,orderController.orderPending)
-userRoute.post("/verify-payment",userAuth.userCheck, orderController.verifyPayment);
-=======
 userRoute.get(
   "/orderPending",
   userAuth.userCheck,
@@ -143,8 +139,6 @@ userRoute.post(
   userAuth.userCheck,
   orderController.verifyRetryPayment
 );
->>>>>>> secondary_main
-
 //for userorder details
 userRoute.get("/orders", userAuth.userCheck, accountController.getOrders);
 userRoute.get(
