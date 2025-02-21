@@ -13,9 +13,8 @@ const categoryInfo = async (req, res) => {
       .limit(limit);
 
     const topSellingCategories = await Category.find({ isListed: true })
-      .sort({ soldCount: -1 }) // Sort in descending order
-      .limit(5); // Limit to top 5
-    console.log(topSellingCategories);
+      .sort({ soldCount: -1 })
+      .limit(5);
     res.render("category", {
       cat: categoryData,
       currentPage: page,

@@ -106,6 +106,25 @@ const getAllProducts = async (req, res) => {
     const categories = await Category.find({ isListed: true });
     const brands = await Brand.find({ isBlocked: false });
 
+    const topSellingProducts = await Product.aggregate([
+      {
+        $match: { isBlocked: false }, // Only include non-blocked products
+      },
+      {
+        $addFields: {
+          totalSoldCount: { $sum: "$combos.soldCount" }, // Sum all soldCount values in combos
+        },
+      },
+      {
+        $sort: { totalSoldCount: -1 }, // Sort by totalSoldCount in descending order
+      },
+      {
+        $limit: 5, // Get top 5 products
+      },
+    ]);
+
+    console.log(topSellingProducts);
+
     if (categories && brands) {
       res.render("products", {
         productData,
@@ -114,6 +133,7 @@ const getAllProducts = async (req, res) => {
         categories,
         brands,
         currentPage: "products",
+        topSellingProducts,
       });
     } else {
       res.redirect("/page-not-found");
