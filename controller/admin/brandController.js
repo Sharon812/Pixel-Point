@@ -15,6 +15,10 @@ const getBrandPage = async (req, res) => {
 
     const totalBrands = await brand.countDocuments();
     const totalPages = Math.ceil(totalBrands / limit);
+    const topSellingBrands = await brand.find({ isBlocked: false })
+    .sort({ soldCount: -1 })
+    .limit(5);
+
 
     res.render("brandPage", {
       brands: brandData,
@@ -22,6 +26,7 @@ const getBrandPage = async (req, res) => {
       totalPages: totalPages,
       totalBrands: totalBrands,
       currentPage: "brands",
+      topSellingBrands
     });
   } catch (error) {
     console.log("error at brandpage", error);
