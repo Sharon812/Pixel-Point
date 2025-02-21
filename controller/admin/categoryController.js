@@ -12,11 +12,15 @@ const categoryInfo = async (req, res) => {
       .skip(skip)
       .limit(limit);
 
+    const topSellingCategories = await Category.find({ isListed: true })
+      .sort({ soldCount: -1 }) // Sort in descending order
+      .limit(5); // Limit to top 5
+    console.log(topSellingCategories);
     res.render("category", {
       cat: categoryData,
       currentPage: page,
-      currentPage:"category"
-
+      currentPage: "category",
+      topSellingCategories,
     });
   } catch (error) {
     console.log("errpr at category info,", error);
@@ -64,8 +68,7 @@ const geteditCategory = async (req, res) => {
     const category = await Category.findOne({ _id: id });
     res.render("editCategory", {
       category,
-      currentPage:"category"
-
+      currentPage: "category",
     });
   } catch (error) {
     console.log("error at edit category,", error);
