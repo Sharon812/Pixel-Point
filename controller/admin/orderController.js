@@ -89,32 +89,94 @@ const updateStatus = async (req, res) => {
       return res.status(404).send("Order not found");
     }
 
-    const product = order.orderedItems.find(
+    const orderedItem = order.orderedItems.find(
       (item) => item.product.toString() === productId
     );
-    if (!product) {
+    if (!orderedItem) {
       console.error("Product not found in order");
       return res.status(404).send("Product not found in order");
     }
+    const productData = await Product.findById(orderedItem.product)
+      .populate("brand")
+      .populate("category");
 
-    if (status === "Cancelled") {
-      const productData = await Product.findById(product.product);
-      const comboIndex = productData.combos.findIndex(
-        (combo) =>
-          combo.ram === product.RAM &&
-          combo.storage === product.Storage &&
-          combo.color.includes(product.color)
-      );
+    const brand = productData.brand;
+    const category = productData.category;
 
-      productData.combos[comboIndex].quantity += product.quantity;
-      if (productData.combos[comboIndex].quantity > 0) {
-        productData.combos[comboIndex].status = "Available";
-      }
+    const comboIndex = productData.combos.findIndex(
+      (combo) =>
+        combo.ram === orderedItem.RAM &&
+        combo.storage === orderedItem.Storage &&
+        combo.color.includes(orderedItem.color)
+    );
+    switch (status) {
+      case "Processing":
+        orderedItem.processing_at = new Date();
+        break;
+      case "Shipped":
+        orderedItem.shipped_at = new Date();
+        break;
+      case "Delivered":
+        orderedItem.delivered_at = new Date();
 
-      await productData.save();
+        brand.soldCount = brand.soldCount || 0;
+        category.soldCount = category.soldCount || 0;
+        productData.combos[comboIndex].soldCount += orderedItem.quantity;
+        brand.soldCount += orderedItem.quantity;
+        category.soldCount += orderedItem.quantity;
+
+        await Promise.all([brand.save(), category.save(), productData.save()]);
+        break;
+
+      case "Cancelled":
+        orderedItem.canceled_at = new Date();
+
+        productData.combos[comboIndex].quantity += orderedItem.quantity;
+        productData.combos[comboIndex].soldCount += orderedItem.quantity;
+        if (productData.combos[comboIndex].quantity > 0) {
+          productData.combos[comboIndex].status = "Available";
+        }
+        brand.soldCount = brand.soldCount || 0;
+        category.soldCount = category.soldCount || 0;
+        productData.combos[comboIndex].soldCount += orderedItem.quantity;
+        brand.soldCount -= orderedItem.quantity;
+        category.soldCount -= orderedItem.quantity;
+
+        await Promise.all([brand.save(), category.save(), productData.save()]);
+        if (
+          order.paymentMethod === "razorpay" ||
+          order.paymentMethod === "wallet"
+        ) {
+          refundAmount = orderedItem.finalAmount;
+          let wallet = await Wallet.findOne({ user: order.userId });
+
+          if (!wallet) {
+            wallet = new Wallet({
+              user: order.userId,
+              balance: refundAmount,
+              transactions: [],
+            });
+          } else {
+            wallet.balance += refundAmount;
+          }
+
+          wallet.transactions.push({
+            type: "credit",
+            amount: refundAmount,
+            date: new Date(),
+            description: `Refund of product ${orderedItem.productName}`,
+          });
+
+          await wallet.save();
+        }
+        break;
+      default:
+        return res
+          .status(400)
+          .json({ success: false, message: "Invalid order status." });
     }
 
-    product.status = status;
+    orderedItem.status = status;
 
     await order.save();
 

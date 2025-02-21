@@ -18,6 +18,10 @@ const brandSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  soldCount: {
+    type: Number,
+    default: 0,
+  },
 });
 
 const brands = mongoose.model("Brands", brandSchema);

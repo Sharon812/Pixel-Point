@@ -24,6 +24,10 @@ const categorySchema = new Schema(
       type: Date,
       default: null,
     },
+    soldCount: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );
