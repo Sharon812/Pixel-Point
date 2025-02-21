@@ -119,6 +119,10 @@ function generateOtp() {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
+const generateReferralCode = () => {
+  return Math.random().toString(36).slice(-6).toUpperCase();
+};
+
 //function to send email
 async function sendVerificationEmail(email, otp) {
   try {
@@ -197,7 +201,7 @@ const verifyOtp = async (req, res) => {
     if (otp === req.session.userOtp) {
       const user = req.session.userData;
       const passwordHash = await securePassword(user.password);
-      const profilePhoto = await getPlaceholderImage(user.name);
+      const profilePhoto = await generateProfilePhotoUrl(user.name);
       console.log(profilePhoto, "prof");
       const saveUserData = new User({
         name: user.name,
@@ -205,6 +209,7 @@ const verifyOtp = async (req, res) => {
         email: user.email,
         password: passwordHash,
         profilePhoto: profilePhoto,
+        refferalCode:generateReferralCode()
       });
       await saveUserData.save();
 
@@ -220,17 +225,52 @@ const verifyOtp = async (req, res) => {
 };
 
 //function to generate placeholdderimage
-const getPlaceholderImage = (name) => {
-  const initials = name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
-  const encodedInitials = encodeURIComponent(initials); // Fixes any special character issues
-  return `https://res.cloudinary.com/dbufv0x2p/image/upload/l_text:Arial_100_bold:${encodedInitials},co_rgb:ffffff,w_200,h_200,c_fit,bo_2px_solid_black,b_rgb:000000/v1/placeholder.jpg`;
-};
+function generateProfilePhotoUrl(fullName) {
+  // Validate input
+  if (!fullName || typeof fullName !== 'string') {
+      throw new Error('Input must be a non-empty string');
+  }
 
+  // Split the string and filter out empty parts
+  const nameParts = fullName.trim().split(' ').filter(part => part.length > 0);
+  
+  // Get initials (first letter of first name and last name if available)
+  let initials = '';
+  if (nameParts.length >= 1) {
+      initials += nameParts[0][0].toUpperCase();
+  }
+  if (nameParts.length >= 2) {
+      initials += nameParts[nameParts.length - 1][0].toUpperCase();
+  }
+
+  // If no valid initials, default to first letter
+  if (!initials) {
+      initials = fullName[0].toUpperCase();
+  }
+
+  // Cloudinary configuration
+  const cloudName = process.env.CLOUDINARY_CLOUD; // Replace with your Cloudinary cloud name
+  const baseUrl = `https://res.cloudinary.com/${cloudName}/image/upload/`;
+  
+  // Updated transformations for better clarity
+  const transformations = [
+      'w_300,h_300',           // Increased to 300x300 for higher resolution
+      'c_fill',               // Fill crop mode
+      'g_center',             // Center gravity
+      'r_max',                // Circular shape
+      'b_rgb:3267d6',         // Slightly darker blue for better contrast (was 4285f4)
+      `l_text:Arial_100_bold:${encodeURIComponent(initials)}`, // Larger, bolder text (was 80)
+      'fl_layer_apply',       // Apply the text layer
+      'g_center',             // Center the text
+      'co_rgb:ffffff',        // White text color
+      'q_auto:best'           // Automatic quality optimization
+  ];
+
+  // Construct the full Cloudinary URL
+  const cloudinaryUrl = `${baseUrl}${transformations.join(',')}/placeholder-headshot_gtsvi5_profileavatar_booggl`;
+
+  return cloudinaryUrl;
+}
 //function for resending otp
 const resendOtp = async (req, res) => {
   try {

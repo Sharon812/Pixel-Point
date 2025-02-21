@@ -57,24 +57,24 @@
                 <h2 class="referral-code-title">Share & Earn Rewards</h2>
                 <p>Share your referral code with friends and earn rewards when they make a purchase</p>
                 <div class="referral-code-display">
-                  <div class="referral-code">PIXEL2024</div>
+                  <div class="referral-code"> <%= user.refferalCode ? user.refferalCode : "NA" %> </div>
                   <button class="copy-btn" id="copyBtn">
                     <i class="fi fi-rs-copy"></i> Copy Code
                   </button>
                 </div>
-                <button class="share-btn">
-                  <i class="fi fi-rs-share"></i> Share Link
-                </button>
+                <a class="share-btn" href="/wallet">
+                  <i class="fi fi-rs-share"></i> Show Wallet
+                </a>
               </div>
 
               <!-- Stats Section -->
               <div class="referral-stats">
                 <div class="stat-card">
-                  <div class="stat-value">5</div>
+                  <div class="stat-value"> <%=refferedUsersCount  %> </div>
                   <div class="stat-label">Total Referrals</div>
                 </div>
                 <div class="stat-card">
-                  <div class="stat-value">₹2,500</div>
+                  <div class="stat-value">₹<%= totalRefferalAmount %> </div>
                   <div class="stat-label">Total Earnings</div>
                 </div>
                 <div class="stat-card">
@@ -151,21 +151,6 @@
         .catch(err => {
           console.error('Failed to copy text: ', err);
         });
-    });
-
-    shareBtn.addEventListener('click', function() {
-      if (navigator.share) {
-        navigator.share({
-          title: 'Join me on Pixel Point!',
-          text: 'Use my referral code PIXEL2024 to get started!',
-          url: window.location.origin + '/signup?ref=PIXEL2024'
-        })
-        .catch(err => {
-          console.error('Share failed:', err);
-        });
-      } else {
-        alert('Web Share API not supported in your browser');
-      }
     });
   });
 </script>

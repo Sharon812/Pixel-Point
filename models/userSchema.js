@@ -43,6 +43,13 @@ const userSchema = new Schema({
     type: Boolean,
     default: false,
   },
+  refferalCode:{
+    type:String,
+  },
+  refferalUsers:[{
+    type:Schema.Types.ObjectId,
+    ref:"User"
+  }],
   cart: [
     {
       type: Schema.Types.ObjectId,

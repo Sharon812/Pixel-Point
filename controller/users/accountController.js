@@ -639,10 +639,23 @@ const returnOrder = async (req, res) => {
 
 const getReferallPage = async (req, res) => {
   try {
-    res.render("referallPage");
+    const user = req.session.user
+    const userData = await User.findById(user)
+
+    const refferalAmountPerUser = 500
+
+    const refferedUsersCount = userData.refferalUsers.kength
+    const totalRefferalAmount = userData.refferalUsers.length * refferalAmountPerUser
+
+
+    res.render("referallPage",{
+      user:userData,
+      refferedUsersCount,
+      totalRefferalAmount
+    });
   } catch (error) {
     console.log(error, "error at loading referal page in user side");
-    res.staus(500).json({ success: false, message: "Internal Server Error" });
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
 
