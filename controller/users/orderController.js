@@ -572,9 +572,10 @@ const generateInvoice = async (req, res) => {
         .json({ success: false, message: "Order not found" });
     }
 
-    // Create PDF document
-    // Create PDF document
-    // Create PDF document
+    if(order.status !== "Delivered"){
+      return res.status(400).json({success:false,message:"Order is still not delivered"})
+    }
+
     const doc = new PDFDocument({
       margin: 50,
       size: "A4",

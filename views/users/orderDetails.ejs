@@ -124,7 +124,9 @@
                                 <% if(item.status !== "Delivered" && item.status !== "Shipped") {%>
                                   <button class="cancel-order-btn" onclick="openCancelModal('<%= item._id %>','<%=order._id%>')">Cancel Order</button>
                                 <% } else { %>
+                                  <% if (item.delivered_at && new Date() <= new Date(item.delivered_at).getTime() + 7 * 24 * 60 * 60 * 1000) { %>
                                   <button class="cancel-order-btn" onclick="openReturnModal('<%= item._id %>','<%=order._id%>')">Return Order</button>
+                                  <% } %>
                                   <%}%>
                               <% } %>
                               <% if(item.status === "Delivered") {%>

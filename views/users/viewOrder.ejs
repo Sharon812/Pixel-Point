@@ -214,6 +214,8 @@
       Cancel Order
     </button>
     <% } else { %>
+      <% if (orderDetails[0].delivered_at && new Date() <= new Date(orderDetails[0].delivered_at).getTime() + 7 * 24 * 60 * 60 * 1000) { %>
+
     <button
       class="btn-danger"
       onclick="openReturnModal('<%= orderDetails[0]._id %>','<%=orderData._id%>')"
@@ -221,6 +223,7 @@
       Return Order
     </button>
     <% } %>
+    <%}%>
   </div>
 </div>
 <% } else {%>

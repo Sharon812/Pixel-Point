@@ -611,8 +611,29 @@ const cancelOrder = async (req, res) => {
 const returnOrder = async (req, res) => {
   try {
     const { itemId, orderId, reason } = req.body;
-    console.log(req.body, "reqbody");
-    const order = await Order.findOneAndUpdate(
+
+    
+    const order = await Order.findOne({ _id: orderId, "orderedItems._id": itemId });
+
+    if (!order) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Order or item not found" });
+    }
+    const orderedItem = order.orderedItems.find(item => item._id.toString() === itemId);
+
+    if (!orderedItem) {
+      return res.status(404).json({ success: false, message: "Ordered item not found" });
+    }
+
+    const deliveredAt = new Date(orderedItem.delivered_at);
+    const sevenDaysLater = new Date(deliveredAt.getTime() + 7 * 24 * 60 * 60 * 1000);
+    
+    if (new Date() > sevenDaysLater) {
+      return res.status(400).json({ success: false, message: "Return period expired. You can only return within 7 days after delivery." });
+    }
+
+    const updatedOrder = await Order.findOneAndUpdate(
       { _id: orderId, "orderedItems._id": itemId },
       {
         $set: {
@@ -622,12 +643,6 @@ const returnOrder = async (req, res) => {
       },
       { new: true }
     );
-    if (!order) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Order or item not found" });
-    }
-
     return res
       .status(200)
       .json({ success: true, message: "Order item cancelled successfully" });
