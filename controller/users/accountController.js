@@ -641,10 +641,11 @@ const getReferallPage = async (req, res) => {
   try {
     const user = req.session.user
     const userData = await User.findById(user)
+    .populate("refferalUsers.userId");
 
     const refferalAmountPerUser = 500
 
-    const refferedUsersCount = userData.refferalUsers.kength
+    const refferedUsersCount = userData.refferalUsers.length
     const totalRefferalAmount = userData.refferalUsers.length * refferalAmountPerUser
 
 

@@ -16,8 +16,8 @@ const getWallet = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = 6; // Items per page
-
-    const userId = req.user ? req.user.id : null;
+    const userId = req.session.user ? req.session.user : null;
+    console.log(userId)
     const userData = await User.findById(userId);
     let walletData = await Wallet.findOne({ user: userId });
 

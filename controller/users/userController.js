@@ -3,6 +3,7 @@ const Category = require("../../models/categorySchema");
 const Products = require("../../models/productSchema");
 const Wishlist = require("../../models/wishlistSchema");
 const brand = require("../../models/brandSchema");
+const Wallet = require("../../models/walletSchema")
 const nodemailer = require("nodemailer");
 const env = require("dotenv").config();
 const bycrypt = require("bcrypt");
@@ -123,6 +124,19 @@ const generateReferralCode = () => {
   return Math.random().toString(36).slice(-6).toUpperCase();
 };
 
+const getVerifyOtpPage = async (req,res) => {
+  try {
+    if(req.session.userData){
+      res.render("verifyOtp")
+    }else{
+      res.redirect("/signup")
+    }
+  } catch (error) {
+    console.log(error,"error at rendering verify otp page")
+    res.redirect("/page-not-found")
+  }
+}
+
 //function to send email
 async function sendVerificationEmail(email, otp) {
   try {
@@ -155,11 +169,20 @@ async function sendVerificationEmail(email, otp) {
 //function on verifying signup details
 const signup = async (req, res) => {
   try {
-    const { name, phone, password } = req.body;
+    console.log(req.body)
+    const { name, phone, password  } = req.body;
     const email = req.body.email.trim().toLowerCase();
+    const refferalCode = req.body.refferalCode.trim().toUpperCase();
     const findUser = await User.findOne({ email: email });
     if (findUser) {
-      return res.render("signUpPage", { message: "user already exists" });
+      return res.status(400).json({success:false,message:"User already exists"});
+    }
+    if(refferalCode){
+      const refferalCodeUser = await User.findOne({refferalCode : refferalCode})
+      console.log(refferalCodeUser)
+      if(!refferalCodeUser){
+        return res.status(400).json({success:false,message:"Invalid Refferal Code"})
+      }
     }
 
     const otp = generateOtp();
@@ -167,13 +190,15 @@ const signup = async (req, res) => {
     const emailSent = sendVerificationEmail(email, otp);
 
     if (!emailSent) {
-      return res.render("signUpPage", { message: "Unable to sent email" });
+      return res.status(400).json({success:false,message:"Unable to send email"});
     }
-    req.session.userOtp = otp;
-    req.session.userData = { email, password, name, phone };
 
-    res.render("verifyOtp");
+
+    req.session.userOtp = otp;
+    req.session.userData = { email, password, name, phone , refferalCode};
     console.log("otp send", otp);
+
+    return res.json({ success: true, redirectUrl: "/verify-otp" });
   } catch (error) {
     console.error("error in save usr", error);
     res.status(500).redirect("/page-not-found");
@@ -202,7 +227,7 @@ const verifyOtp = async (req, res) => {
       const user = req.session.userData;
       const passwordHash = await securePassword(user.password);
       const profilePhoto = await generateProfilePhotoUrl(user.name);
-      console.log(profilePhoto, "prof");
+
       const saveUserData = new User({
         name: user.name,
         phone: user.phone,
@@ -211,9 +236,20 @@ const verifyOtp = async (req, res) => {
         profilePhoto: profilePhoto,
         refferalCode:generateReferralCode()
       });
-      await saveUserData.save();
-
-      req.session.user = saveUserData._id;
+      const newUserData =  await saveUserData.save();
+      if(user.refferalCode){
+        const refferalCodeUser = await User.findOne({refferalCode : user.refferalCode})
+        if(refferalCodeUser){
+          refferalCodeUser.refferalUsers.push({
+            userId:newUserData._id,
+            userName:newUserData.name,
+          })
+          await refferalCodeUser.save()
+          await addRefferalMoneyToNewUserWallet(newUserData._id,refferalCodeUser.name)
+          await addRefferalMoneytoRefferalUser(refferalCodeUser._id,newUserData.name)
+        }
+      }
+      req.session.user = newUserData._id;
       res.json({ success: true, redirectUrl: "/" });
     } else {
       res.status(400).json({ success: false, message: "Please try again" });
@@ -224,35 +260,62 @@ const verifyOtp = async (req, res) => {
   }
 };
 
+//function to add money to user wallet
+async function addRefferalMoneyToNewUserWallet(userId,name){
+    let wallet = await Wallet.create({
+      user:userId,
+      balance:500,
+      transactions:[
+        {
+          type:"credit",
+          amount:500,
+          date:new Date(),
+          description:`Money added for refferal by ${name}`
+        }
+      ]
+    })
+    await wallet.save();
+}
+
+async function addRefferalMoneytoRefferalUser(userId,name){
+    let wallet = await Wallet.findOne({ user: userId });
+       if (!wallet) {
+         wallet = await Wallet.create({
+           user: userId,
+           balance: 500,
+           transactions: [
+             {
+               type: "credit",
+               amount: 500,
+               date: new Date(),
+               description: `Money added to wallet for reffering ${name}`,
+             },
+           ],
+         });
+       } else {
+         wallet.balance += 500;
+         wallet.transactions.push({
+           type: "credit",
+           amount: 500,
+           date: new Date(),
+           description: `Money added to wallet for reffering ${name}`,
+          });
+         await wallet.save();
+       }
+   
+}
+
 //function to generate placeholdderimage
 function generateProfilePhotoUrl(fullName) {
-  // Validate input
   if (!fullName || typeof fullName !== 'string') {
       throw new Error('Input must be a non-empty string');
   }
 
-  // Split the string and filter out empty parts
-  const nameParts = fullName.trim().split(' ').filter(part => part.length > 0);
-  
-  // Get initials (first letter of first name and last name if available)
-  let initials = '';
-  if (nameParts.length >= 1) {
-      initials += nameParts[0][0].toUpperCase();
-  }
-  if (nameParts.length >= 2) {
-      initials += nameParts[nameParts.length - 1][0].toUpperCase();
-  }
+  const initials = fullName.trim()[0].toUpperCase();  
 
-  // If no valid initials, default to first letter
-  if (!initials) {
-      initials = fullName[0].toUpperCase();
-  }
-
-  // Cloudinary configuration
-  const cloudName = process.env.CLOUDINARY_CLOUD; // Replace with your Cloudinary cloud name
+  const cloudName = process.env.CLOUDINARY_CLOUD; 
   const baseUrl = `https://res.cloudinary.com/${cloudName}/image/upload/`;
   
-  // Updated transformations for better clarity
   const transformations = [
       'w_300,h_300',           // Increased to 300x300 for higher resolution
       'c_fill',               // Fill crop mode
@@ -266,11 +329,12 @@ function generateProfilePhotoUrl(fullName) {
       'q_auto:best'           // Automatic quality optimization
   ];
 
-  // Construct the full Cloudinary URL
   const cloudinaryUrl = `${baseUrl}${transformations.join(',')}/placeholder-headshot_gtsvi5_profileavatar_booggl`;
 
   return cloudinaryUrl;
 }
+
+
 //function for resending otp
 const resendOtp = async (req, res) => {
   try {
@@ -320,6 +384,7 @@ const loginVerification = async (req, res) => {
     if (!findUser) {
       return res.render("userLoginPage", { message: "user not found" });
     }
+    console.log(findUser,"findUser")
     if (findUser.isBlocked) {
       return res.render("userLoginPage", {
         message: "user is blocked by admin",
@@ -330,6 +395,7 @@ const loginVerification = async (req, res) => {
     if (!passwordMatch) {
       return res.render("userLoginPage", { message: "incorrect password" });
     }
+    console.log(findUser._id,"findUserid")
 
     req.session.user = findUser._id;
 
@@ -363,6 +429,7 @@ module.exports = {
   loadLoginPage,
   loadRegisterPage,
   signup,
+  getVerifyOtpPage,
   loadHomePage,
   verifyOtp,
   resendOtp,

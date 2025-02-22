@@ -1,11 +1,14 @@
-document.getElementById("signUpForm").addEventListener("submit", function (e) {
+document.getElementById("signUpForm").addEventListener("submit",async function (e) {
   e.preventDefault();
+  console.log(typeof Swal);
 
   const nameid = document.getElementById("name").value.trim();
   const emailid = document.getElementById("email").value.trim();
   const phoneid = document.getElementById("phone").value.trim();
   const passwordid = document.getElementById("password").value;
   const confirmpasswordid = document.getElementById("cpassword").value;
+  const refferalCode = document.getElementById("refferalCode").value.trim();
+
 
   const nameerror = document.getElementById("nameerror");
   const emailerror = document.getElementById("emailerror");
@@ -76,6 +79,44 @@ document.getElementById("signUpForm").addEventListener("submit", function (e) {
 
   // Submit Form if Valid
   if (isValid) {
-    e.target.submit();
+    try {
+      const response = await fetch("/signup",{
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body:JSON.stringify({
+          name:nameid,
+          phone:phoneid,
+          email:emailid,
+          password:passwordid,
+          refferalCode:refferalCode
+        })
+      })
+      const result = await response.json()
+      if (!result.success) {
+        Swal.fire({
+          toast: true,
+          position: "top-end",
+          icon: "error",
+          title: "Error!",
+          text: result.message || "An error occurred. Please try again.",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          customClass: {
+            popup: "colored-toast error-toast",
+            icon: "error-icon",
+          },
+        });
+      } else {
+        window.location.href = result.redirectUrl;
+      }
+
+    } catch (error) {
+      console.log(error,"error at sumbitting signup form")
+    }
   }
 });
+
+

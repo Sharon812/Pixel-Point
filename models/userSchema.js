@@ -46,10 +46,21 @@ const userSchema = new Schema({
   refferalCode:{
     type:String,
   },
-  refferalUsers:[{
-    type:Schema.Types.ObjectId,
-    ref:"User"
-  }],
+  refferalUsers:[
+    {
+      userId:{
+        type:Schema.Types.ObjectId,
+        ref:"User"
+      },
+      userName:{
+        type:String
+      },
+      date:{
+        type: Date,
+        default: Date.now,
+      }
+    }
+  ],
   cart: [
     {
       type: Schema.Types.ObjectId,
@@ -72,21 +83,6 @@ const userSchema = new Schema({
     type: Date,
     default: Date.now,
   },
-  searchHistory: [
-    {
-      category: {
-        type: Schema.Types.ObjectId,
-        ref: "Category",
-      },
-      brand: {
-        type: String,
-      },
-      SearchOn: {
-        type: Date,
-        default: Date.now,
-      },
-    },
-  ],
   resetToken: {
     type: String,
   },

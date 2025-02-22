@@ -91,39 +91,18 @@
                   <div>Earnings</div>
                 </div>
                 <!-- Sample referral items -->
-                <div class="referral-item">
+                <% user.refferalUsers.forEach(user => { %>
+                     <div class="referral-item">
                   <div class="referral-user">
-                    <div class="user-avatar">JD</div>
                     <div class="user-info">
-                      <div class="user-name">John Doe</div>
+                      <div class="user-name"><%=user.userId.name%></div>
                       <div class="join-date">Feb 15, 2024</div>
                     </div>
                   </div>
-                  <div class="join-date">Feb 15, 2024</div>
+                  <div class="join-date"> <%= user.date ?user.date : "NA" %> </div>
                   <div class="earning-amount">₹500</div>
                 </div>
-                <div class="referral-item">
-                  <div class="referral-user">
-                    <div class="user-avatar">AS</div>
-                    <div class="user-info">
-                      <div class="user-name">Alice Smith</div>
-                      <div class="join-date">Feb 10, 2024</div>
-                    </div>
-                  </div>
-                  <div class="join-date">Feb 10, 2024</div>
-                  <div class="earning-amount">₹500</div>
-                </div>
-                <div class="referral-item">
-                  <div class="referral-user">
-                    <div class="user-avatar">RJ</div>
-                    <div class="user-info">
-                      <div class="user-name">Robert Johnson</div>
-                      <div class="join-date">Feb 5, 2024</div>
-                    </div>
-                  </div>
-                  <div class="join-date">Feb 5, 2024</div>
-                  <div class="earning-amount">₹500</div>
-                </div>
+              <%  }); %>
               </div>
             </div>
           </div>

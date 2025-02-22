@@ -28,6 +28,7 @@ userRoute.get("/signup", userController.loadRegisterPage);
 userRoute.post("/signup", userController.signup);
 
 //for otp verification
+userRoute.get("/verify-otp",userController.getVerifyOtpPage)
 userRoute.post("/verify-otp", userController.verifyOtp);
 userRoute.post("/resend-otp", userController.resendOtp);
 
