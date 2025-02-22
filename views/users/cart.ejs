@@ -53,7 +53,7 @@
                   <p>
                    
                   </p>
-                  <p id="itemTotalPrice-<%=item._id%>" class="cart__item-price">&#8377;<%= item.totalPrice %></p>
+                  <p id="itemTotalPrice-<%=item._id%>" class="cart__item-price">&#8377;<%= item.totalPrice.toLocaleString('en-IN') %></p>
                 </div>
               </div>
               <div class="cart__item-controls">
@@ -92,7 +92,7 @@
          <table class="cart__total-table">
            <tr>
              <td class="cart__total-title">Subtotal:</td>
-             <td  id="subTotal" class="cart__total-price">&#8377; <%= cart.totalPrice %></td>
+             <td  id="subTotal" class="cart__total-price">&#8377; <%= cart.totalPrice.toLocaleString('en-IN')%></td>
            </tr>
            <!-- <tr>
              <td class="cart__total-title">Shipping:</td>
@@ -100,7 +100,7 @@
            </tr> -->
            <tr>
              <td class="cart__total-title">Total:</td>
-             <td id="totalAmount" class="cart__total-price">&#8377; <%= cart.totalPrice %> </td>
+             <td id="totalAmount" class="cart__total-price">&#8377; <%= cart.totalPrice.toLocaleString('en-IN') %> </td>
            </tr>
          </table>
        <% if(stockMessage) {%>

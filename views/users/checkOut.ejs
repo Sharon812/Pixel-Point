@@ -44,7 +44,7 @@
                           <span class="item__qty">Qty: <%= item.quantity %></span>
                         </div>
                       </div>
-                      <div class="item__price">₹<%= item.totalPrice %></div>
+                      <div class="item__price">₹<%= item.totalPrice.toLocaleString('en-IN') %></div>
                     </div>
                 
                   </div>
@@ -163,7 +163,7 @@
               <div class="price__breakdown">
                 <div class="price__item">
                   <span>Price</span>
-                  <span>₹<%= totalPrice %></span>
+                  <span>₹<%= totalPrice.toLocaleString('en-IN') %></span>
                 </div>
                 <div class="price__item" id="couponDiscountRow" style="display: none;">
                   <span>Coupon Discount</span>
@@ -176,7 +176,7 @@
                 </div>
                 <div class="price__item total">
                   <span>Total Amount</span>
-                  <span id="finalAmount">₹ <%= totalPrice %></span>
+                  <span id="finalAmount">₹ <%= totalPrice.toLocaleString('en-IN') %></span>
                 </div>
               </div>
             </div>

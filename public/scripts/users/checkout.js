@@ -155,6 +155,9 @@ document.addEventListener("DOMContentLoaded", () => {
         sessionStorage.removeItem("checkoutTotal");
         sessionStorage.removeItem("appliedCoupon");
         window.location.href = `/orderplaced/?orderId=${result.order.orderId}`;
+      }else{
+        window.location.href = `/orderPending?orderId=${result.order._id}`;
+
       }
     } catch (error) {
       sessionStorage.removeItem("checkoutTotal");

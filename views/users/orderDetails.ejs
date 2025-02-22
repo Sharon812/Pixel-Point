@@ -70,7 +70,7 @@
                     </div>
                     <div id="secondDiv">
                       <div>
-                        <p class="order-amount">&#8377;<%= order.FinalAmount %></p>
+                        <p class="order-amount">&#8377;<%= order.FinalAmount.toLocaleString('en-IN') %></p>
                       </div>
                       <div>
                         <strong>payment-method : </strong>
@@ -113,7 +113,7 @@
                               </div>
                               <div class="info-group">
                                 <span class="order-label">Price:</span>
-                                <span class="order-value">&#8377;<%= item.finalAmount %></span>
+                                <span class="order-value">&#8377;<%= item.finalAmount.toLocaleString('en-IN') %></span>
                               </div>
                             </div>
                             <div class="item-actions">
