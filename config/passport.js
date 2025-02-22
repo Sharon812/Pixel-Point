@@ -2,6 +2,7 @@ const passport = require("passport");
 const googleStratergy = require("passport-google-oauth20").Strategy;
 const User = require("../models/userSchema");
 const env = require("dotenv").config();
+const userController = require("../controller/users/userController")
 
 //initialising
 passport.use(
@@ -23,7 +24,8 @@ passport.use(
             name: profile.displayName,
             email: email,
             googleId: profile.id,
-            profilePhoto:profile.photos[0]?.value 
+            profilePhoto:profile.photos[0]?.value,
+            refferalCode:userController.generateReferralCode()
           });
           await user.save();
           return done(null, user);

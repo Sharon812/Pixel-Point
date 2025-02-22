@@ -436,4 +436,5 @@ module.exports = {
   loadPageNotFound,
   loginVerification,
   logout,
+  generateReferralCode
 };
