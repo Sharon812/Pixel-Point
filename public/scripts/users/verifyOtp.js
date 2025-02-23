@@ -1,59 +1,66 @@
 document.addEventListener("DOMContentLoaded", function () {
   const otpInput = document.querySelector(".otp-input");
-  const form = document.getElementById("otpForm");
   const resendButton = document.getElementById("resendOTP");
   const timerSpan = document.getElementById("timer");
-  let timeLeft = 60;
+
   let timerInterval;
 
-  resendButton.style.display = "none";
-  otpInput.focus();
+  function startTimer(duration = 60) {
+    const endTime = Date.now() + duration * 1000;
+    sessionStorage.setItem("otpTimerEnd", endTime);
 
-  // Handle OTP input - restrict to numbers and 6 digits
-  otpInput.addEventListener("input", function (e) {
-    this.value = this.value.replace(/[^0-9]/g, "").slice(0, 6);
-  });
-
-  // Timer functionality
-  function startTimer() {
-    timeLeft = 60;
-    resendButton.style.display = "none";
-    timerSpan.parentElement.parentElement.style.display = "block";
-
+    updateTimer(duration);
     clearInterval(timerInterval);
-    updateTimer();
+
     timerInterval = setInterval(() => {
+      let timeLeft = Math.floor((endTime - Date.now()) / 1000);
+
       if (timeLeft <= 0) {
         clearInterval(timerInterval);
-        resendButton.style.display = "inline";
-        timerSpan.parentElement.parentElement.style.display = "none";
+        timerExpired();
         return;
       }
-      timeLeft--;
-      updateTimer();
+
+      updateTimer(timeLeft);
     }, 1000);
   }
 
-  function updateTimer() {
+  function updateTimer(timeLeft) {
     const minutes = Math.floor(timeLeft / 60);
     const seconds = timeLeft % 60;
-    timerSpan.textContent = `${String(minutes).padStart(2, "0")}:${String(
-      seconds
-    ).padStart(2, "0")}`;
+    timerSpan.textContent = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+
+    resendButton.style.display = "none";
+    timerSpan.parentElement.parentElement.style.display = "block";
   }
 
-  // Start the initial timer
-  startTimer();
+  function timerExpired() {
+    resendButton.style.display = "inline";
+    timerSpan.parentElement.parentElement.style.display = "none";
+    sessionStorage.removeItem("otpTimerEnd"); // Remove expired timer
+  }
+
+  let storedEndTime = sessionStorage.getItem("otpTimerEnd");
+  let timerEnd = storedEndTime ? parseInt(storedEndTime) : null;
+
+  if (timerEnd && Date.now() < timerEnd) {
+    let remainingTime = Math.floor((timerEnd - Date.now()) / 1000);
+    startTimer(remainingTime);
+  } else {
+    startTimer();
+  }
 
   // Handle resend OTP click
   resendButton.addEventListener("click", function (e) {
     e.preventDefault();
-    // Here you can add your API call to resend OTP
-    startTimer();
+    startTimer(); // Restart timer on resend
     otpInput.value = ""; // Clear the OTP input
     otpInput.focus();
   });
 });
+
+
+
 
 function validateOtp() {
   const otp = document.getElementById("otp").value;
