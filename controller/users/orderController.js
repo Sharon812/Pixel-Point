@@ -394,8 +394,14 @@ const orderPlaced = async (req, res) => {
         .status(400)
         .json({ success: false, message: "unable to find orderdetails" });
     }
+    const addressDocuments = await Address.find({ userId: order.userId });
+    const specificAddress = addressDocuments
+      .flatMap((doc) => doc.address) // Combine all address arrays
+      .find((addr) => addr._id.toString() === order.address.toString());
+
     res.render("orderPlaced", {
       order: order,
+      specificAddress
     });
   } catch (error) {
     console.log(error, "errror at rendering order placed page");
@@ -412,8 +418,15 @@ const orderPending = async (req, res) => {
         .status(400)
         .json({ success: false, message: "unable to find orderdetails" });
     }
+
+    const addressDocuments = await Address.find({ userId: order.userId });
+    const specificAddress = addressDocuments
+      .flatMap((doc) => doc.address) 
+      .find((addr) => addr._id.toString() === order.address.toString());
+
     res.render("orderPending", {
       order: order,
+      specificAddress
     });
   } catch (error) {
     console.log(error, "errror at rendering order placed page");
@@ -563,7 +576,7 @@ const generateInvoice = async (req, res) => {
         _id: orderId,
         orderedItems: { $elemMatch: { _id: itemId } },
       },
-      { "orderedItems.$": 1, createdAt: 1 }
+      { "orderedItems.$": 1, createdAt: 1 ,userId:1, address:1}
     );
     console.log(order, "ordersldlk");
     if (!order) {
@@ -572,10 +585,18 @@ const generateInvoice = async (req, res) => {
         .json({ success: false, message: "Order not found" });
     }
 
-    if(order.status !== "Delivered"){
+
+    if(order.orderedItems[0].status !== "Delivered"){
       return res.status(400).json({success:false,message:"Order is still not delivered"})
     }
 
+    const addressDocuments = await Address.find({ userId: order.userId });
+    console.log(addressDocuments)
+    const specificAddress = addressDocuments
+      .flatMap((doc) => doc.address) 
+      .find((addr) => addr._id.toString() === order.address.toString());
+    
+console.log(specificAddress)
     const doc = new PDFDocument({
       margin: 50,
       size: "A4",
@@ -638,25 +659,29 @@ const generateInvoice = async (req, res) => {
     const leftColumn = 50;
     const rightColumn = 350;
 
-    doc.text("Billed To:", leftColumn, doc.y);
+    const addressStartY = doc.y;
+
+    // Left column: Billing Address
+    doc.text("Billed To:", leftColumn, addressStartY);
+    doc.text(specificAddress.addressType, leftColumn)
+       .text(specificAddress.name, leftColumn)
+       .text(specificAddress.city, leftColumn)
+       .text(specificAddress.landMark, leftColumn)
+       .text(specificAddress.state, leftColumn)
+       .text(specificAddress.pincode, leftColumn)
+       .text(specificAddress.phone, leftColumn);
+    
+    // Ensure right column starts at the same height as "Billed To"
+    doc.y = addressStartY;
+    
     doc.moveDown(0.5);
     doc
-      .fillColor(accentColor)
-      .text(order.customerName || "Valued Customer", leftColumn, doc.y);
-
-    doc
       .fillColor(secondaryColor)
-      .text("Invoice Details:", rightColumn, doc.y - doc.currentLineHeight());
-    doc
+      .text("Invoice Details:", rightColumn, doc.y - doc.currentLineHeight())
       .fillColor(accentColor)
       .text(`OrderID #: ${orderId}`, rightColumn)
-      .text(
-        `Date: ${new Date(order.createdAt).toLocaleDateString()}`,
-        rightColumn
-      );
-
     // Add items table with modern styling
-    doc.moveDown(2);
+    doc.moveDown(8);
 
     // Table headers with background
     const tableTop = doc.y;
