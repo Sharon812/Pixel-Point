@@ -4,6 +4,7 @@ const Brand = require("../../models/brandSchema");
 const User = require("../../models/userSchema");
 const cart = require("../../models/cartSchema");
 const Order = require("../../models/orderSchema");
+const Address = require("../../models/addressSchema")
 const Wallet = require("../../models/walletSchema");
 
 const getOrderDetails = async (req, res) => {
@@ -27,6 +28,7 @@ const getOrderDetails = async (req, res) => {
     const transformedOrders = orders.flatMap((order) =>
       order.orderedItems.map((item) => ({
         orderId: order.orderId,
+        orderItemId:item._id,
         customerName:
           order.userId && order.userId.name ? order.userId.name : "Unknown",
         productId: item.product ? item.product._id : null,
@@ -301,9 +303,49 @@ const denyReturnOrder = async (req, res) => {
   }
 };
 
+const getFullOrderDetails = async (req, res) => {
+  try {
+    const { orderId , itemId} = req.query;
+
+    const orders = await Order.findOne({ orderId: orderId }).populate(
+      "orderedItems.product"
+    );
+    console.log(orders,"orders")
+
+    if (!orders || orders.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Order details not found",
+      });
+    }
+
+
+    const orderDetails = orders.orderedItems.filter(
+      (item) => item._id.toString() === itemId
+    );
+
+    const addressDocuments = await Address.find({ userId: orders.userId });
+
+    const specificAddress = addressDocuments
+      .flatMap((doc) => doc.address) // Combine all address arrays
+      .find((addr) => addr._id.toString() === orders.address.toString());
+
+    res.render("viewOrderDetails", {
+      orderDetails: orderDetails,
+      orderData: orders,
+      address: specificAddress,
+      currentPage:"orders"
+    });
+  } catch (error) {
+    console.log(error, "error at order details");
+    res.redirect("/page-not-found");
+  }
+};
+
 module.exports = {
   getOrderDetails,
   updateStatus,
   confirmReturnOrder,
   denyReturnOrder,
+  getFullOrderDetails
 };

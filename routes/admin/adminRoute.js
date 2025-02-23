@@ -67,6 +67,7 @@ router.get("/orders", orderController.getOrderDetails);
 router.post("/orders/update-status", orderController.updateStatus);
 router.patch("/confirm-returnorder", orderController.confirmReturnOrder);
 router.patch("/deny-returnorder", orderController.denyReturnOrder);
+router.get("/view-order-details",orderController.getFullOrderDetails)
 
 // Sales Report Routes
 router.get("/sales-report/daily", adminController.generateDailyReport);

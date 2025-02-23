@@ -102,6 +102,7 @@
                     <th>Total</th>
                     <th>Status</th>
                     <th>Actions</th>
+                    <th>view Order</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -167,6 +168,7 @@
                       </form>
                       
                     </td>
+                    <td><a href="/admin/view-order-details?orderId=<%=order.orderId%>&itemId=<%=order.orderItemId%>" class="btn btn-primary" >View order</a></td>
                   </tr>
                   <% }) %>
                 </tbody>
