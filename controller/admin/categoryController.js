@@ -135,7 +135,7 @@ const calculateDiscountedPrice = async (categoryId, offerPercentage) => {
     products.forEach((product) => {
       let shouldUpdate = false;
 
-      if (product.offerPercentage < offerPercentage) {
+      if (product.productOffer == false) {
         product.offerPercentage = offerPercentage;
         shouldUpdate = true;
       }
@@ -183,14 +183,25 @@ const removeOffer = async (req, res) => {
       category: categoryId,
     });
     const updatedProducts = products.map(async (product) => {
+      let shouldUpdate = false
+
+      if(product.productOffer == false){
+        shouldUpdate = true
+      }
+
+    
       product.combos.forEach((combo) => {
+        if(shouldUpdate){
         product.offerPercentage = 0;
         combo.salePrice = combo.salePriceBeforeDiscount;
         combo.salePriceBeforeDiscount = null;
+        }
       });
-      return product.save();
+      if(shouldUpdate){
+        return product.save();
+      }
     });
-    await Promise.allSettled(updatedProducts);
+    await Promise.all(updatedProducts);
 
     return res
       .status(200)

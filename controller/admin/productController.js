@@ -337,6 +337,7 @@ const addOffer = async (req, res) => {
     if (product.offerPercentage >= offerPercentage) {
       return res.json({ success: false, message: "Offer Already exists" });
     }
+    product.productOffer = true;
     product.offerPercentage = offerPercentage;
     product.offerEndDate = endDate;
     if (product.combos && Array.isArray(product.combos)) {
@@ -369,6 +370,11 @@ const removeOffer = async (req, res) => {
     if (!product) {
       return res.status(400).json({ error: "Product not found" });
     }
+    if(product.productOffer == false){
+      return res.status(400).json({success:false,message:"Product offer is not applied"})
+    }
+
+    product.productOffer = false;
     product.offerPercentage = 0;
     product.offerEndDate = null;
     if (product.combos && Array.isArray(product.combos)) {

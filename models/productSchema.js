@@ -75,6 +75,10 @@ const productSchema = new Schema(
       type: Number,
       default: 0,
     },
+    productOffer:{
+      type:Boolean,
+      default:false
+    },
     offerEndDate: {
       type: Date,
       default: null,
