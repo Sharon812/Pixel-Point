@@ -69,6 +69,9 @@ const addToCart = async (req, res) => {
         .status(400)
         .json({ success: false, message: "Invalid input data" });
     }
+    if(quantity > 5){
+      return res.status(400).json({success:false,message:"can only add 5 items at a time"})
+    }
 
     const productData = await Product.findById(productId);
     const userData = await User.findById(user);
