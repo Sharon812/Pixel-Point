@@ -94,10 +94,12 @@ const getAllProducts = async (req, res) => {
       isBlocked: false,
       productName: { $regex: new RegExp(".*" + search + ".*", "i") },
     })
+      .sort({createdAt:-1})
       .limit(limit)
       .skip((page - 1) * limit)
       .populate("category")
-      .populate("brand");
+      .populate("brand")
+     
 
     const count = await Product.find({
       productName: { $regex: new RegExp(".*" + search + ".*", "i") },
