@@ -161,89 +161,92 @@
     </div>
   </form>
 </div>
+<% if(products && products.length >0) {%>
 <section class="products container section--lg">
   <div class="products__container_shop grid">
-
+    
     <% for(let i =0; i<products.length;i++){%>
-    <div class="product__item">
-      <div class="product__banner">
-        <a href="/productDetails/<%= products[i]._id %>" class="product__images">
-          <img
+      <div class="product__item">
+        <div class="product__banner">
+          <a href="/productDetails/<%= products[i]._id %>" class="product__images">
+            <img
+              src="<%= products[i].productImage[0] %>"
+              alt="productImage"
+              class="product__img default"
+            />
+            <img
             src="<%= products[i].productImage[0] %>"
             alt="productImage"
-            class="product__img default"
-          />
-          <img
-          src="<%= products[i].productImage[0] %>"
-          alt="productImage"
-          class="product__img hover"
-          />
-        </a>
-        <% if (wishlistProducts.includes(products[i]._id.toString())) { %>
-          <button class="wishlist__btn active"
-          data-id='<%=products[i]._id %>'
-          aria-label="Add to Wishlist">
+            class="product__img hover"
+            />
+          </a>
+          <% if (wishlistProducts.includes(products[i]._id.toString())) { %>
+            <button class="wishlist__btn active"
+            data-id='<%=products[i]._id %>'
+            aria-label="Add to Wishlist">
+              <i class="fi fi-rs-heart"></i>
+            </button>
+          <% }else{ %>
+            <button class="wishlist__btn "
+            data-id='<%=products[i]._id %>'
+            aria-label="Add to Wishlist">
             <i class="fi fi-rs-heart"></i>
           </button>
-        <% }else{ %>
-          <button class="wishlist__btn "
-          data-id='<%=products[i]._id %>'
-          aria-label="Add to Wishlist">
-          <i class="fi fi-rs-heart"></i>
-        </button>
-        <% } %>
-        <div class="product__badge "> <%= products[i].category.name %> </div>
-      </div>
-      <div class="product__content">
-        <span class="product__category"> <%= products[i].brand.brandName %> </span>
-        <a href="/productDetails/<%= products[i]._id %>">
-          <h3 class="product__title"> <%= products[i].productName %>  </h3>
-        </a>
-        <div class="product__rating">
-          <i class="fi fi-rs-star"></i>
-          <i class="fi fi-rs-star"></i>
-          <i class="fi fi-rs-star"></i>
-          <i class="fi fi-rs-star"></i>
-          <i class="fi fi-rs-star"></i>
-          <% if(products[i].combos[0].salePriceBeforeDiscount > 0) {%>
-            <span class="offer-text  " style="background: #e8f0fe; color: #113c7c; font-size: 8px; padding: 5px 10px; border-radius: 12px; margin-left: 80px; font-weight: 500; border: 1px solid #cce0ff;">Offer Applied</span>
-             <%}%>
+          <% } %>
+          <div class="product__badge "> <%= products[i].category.name %> </div>
         </div>
-          <div class="product__price flex">
-            <span class="new__price">&#8377; <%= products[i].combos[0].salePrice %> </span>
-            <span class="old__price">&#8377; <%= products[i].combos[0].regularPrice %> </span>
-            <% 
-              const regularPrice = products[i].combos[0].regularPrice;
-              const salePrice = products[i].combos[0].salePrice;
-              const discount = Math.round(((regularPrice - salePrice) / regularPrice) * 100);
-            %>
-            <span class="offer-badge" style="background: #113c7c; color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-left: 8px;">
-              -<%= discount %>%
-            </span>
-          </div>
-        <% if(products[i].combos[0].quantity > 0 ) {%>
-        <div class="product__buttons">
-          <button
-            onclick="addToCart('<%=products[i]._id%>','<%=products[i].combos[0]._id%>')"
-            class="product__btn add-to-cart-btn"
-          >
-            Add to Cart
-          </button>
-          <a href="/productDetails/<%= products[i]._id %>" class="product__btn buy-now-btn">
-            Buy Now
+        <div class="product__content">
+          <span class="product__category"> <%= products[i].brand.brandName %> </span>
+          <a href="/productDetails/<%= products[i]._id %>">
+            <h3 class="product__title"> <%= products[i].productName %>  </h3>
           </a>
-        </div>
-        <% } else{ %>
-          <div class="product__buttons">
-            <button class="product__btn" disabled>Out of Stock</button>
+          <div class="product__rating">
+            <i class="fi fi-rs-star"></i>
+            <i class="fi fi-rs-star"></i>
+            <i class="fi fi-rs-star"></i>
+            <i class="fi fi-rs-star"></i>
+            <i class="fi fi-rs-star"></i>
+            <% if(products[i].combos[0].salePriceBeforeDiscount > 0) {%>
+              <span class="offer-text  " style="background: #e8f0fe; color: #113c7c; font-size: 8px; padding: 5px 10px; border-radius: 12px; margin-left: 80px; font-weight: 500; border: 1px solid #cce0ff;">Offer Applied</span>
+               <%}%>
           </div>
-        <% } %>
+            <div class="product__price flex">
+              <span class="new__price">&#8377; <%= products[i].combos[0].salePrice %> </span>
+              <span class="old__price">&#8377; <%= products[i].combos[0].regularPrice %> </span>
+              <% 
+                const regularPrice = products[i].combos[0].regularPrice;
+                const salePrice = products[i].combos[0].salePrice;
+                const discount = Math.round(((regularPrice - salePrice) / regularPrice) * 100);
+              %>
+              <span class="offer-badge" style="background: #113c7c; color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-left: 8px;">
+                -<%= discount %>%
+              </span>
+            </div>
+          <% if(products[i].combos[0].quantity > 0 ) {%>
+          <div class="product__buttons">
+            <button
+              onclick="addToCart('<%=products[i]._id%>','<%=products[i].combos[0]._id%>')"
+              class="product__btn add-to-cart-btn"
+            >
+              Add to Cart
+            </button>
+            <a href="/productDetails/<%= products[i]._id %>" class="product__btn buy-now-btn">
+              Buy Now
+            </a>
+          </div>
+          <% } else{ %>
+            <div class="product__buttons">
+              <button class="product__btn" disabled>Out of Stock</button>
+            </div>
+          <% } %>
+        </div>
       </div>
     </div>
-
-<% } %>
+    </section>
+  <% } %>
+    
    
-</div>
+
   <ul class="pagination">
     <% if (currentPage > 1) { %>
       <a href="?<%= new URLSearchParams({ page: currentPage - 1 }) %>">&laquo; Previous</a>
@@ -265,8 +268,22 @@
       </a>
     </li>
   </ul>
-</section>
-
+  <% }else{ %>
+    <div class="no-products-container text-center">
+      <div class="empty-state-wrapper">
+        <div class="empty-state-icon mb-4">
+          <i class="fas fa-box-open fa-4x text-muted"></i>
+        </div>
+        <h3 class="empty-state-title mb-3">No Products Available</h3>
+        <p class="empty-state-description text-muted mb-4">
+          We're currently restocking our inventory. Please check back later!
+        </p>
+        <a href="/shop" class="btn btn-primary">
+          <i class="fas fa-sync-alt me-2"></i>Refresh Page
+        </a>
+      </div>
+    </div>
+  <% } %>  
 
 </div>
 </main>
