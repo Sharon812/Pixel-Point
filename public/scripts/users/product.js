@@ -39,8 +39,13 @@ function selectCombo(button) {
         if (data.combo.quantity > 0) {
           quantityStatus.innerHTML = `${data.combo.quantity} Items in Stock`;
           actionButtons.innerHTML = `
-            <input type="number" class="quantity" value="1" />
+            <input type="number" min="1" max="5" class="quantity" value="1" />
             <button class="btn btn-success" id="addToCart" onclick="addToCart('${productId}','${data.combo.combosId}')"> Add to cart</button>
+                <button class="wishlist__btnpro"
+            data-id='<%=product._id %>'
+              aria-label="Add to Wishlist">
+              <i class="fi fi-rs-heart"></i>
+            </button>
           `;
         } else {
           quantityStatus.innerHTML = `<span class="text-danger">Out of Stock</span>`;
