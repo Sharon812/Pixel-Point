@@ -13,7 +13,7 @@ const userInfo = async (req, res) => {
       page = parseInt(req.query.page);
     }
 
-    const limit = 3;
+    const limit = 8;
     const userData = await User.find({
       isAdmin: false,
       $or: [
@@ -40,6 +40,7 @@ const userInfo = async (req, res) => {
       data: userData,
       totalPages,
       currentPage: page,
+      search: search  ,
       currentPage:"users"
 
     });
