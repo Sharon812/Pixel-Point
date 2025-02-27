@@ -290,7 +290,12 @@ const placeOrder = async (req, res) => {
 const updateInventory = async (orderItems, userId) => {
   await Promise.all(
     orderItems.map(async (item) => {
-      const product = await Product.findById(item.product);
+      const product = await Product.findById(item.product)
+        .populate("brand")
+        .populate("category");
+
+      const brand = product.brand;
+      const category = product.category;
       const comboIndex = product.combos.findIndex(
         (combo) =>
           combo.ram === item.RAM &&
@@ -304,12 +309,18 @@ const updateInventory = async (orderItems, userId) => {
         throw new Error(`Insufficient stock for ${product.productName}`);
       }
 
+      brand.soldCount = brand.soldCount || 0;
+      category.soldCount = category.soldCount || 0;
+      product.combos[comboIndex].soldCount += item.quantity;
+      brand.soldCount += item.quantity;
+      category.soldCount += item.quantity;
+
       product.combos[comboIndex].quantity -= item.quantity;
       if (product.combos[comboIndex].quantity === 0) {
         product.combos[comboIndex].status = "Out of Stock";
       }
 
-      await product.save();
+      await Promise.all([brand.save(), category.save(), product.save()]);
     })
   );
 };
@@ -401,7 +412,7 @@ const orderPlaced = async (req, res) => {
 
     res.render("orderPlaced", {
       order: order,
-      specificAddress
+      specificAddress,
     });
   } catch (error) {
     console.log(error, "errror at rendering order placed page");
@@ -421,12 +432,12 @@ const orderPending = async (req, res) => {
 
     const addressDocuments = await Address.find({ userId: order.userId });
     const specificAddress = addressDocuments
-      .flatMap((doc) => doc.address) 
+      .flatMap((doc) => doc.address)
       .find((addr) => addr._id.toString() === order.address.toString());
 
     res.render("orderPending", {
       order: order,
-      specificAddress
+      specificAddress,
     });
   } catch (error) {
     console.log(error, "errror at rendering order placed page");
@@ -576,7 +587,7 @@ const generateInvoice = async (req, res) => {
         _id: orderId,
         orderedItems: { $elemMatch: { _id: itemId } },
       },
-      { "orderedItems.$": 1, createdAt: 1 ,userId:1, address:1}
+      { "orderedItems.$": 1, createdAt: 1, userId: 1, address: 1 }
     );
     console.log(order, "ordersldlk");
     if (!order) {
@@ -585,18 +596,19 @@ const generateInvoice = async (req, res) => {
         .json({ success: false, message: "Order not found" });
     }
 
-
-    if(order.orderedItems[0].status !== "Delivered"){
-      return res.status(400).json({success:false,message:"Order is still not delivered"})
+    if (order.orderedItems[0].status !== "Delivered") {
+      return res
+        .status(400)
+        .json({ success: false, message: "Order is still not delivered" });
     }
 
     const addressDocuments = await Address.find({ userId: order.userId });
-    console.log(addressDocuments)
+    console.log(addressDocuments);
     const specificAddress = addressDocuments
-      .flatMap((doc) => doc.address) 
+      .flatMap((doc) => doc.address)
       .find((addr) => addr._id.toString() === order.address.toString());
-    
-console.log(specificAddress)
+
+    console.log(specificAddress);
     const doc = new PDFDocument({
       margin: 50,
       size: "A4",
@@ -663,23 +675,24 @@ console.log(specificAddress)
 
     // Left column: Billing Address
     doc.text("Billed To:", leftColumn, addressStartY);
-    doc.text(specificAddress.addressType, leftColumn)
-       .text(specificAddress.name, leftColumn)
-       .text(specificAddress.city, leftColumn)
-       .text(specificAddress.landMark, leftColumn)
-       .text(specificAddress.state, leftColumn)
-       .text(specificAddress.pincode, leftColumn)
-       .text(specificAddress.phone, leftColumn);
-    
+    doc
+      .text(specificAddress.addressType, leftColumn)
+      .text(specificAddress.name, leftColumn)
+      .text(specificAddress.city, leftColumn)
+      .text(specificAddress.landMark, leftColumn)
+      .text(specificAddress.state, leftColumn)
+      .text(specificAddress.pincode, leftColumn)
+      .text(specificAddress.phone, leftColumn);
+
     // Ensure right column starts at the same height as "Billed To"
     doc.y = addressStartY;
-    
+
     doc.moveDown(0.5);
     doc
       .fillColor(secondaryColor)
       .text("Invoice Details:", rightColumn, doc.y - doc.currentLineHeight())
       .fillColor(accentColor)
-      .text(`OrderID #: ${orderId}`, rightColumn)
+      .text(`OrderID #: ${orderId}`, rightColumn);
     // Add items table with modern styling
     doc.moveDown(8);
 
@@ -839,5 +852,5 @@ module.exports = {
   verifyRetryPayment,
   generateInvoice,
   verifyPayment,
-  orderPending
+  orderPending,
 };
