@@ -110,22 +110,21 @@ const getAllProducts = async (req, res) => {
 
     const topSellingProducts = await Product.aggregate([
       {
-        $match: { isBlocked: false }, // Only include non-blocked products
+        $match: { isBlocked: false }, 
       },
       {
         $addFields: {
-          totalSoldCount: { $sum: "$combos.soldCount" }, // Sum all soldCount values in combos
+          totalSoldCount: { $sum: "$combos.soldCount" }, 
         },
       },
       {
-        $sort: { totalSoldCount: -1 }, // Sort by totalSoldCount in descending order
+        $sort: { totalSoldCount: -1 }
       },
       {
-        $limit: 5, // Get top 5 products
+        $limit: 5, 
       },
     ]);
 
-    console.log(topSellingProducts);
 
     if (categories && brands) {
       res.render("products", {
