@@ -134,13 +134,12 @@ const updateStatus = async (req, res) => {
         orderedItem.canceled_at = new Date();
 
         productData.combos[comboIndex].quantity += orderedItem.quantity;
-        productData.combos[comboIndex].soldCount += orderedItem.quantity;
         if (productData.combos[comboIndex].quantity > 0) {
           productData.combos[comboIndex].status = "Available";
         }
         brand.soldCount = brand.soldCount || 0;
         category.soldCount = category.soldCount || 0;
-        productData.combos[comboIndex].soldCount += orderedItem.quantity;
+        productData.combos[comboIndex].soldCount -= orderedItem.quantity;
         brand.soldCount -= orderedItem.quantity;
         category.soldCount -= orderedItem.quantity;
 
@@ -149,7 +148,7 @@ const updateStatus = async (req, res) => {
           order.paymentMethod === "razorpay" ||
           order.paymentMethod === "wallet"
         ) {
-          refundAmount = orderedItem.finalAmount;
+          const refundAmount = orderedItem.finalAmount;
           let wallet = await Wallet.findOne({ user: order.userId });
 
           if (!wallet) {
@@ -217,7 +216,6 @@ const confirmReturnOrder = async (req, res) => {
 
     orderItem = Array.isArray(orderItem) ? orderItem : [orderItem];
 
-    console.log(orderItem, "orderitem");
 
     await Promise.all(
       orderItem.map(async (item) => {
@@ -310,7 +308,6 @@ const getFullOrderDetails = async (req, res) => {
     const orders = await Order.findOne({ orderId: orderId }).populate(
       "orderedItems.product"
     );
-    console.log(orders,"orders")
 
     if (!orders || orders.length === 0) {
       return res.status(404).json({
