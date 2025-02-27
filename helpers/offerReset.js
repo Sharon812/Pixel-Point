@@ -22,14 +22,26 @@ const checkIfCategoryOfferExpired = async (req,res) => {
               console.log(products,"products")
 
               const updatedProducts = products.map(async (product) => {
+              
+              let shouldUpdate = false
+
+              if(product.productOffer == false){
+                shouldUpdate = true
+              }
+
+
                 product.combos.forEach((combo) => {
-                  product.offerPercentage = 0;
-                  combo.salePrice = combo.salePriceBeforeDiscount;
-                  combo.salePriceBeforeDiscount = null;
+                  if(shouldUpdate){
+                    product.offerPercentage = 0;
+                    combo.salePrice = combo.salePriceBeforeDiscount;
+                    combo.salePriceBeforeDiscount = null;
+                  }
                 });
+               if(shouldUpdate){
                 return product.save();
+               }
               });
-              await Promise.allSettled(updatedProducts);
+              await Promise.all(updatedProducts);
           
           }  
           if(categories.length === 0){
