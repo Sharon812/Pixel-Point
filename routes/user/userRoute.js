@@ -162,7 +162,7 @@ userRoute.get(
 );
 
 //for wishlist
-userRoute.get("/wishlist", wishlistController.getWishlist);
+userRoute.get("/wishlist", userAuth.userCheck, wishlistController.getWishlist);
 userRoute.post("/addToWishlist", wishlistController.addToWishlist);
 
 //for wallet
