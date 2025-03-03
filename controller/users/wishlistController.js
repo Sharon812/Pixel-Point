@@ -32,6 +32,10 @@ const addToWishlist = async (req, res) => {
     const { productId } = req.body;
     const user = req.session.user;
 
+    if(!user){
+      return res.status(400).json({success:false,message:"Error, login first"})
+    }
+
     if (!productId) {
       return res
         .status(400)
@@ -46,7 +50,6 @@ const addToWishlist = async (req, res) => {
     }
 
     let wishlistData = await Wishlist.findOne({ userId: user });
-    console.log(wishlistData, "wishlistdata");
     const product = wishlistData.product.find(
       (item) => item.productId.toString() === productId
     );
