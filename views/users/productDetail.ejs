@@ -348,13 +348,13 @@
   <!--=============== DETAILS TAB ===============-->
   <section class="details__tab container">
     <div class="detail__tabs">
-      <span class="detail__tab active-tab" data-target="#info">
+      <!-- <span class="detail__tab " data-target="#info">
         Additional Info
-      </span>
+      </span> -->
       <span class="detail__tab" data-target="#reviews">Reviews(3)</span>
     </div>
     <div class="details__tabs-content">
-      <div class="details__tab-content active-tab" content id="info">
+      <!-- <div class="details__tab-content" content id="info">
         <table class="info__table">
           <tr>
             <th>GPU</th>
@@ -378,8 +378,8 @@
           </tr>
           
         </table>
-      </div>
-      <div class="details__tab-content" content id="reviews">
+      </div> -->
+      <div class="details__tab-content  active-tab" content id="reviews">
         <div class="reviews__container grid">
           <div class="review__single">
             <div>
@@ -464,62 +464,94 @@
       </div>
     </div>
   </section>
-
+<br>
+<br>
+<br>
   <!--=============== PRODUCTS ===============-->
   <section class="products container section--lg">
     <h3 class="section__title"><span>Related</span> Products</h3>
     <div class="products__container grid">
       <% for(let i = 0; i <relatedProducts.length; i++) { %>
-      <div class="product__item">
-        <div class="product__banner">
-          <a href="/productDetails/<%= relatedProducts[i]._id %>" class="product__images">
-            <img
-              src=" <%= relatedProducts[i].productImage[0] %> "
-              alt=""
-              class="product__img default"
-            />
-            <img src="<%= relatedProducts[i].productImage[0] %>" alt="" class="product__img hover" />
-          </a>
-          <div class="product__actions">
-            <a href="#" class="action__btn" aria-label="Quick View">
-              <i class="fi fi-rs-eye"></i>
+        <div class="product__item">
+          <div class="product__banner">
+            <a href="/productDetails/<%= relatedProducts[i]._id %>" class="product__images">
+              <img
+                src="<%= relatedProducts[i].productImage[0] %>"
+                alt="productImage"
+                class="product__img default"
+              />
+              <img
+              src="<%= relatedProducts[i].productImage[0] %>"
+              alt="productImage"
+              class="product__img hover"
+              />
             </a>
-            <a href="#" class="action__btn" aria-label="Add to Wishlist">
+            <% if (wishlistProducts.includes(relatedProducts[i]._id.toString())) { %>
+              <button class="wishlist__btn active"
+              data-id='<%=relatedProducts[i]._id %>'
+              aria-label="Add to Wishlist">
+                <i class="fi fi-rs-heart"></i>
+              </button>
+            <% }else{ %>
+              <button class="wishlist__btn "
+              data-id='<%=relatedProducts[i]._id %>'
+              aria-label="Add to Wishlist">
               <i class="fi fi-rs-heart"></i>
+            </button>
+            <% } %>
+            <div class="product__badge "> <%= relatedProducts[i].category.name %> </div>
+          </div>
+          <div class="product__content">
+            <span class="product__category"> <%= relatedProducts[i].brand.brandName %> </span>
+            <a href="/productDetails/<%= relatedProducts[i]._id %>">
+              <h3 class="product__title"> <%= relatedProducts[i].productName %>  </h3>
             </a>
-            <a href="#" class="action__btn" aria-label="Compare">
-              <i class="fi fi-rs-shuffle"></i>
-            </a>
+            <div class="product__rating">
+              <i class="fi fi-rs-star"></i>
+              <i class="fi fi-rs-star"></i>
+              <i class="fi fi-rs-star"></i>
+              <i class="fi fi-rs-star"></i>
+              <i class="fi fi-rs-star"></i>
+              <% if(relatedProducts[i].combos[0].salePriceBeforeDiscount > 0) {%>
+                <span class="offer-text  " style="background: #e8f0fe; color: #113c7c; font-size: 8px; padding: 5px 10px; border-radius: 12px; margin-left: 80px; font-weight: 500; border: 1px solid #cce0ff;">Offer Applied</span>
+                 <%}%>
+            </div>
+              <div class="product__price flex">
+                <span class="new__price">&#8377; <%= relatedProducts[i].combos[0].salePrice %> </span>
+                <span class="old__price">&#8377; <%= relatedProducts[i].combos[0].regularPrice %> </span>
+                <% 
+                  const regularPrice = relatedProducts[i].combos[0].regularPrice;
+                  const salePrice = relatedProducts[i].combos[0].salePrice;
+                  const discount = Math.round(((regularPrice - salePrice) / regularPrice) * 100);
+                %>
+                <span class="offer-badge" style="background: #113c7c; color: white; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-left: 8px;">
+                  -<%= discount %>%
+                </span>
+              </div>
+            <% if(relatedProducts[i].combos[0].quantity > 0 ) {%>
+            <div class="product__buttons">
+              <button
+                onclick="addToCart('<%=relatedProducts[i]._id%>','<%=relatedProducts[i].combos[0]._id%>')"
+                class="product__btn add-to-cart-btn"
+              >
+                Add to Cart
+              </button>
+              <a href="/productDetails/<%= relatedProducts[i]._id %>" class="product__btn buy-now-btn">
+                Buy Now
+              </a>
+            </div>
+            <% } else{ %>
+              <div class="product__buttons">
+                <button class="product__btn" disabled>Out of Stock</button>
+              </div>
+            <% } %>
           </div>
-          <div class="product__badge light-pink">Hot</div>
         </div>
-
-        <div class="product__content">
-          <span class="product__category"> <%= relatedProducts[i].brand.brandName %> </span>
-          <a href="details.html">
-            <h3 class="product__title"> <%= relatedProducts[i].productName %> </h3>
-          </a>
-          <div class="product__rating">
-            <i class="fi fi-rs-star"></i>
-            <i class="fi fi-rs-star"></i>
-            <i class="fi fi-rs-star"></i>
-            <i class="fi fi-rs-star"></i>
-            <i class="fi fi-rs-star"></i>
-          </div>
-          <div class="product__price flex">
-            <span class="new__price">₹<%= relatedProducts[i].combos[0].salePrice %> </span>
-            <span class="old__price">₹<%= relatedProducts[i].combos[0].regularPrice %> </span>
-          </div>
-          <a href="#" class="action__btn cart__btn" aria-label="Add To Cart">
-            <i class="fi fi-rs-shopping-bag-add"></i>
-          </a>
-        </div>
-      </div>
       <% } %>
       </div>
     </div>
   </section>
-
+<br><br><br>
   <!--=============== NEWSLETTER ===============-->
   <section class="newsletter section">
     <div class="newsletter__container container grid">
