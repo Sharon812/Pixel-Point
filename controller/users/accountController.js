@@ -550,10 +550,10 @@ const cancelOrder = async (req, res) => {
 
     await Promise.all(
       orderItem.map(async (item) => {
-        const product = await Product.findById(item.product);
-
+        const product = await Product.findById(item.product).populate("brand").populate("category")
+  
       const brand = product.brand;
-      const category = product.category;
+      const category = product.category; 
 
         const comboIndex = product.combos.findIndex(
           (combo) =>
