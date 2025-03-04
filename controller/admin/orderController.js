@@ -4,7 +4,7 @@ const Brand = require("../../models/brandSchema");
 const User = require("../../models/userSchema");
 const cart = require("../../models/cartSchema");
 const Order = require("../../models/orderSchema");
-const Address = require("../../models/addressSchema")
+const Address = require("../../models/addressSchema");
 const Wallet = require("../../models/walletSchema");
 
 const getOrderDetails = async (req, res) => {
@@ -28,7 +28,7 @@ const getOrderDetails = async (req, res) => {
     const transformedOrders = orders.flatMap((order) =>
       order.orderedItems.map((item) => ({
         orderId: order.orderId,
-        orderItemId:item._id,
+        orderItemId: item._id,
         customerName:
           order.userId && order.userId.name ? order.userId.name : "Unknown",
         productId: item.product ? item.product._id : null,
@@ -121,13 +121,13 @@ const updateStatus = async (req, res) => {
       case "Delivered":
         orderedItem.delivered_at = new Date();
 
-        brand.soldCount = brand.soldCount || 0;
-        category.soldCount = category.soldCount || 0;
+        // brand.soldCount = brand.soldCount || 0;
+        // category.soldCount = category.soldCount || 0;
         productData.combos[comboIndex].soldCount += orderedItem.quantity;
-        brand.soldCount += orderedItem.quantity;
-        category.soldCount += orderedItem.quantity;
+        // brand.soldCount += orderedItem.quantity;
+        // category.soldCount += orderedItem.quantity;
 
-        await Promise.all([brand.save(), category.save(), productData.save()]);
+        await Promise.all([productData.save()]);
         break;
 
       case "Cancelled":
@@ -216,10 +216,14 @@ const confirmReturnOrder = async (req, res) => {
 
     orderItem = Array.isArray(orderItem) ? orderItem : [orderItem];
 
-
     await Promise.all(
       orderItem.map(async (item) => {
-        const product = await Product.findById(item.product);
+        const product = await Product.findById(item.product)
+          .populate("brand")
+          .populate("category");
+
+        const brand = product.brand;
+        const category = product.category;
         const comboIndex = product.combos.findIndex(
           (combo) =>
             combo.ram === item.RAM &&
@@ -227,12 +231,18 @@ const confirmReturnOrder = async (req, res) => {
             combo.color.includes(item.color)
         );
 
+        brand.soldCount = brand.soldCount || 0;
+        category.soldCount = category.soldCount || 0;
+        product.combos[comboIndex].soldCount -= item.quantity;
+        brand.soldCount -= item.quantity;
+        category.soldCount -= item.quantity;
+
         product.combos[comboIndex].quantity += item.quantity;
         if (product.combos[comboIndex].quantity > 0) {
           product.combos[comboIndex].status = "Available";
         }
 
-        await product.save();
+        await Promise.all([brand.save(), category.save(), product.save()]);
       })
     );
 
@@ -303,7 +313,7 @@ const denyReturnOrder = async (req, res) => {
 
 const getFullOrderDetails = async (req, res) => {
   try {
-    const { orderId , itemId} = req.query;
+    const { orderId, itemId } = req.query;
 
     const orders = await Order.findOne({ orderId: orderId }).populate(
       "orderedItems.product"
@@ -315,7 +325,6 @@ const getFullOrderDetails = async (req, res) => {
         message: "Order details not found",
       });
     }
-
 
     const orderDetails = orders.orderedItems.filter(
       (item) => item._id.toString() === itemId
@@ -331,7 +340,7 @@ const getFullOrderDetails = async (req, res) => {
       orderDetails: orderDetails,
       orderData: orders,
       address: specificAddress,
-      currentPage:"orders"
+      currentPage: "orders",
     });
   } catch (error) {
     console.log(error, "error at order details");
@@ -344,5 +353,5 @@ module.exports = {
   updateStatus,
   confirmReturnOrder,
   denyReturnOrder,
-  getFullOrderDetails
+  getFullOrderDetails,
 };
