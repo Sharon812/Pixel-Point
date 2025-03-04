@@ -551,6 +551,10 @@ const cancelOrder = async (req, res) => {
     await Promise.all(
       orderItem.map(async (item) => {
         const product = await Product.findById(item.product);
+
+      const brand = product.brand;
+      const category = product.category;
+
         const comboIndex = product.combos.findIndex(
           (combo) =>
             combo.ram === item.RAM &&
@@ -558,12 +562,17 @@ const cancelOrder = async (req, res) => {
             combo.color.includes(item.color)
         );
 
+      brand.soldCount = brand.soldCount || 0;
+      category.soldCount = category.soldCount || 0;
+      product.combos[comboIndex].soldCount -= item.quantity;
+      brand.soldCount -= item.quantity;
+      category.soldCount -= item.quantity;
         product.combos[comboIndex].quantity += item.quantity;
         if (product.combos[comboIndex].quantity > 0) {
           product.combos[comboIndex].status = "Available";
         }
 
-        await product.save();
+        await Promise.all([brand.save(), category.save(), product.save()]);
       })
     );
 
@@ -572,7 +581,6 @@ const cancelOrder = async (req, res) => {
       order.paymentMethod === "wallet"
     ) {
       refundAmount = orderItem[0].finalAmount;
-      console.log(refundAmount, "redunddam");
       let wallet = await Wallet.findOne({ user: order.userId });
 
       if (!wallet) {
