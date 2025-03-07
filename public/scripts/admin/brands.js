@@ -17,7 +17,6 @@ document.getElementById("sidebarClose")?.addEventListener("click", () => {
 });
 
 async function blockBrand(brandid) {
-  console.log("hey");
   const route = `/admin/blockBrand?id=${brandid}`;
   try {
     // Send a fetch request to the server
@@ -29,7 +28,6 @@ async function blockBrand(brandid) {
     });
 
     const result = await response.json();
-    console.log(result);
     if (response.ok && result.success) {
       const element = document.getElementById(
         `badge-${result.updatedBrand.brandName}`
