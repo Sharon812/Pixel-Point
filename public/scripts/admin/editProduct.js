@@ -177,7 +177,7 @@ function validateForm() {
 
   // Validate Combos
   const combos = document.querySelectorAll(".combo-row");
-  combos.forEach((combo) => {
+  combos.forEach((combo,index) => {
     const ram = combo.querySelector('input[name="ram"]').value.trim();
     const storage = combo.querySelector('input[name="storage"]').value.trim();
     const quantity = combo.querySelector('input[name="quantity"]').value.trim();
@@ -191,35 +191,38 @@ function validateForm() {
 
     // Check if any field is empty
     if (ram === "") {
-      displayErrorMessage("comboRAM-error", "This is Empty");
+      displayErrorMessage(`comboRAM-error-${index}`, "This is Empty");
       isValid = false;
     }
 
     if (storage === "") {
-      displayErrorMessage("comboStorage-error", "This is Empty");
+      displayErrorMessage(`comboStorage-error-${index}`, "This is Empty");
       isValid = false;
     }
 
-    if (quantity === "") {
-      displayErrorMessage("comboQuantity-error", "This is Empty");
+    if (quantity === "" || quantity < 0) {
+      displayErrorMessage(`comboQuantity-error-${index}`, "Error occured");
       isValid = false;
     }
 
     if (regularPrice === "") {
-      displayErrorMessage("comboReg-error", "This is Empty");
+      displayErrorMessage(`comboReg-error-${index}`, "This is Empty");
       isValid = false;
     }
 
     if (salePrice === "") {
-      displayErrorMessage("comboSale-error", "This is Empty");
+      displayErrorMessage(`comboSale-error-${index}`, "This is Empty");
       isValid = false;
     }
 
     if (color === "") {
-      displayErrorMessage("comboColor-error", "This is Empty");
+      displayErrorMessage(`comboColor-error-${index}`, "This is Empty");
       isValid = false;
     }
 
+    if(parseFloat(regularPrice) < 0 || parseFloat(salePrice) < 0){
+      displayErrorMessage(`comboReg-error-${index}`,"Price should be greater than 0")
+    }
     // Check for duplicate combos
     const comboKey = `${ram}-${storage}-${regularPrice}-${salePrice}-${color}`;
     if (comboSet.has(comboKey)) {
@@ -241,37 +244,38 @@ addComboBtn.addEventListener("click", () => {
   // Create a new combo row
   const newRow = document.createElement("div");
   newRow.classList.add("row", "combo-row");
+  const comboIndex = document.querySelectorAll(".combo-row").length;
 
   newRow.innerHTML = `
         <div class="col-lg-3">
             <label class="form-label">RAM</label>
             <input name="ram" type="text" class="form-control border" required>
-            <div id="comboRAM-error" class="error-message"></div>
+            <div id="comboRAM-error-${comboIndex}" class="error-message"></div>
         </div>
         <div class="col-lg-3">
             <label class="form-label">Storage</label>
             <input name="storage" type="text" class="form-control border" required>
-            <div id="comboStorage-error" class="error-message"></div>
+            <div id="comboStorage-error-${comboIndex}" class="error-message"></div>
         </div>
         <div class="col-lg-3">
             <label class="form-label">Quantity</label>
             <input name="quantity" type="number" class="form-control border" required>
-            <div id="comboQuantity-error" class="error-message"></div>
+            <div id="comboQuantity-error-${comboIndex}" class="error-message"></div>
         </div>
         <div class="col-lg-3">
             <label class="form-label">Regular Price</label>
             <input name="regularPrice" type="number" class="form-control border" required>
-            <div id="comboReg-error" class="error-message"></div>
+            <div id="comboReg-error-${comboIndex}" class="error-message"></div>
         </div>
         <div class="col-lg-3">
             <label class="form-label">Sale Price</label>
             <input name="salePrice" type="number" class="form-control border" required>
-            <div id="comboSale-error" class="error-message"></div>
+            <div id="comboSale-error-${comboIndex}" class="error-message"></div>
         </div>
         <div class="col-lg-3">
             <label class="form-label">Color</label>
             <input name="color" type="text" class="form-control border" placeholder="e.g., Red, Blue, Green" required>
-            <div id="comboColor-error" class="error-message"></div>+
+            <div id="comboColor-error-${comboIndex}" class="error-message"></div>+
         </div>
         <div class="col-lg-3 d-flex align-items-center">
             <button type="button" class="btn btn-danger delete-combo-btn">Delete</button>

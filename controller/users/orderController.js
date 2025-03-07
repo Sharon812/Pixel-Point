@@ -145,12 +145,19 @@ const placeOrder = async (req, res) => {
           message: ` ${item.productId.productName} is out of stock`,
         });
       }
+      if (paymentMethod === "Cash on Delivery" && finalAmount > 100000) {
+        return res.status(400).json({
+          success: false,
+          message: "Cash on Delivery is not available for orders above ₹1,00,000",
+        });
+      }
+
+      const finalAmount = req.body.discountedTotal || totalAmount;
 
       const addressData = await Address.findOne({ userId: userId });
       const addressDetails = addressData.address.filter((address) => {
         address.id.toString() === selectedAddress.toString();
       });
-      console.log(addressDetails, "adders");
 
       orderItems.push({
         product: item.productId._id,
@@ -173,14 +180,6 @@ const placeOrder = async (req, res) => {
       0
     );
 
-    const finalAmount = req.body.discountedTotal || totalAmount;
-
-    if (paymentMethod === "Cash on Delivery" && finalAmount > 100000) {
-      return res.status(400).json({
-        success: false,
-        message: "Cash on Delivery is not available for orders above ₹10,000",
-      });
-    }
 
     const newOrder = new Order({
       userId: userId,
