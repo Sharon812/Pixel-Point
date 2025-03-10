@@ -100,7 +100,6 @@ const placeOrder = async (req, res) => {
     const userId = req.session.user;
     const { selectedAddress, paymentMethod, couponCode, discount } = req.body;
     console.log(req.body, "redfjo");
-
     if (!selectedAddress || !paymentMethod) {
       return res.status(400).json({
         success: false,
@@ -116,6 +115,7 @@ const placeOrder = async (req, res) => {
       .lean();
     const cartItemLength = cart.items.length;
     let discountPerProduct = 0;
+    let finalAmount = 0;
     if (discount !== null) {
       discountPerProduct = Math.round(discount / cartItemLength);
     }
@@ -145,20 +145,12 @@ const placeOrder = async (req, res) => {
           message: ` ${item.productId.productName} is out of stock`,
         });
       }
-      if (paymentMethod === "Cash on Delivery" && finalAmount > 100000) {
-        return res.status(400).json({
-          success: false,
-          message: "Cash on Delivery is not available for orders above ₹1,00,000",
-        });
-      }
-
-      const finalAmount = req.body.discountedTotal || totalAmount;
-
+     
       const addressData = await Address.findOne({ userId: userId });
       const addressDetails = addressData.address.filter((address) => {
         address.id.toString() === selectedAddress.toString();
       });
-
+  
       orderItems.push({
         product: item.productId._id,
         productName: item.productId.productName,
@@ -179,8 +171,16 @@ const placeOrder = async (req, res) => {
       (acc, item) => acc + item.totalPrice,
       0
     );
+ 
 
+    finalAmount = req.body.discountedTotal || totalAmount;
 
+    if (paymentMethod === "Cash on Delivery" && finalAmount > 100000) {
+      return res.status(400).json({
+        success: false,
+        message: "Cash on Delivery is not available for orders above ₹1,00,000",
+      });
+    }
     const newOrder = new Order({
       userId: userId,
       address: selectedAddress,
@@ -196,8 +196,6 @@ const placeOrder = async (req, res) => {
           : "Pending Payment",
     });
     await newOrder.save();
-    console.log(newOrder, "iodjfiodsjfoij");
-    console.log(newOrder, "iodjfiodsjfoij");
     if (paymentMethod === "Cash on Delivery") {
       await updateInventory(orderItems, userId);
       await Cart.findOneAndUpdate({ userId }, { $set: { items: [] } });
@@ -206,7 +204,6 @@ const placeOrder = async (req, res) => {
         couponData.usesCount += 1;
         await couponData.save();
       }
-      console.log(newOrder, "neworder");
 
       return res.json({
         success: true,
