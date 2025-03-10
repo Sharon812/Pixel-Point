@@ -106,6 +106,9 @@ const addToCart = async (req, res) => {
           item.productId.equals(productId) && item.comboId.equals(comboId)
       );
       if (existingItem) {
+        if(existingItem.quantity + quantity > 5){
+          return res.status(400).json({success:false,message:"Can only add 5 products at a time"})
+        }
         if (existingItem.quantity + quantity > combo.quantity) {
           return res
             .status(404)

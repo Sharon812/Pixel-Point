@@ -55,7 +55,6 @@ const addProducts = async (req, res) => {
         }
       });
     }
-    console.log("combios", combos);
 
     // Find category by name
     const categoryId = await Category.findOne({ name: category });
@@ -63,7 +62,6 @@ const addProducts = async (req, res) => {
       return res.status(400).send("Category not found");
     }
     const brandId = await Brand.findOne({ brandName: brand });
-    console.log("here", brandId);
     // Create and save the new product
     const newProduct = new Product({
       productName,
@@ -149,7 +147,6 @@ const getAllProducts = async (req, res) => {
 const deleteProducts = async (req, res) => {
   try {
     const id = req.query.id;
-    console.log("Product ID to delete:", id);
 
     const updatedProduct = await Product.findByIdAndUpdate(
       id,
@@ -262,7 +259,6 @@ const editProduct = async (req, res) => {
     }
 
     await Product.findByIdAndUpdate(id, updateFields, { new: true });
-    console.log("Product edited successfully!");
     res.status(200).json({ message: "Product edited successfully!" });
   } catch (error) {
     console.log("Error found in Edit Product side: ", error.message);
@@ -275,7 +271,6 @@ const deleteSingleImage = async (req, res) => {
   try {
     let { imagePublicId, productId } = req.body;
 
-    console.log("Original imagePublicId:", imagePublicId);
     let imageId;
     // code to get public id from  url
     if (imagePublicId.startsWith("http")) {
@@ -284,13 +279,10 @@ const deleteSingleImage = async (req, res) => {
       imageId = fileName.split(".")[0];
     }
 
-    console.log("Extracted public_id:", imageId);
 
     // deletind the image from Cloudinary
     const result = await cloudinary.uploader.destroy(imageId);
-    console.log("result", result);
     if (result.result !== "ok") {
-      console.error("Error deleting image from Cloudinary:", result);
       return res.status(500).send({
         status: false,
         message: "Failed to delete image from Cloudinary",
@@ -298,14 +290,12 @@ const deleteSingleImage = async (req, res) => {
       });
     }
 
-    console.log(`Image ${imagePublicId} deleted from Cloudinary successfully.`);
 
     const product = await Product.findByIdAndUpdate(
       productId,
       { $pull: { productImage: imagePublicId } },
       { new: true }
     );
-    console.log("product", product);
     if (!product) {
       return res
         .status(404)

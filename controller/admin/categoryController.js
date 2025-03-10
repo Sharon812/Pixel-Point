@@ -128,7 +128,6 @@ const addCateogoryOffer = async (req, res) => {
 const calculateDiscountedPrice = async (categoryId, offerPercentage) => {
   try {
     const products = await Product.find({ category: categoryId });
-    console.log("Products:", products);
 
     const updatedProducts = [];
 
@@ -156,7 +155,6 @@ const calculateDiscountedPrice = async (categoryId, offerPercentage) => {
     });
 
     await Promise.all(updatedProducts);
-    console.log("Discounted prices updated successfully");
   } catch (error) {
     console.error("Error updating discounted prices:", error);
   }

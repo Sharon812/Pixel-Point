@@ -19,7 +19,6 @@ const loadlogin = async (req, res) => {
 //function to verify login details
 const loginverification = async (req, res) => {
   try {
-    console.log(req.body);
     const { email, password } = req.body;
     const admin = await User.findOne({ email, isAdmin: true });
     if (admin) {
@@ -242,13 +241,11 @@ const generateSalesReport = async (
     const deliveredItems = order.orderedItems.filter(
       (item) => item.status === "Delivered"
     );
-    console.log(deliveredItems,"items")
 
     const deliveredAmount = deliveredItems.reduce(
       (itemSum, item) => itemSum + (item.totalPrice || 0),
       0
     );
-    console.log(deliveredAmount,"amt")
 
     return sum + deliveredAmount;
   }, 0);
@@ -267,16 +264,13 @@ const generateSalesReport = async (
 
     return sum + deliveredAmount;
   }, 0);
-console.log(orders,"orderin here below")
 
   const totalOrders = orders.reduce((count, order) => 
     count + order.orderedItems.filter((item) => item.status === "Delivered").length, 0
   );
   
   const finalAmount = totalAmount - discountAmount
-  // const returnedOrders = orders.filter((order) =>
-  //   order.orderedItems.some((item) => item.status === "Returned")
-  // ).length;
+
 
   doc.fontSize(14).text("Summary", { underline: true });
   doc.moveDown(0.5);
@@ -390,13 +384,11 @@ const generateExcelReport = async (
     const deliveredItems = order.orderedItems.filter(
       (item) => item.status === "Delivered"
     );
-    console.log(deliveredItems,"items")
 
     const deliveredAmount = deliveredItems.reduce(
       (itemSum, item) => itemSum + (item.totalPrice || 0),
       0
     );
-    console.log(deliveredAmount,"amt")
 
     return sum + deliveredAmount;
   }, 0);

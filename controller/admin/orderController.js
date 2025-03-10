@@ -63,7 +63,6 @@ const getOrderDetails = async (req, res) => {
         }))
     );
 
-    console.log(returnRequestedProducts, "returend reqested");
     res.render("orderDetailss", {
       orders: transformedOrders,
       currentPage: page,

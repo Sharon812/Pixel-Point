@@ -23,7 +23,7 @@ cron.schedule("0 0 * * *",async () => {
   try {
     const date = new Date()
     console.log(`cron job started ${date} `)
-
+ 
     await resetCoupons()
     await resetCategoryOffer()
     await resetProductOffer()
@@ -32,6 +32,9 @@ cron.schedule("0 0 * * *",async () => {
     console.error("error at cron in index.js",error)
   }
 })
+
+app.use(express.json()); 
+app.use(express.urlencoded({ extended: true })); 
 
 //configuring session
 app.use(

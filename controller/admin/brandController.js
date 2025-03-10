@@ -38,9 +38,7 @@ const getBrandPage = async (req, res) => {
 const addBrand = async (req, res) => {
   try {
     const name = req.body.name;
-    console.log(req.body);
     const findBrand = await brand.findOne({ name });
-    console.log(req.files);
     if (!findBrand) {
       const result = await cloudinary.uploader.upload(req.file.path, {
         quality: "100",
@@ -68,7 +66,6 @@ const blockBrand = async (req, res) => {
       { $set: { isBlocked: true } },
       { new: true }
     );
-    console.log(updatedBrand, "updatedbrand");
     res
       .status(200)
       .json({ success: true, message: "Blocked successfully", updatedBrand });
@@ -81,7 +78,6 @@ const blockBrand = async (req, res) => {
 const unblockBrand = async (req, res) => {
   try {
     const id = req.query.id;
-    console.log(id);
     const updatedBrand = await brand.findOneAndUpdate(
       { _id: id },
       { $set: { isBlocked: false } },

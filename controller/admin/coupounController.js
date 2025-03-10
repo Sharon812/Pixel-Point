@@ -26,7 +26,6 @@ const addCoupon = async (req, res) => {
       startOn,
       maxUsesPerUser,
     } = req.body;
-    console.log(req.body, "reqbodycoupn");
     if (!name || !expireOn || !offerPrice || !minimumPrice) {
       return res.status(400).json({
         success: false,
@@ -88,7 +87,6 @@ const updateCouponStatus = async (req, res) => {
   try {
     const { couponId } = req.params;
     const coupon = await Coupon.findById(couponId);
-    console.log(coupon, "coupondata");
     if (!coupon) {
       return res.status(404).json({ message: "Coupon not found" });
     }
@@ -110,9 +108,7 @@ const updateCouponStatus = async (req, res) => {
 const deleteCoupon = async (req, res) => {
   try {
     const { couponId } = req.params;
-    console.log(couponId, "couponid");
     const coupon = await Coupon.findById(couponId);
-    console.log(coupon, "coupondata");
     if (!coupon) {
       return res.status(404).json({ message: "Coupon not found" });
     }
