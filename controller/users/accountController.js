@@ -546,8 +546,6 @@ const cancelOrder = async (req, res) => {
     }
     orderItem = Array.isArray(orderItem) ? orderItem : [orderItem];
 
-    console.log(orderItem, "orderitem");
-
     await Promise.all(
       orderItem.map(async (item) => {
         const product = await Product.findById(item.product).populate("brand").populate("category")
