@@ -13,6 +13,7 @@ const Wallet = require("../../models/walletSchema");
 const Coupons = require("../../models/couponSchema");
 const PDFDocument = require("pdfkit");
 
+//function to render checkout page
 const processCheckout = async (req, res) => {
   try {
     const userId = req.session.user;
@@ -29,9 +30,7 @@ const processCheckout = async (req, res) => {
 
     for (const item of cart.items) {
       if (item.comboId) {
-        console.log(item.comboId, "itembcoboit");
         const product = await Product.findById(item.productId);
-        console.log(product, "product in checkout");
         if (!product) {
           return res.status(404).json({
             success: false,
@@ -42,7 +41,6 @@ const processCheckout = async (req, res) => {
         const combo = product.combos.find(
           (combo) => combo._id.toString() === item.comboId.toString()
         );
-        console.log(combo, "combohere");
         if (!combo) {
           res.status(400).json({
             success: false,
@@ -99,7 +97,6 @@ const placeOrder = async (req, res) => {
   try {
     const userId = req.session.user;
     const { selectedAddress, paymentMethod, couponCode, discount } = req.body;
-    console.log(req.body, "redfjo");
     if (!selectedAddress || !paymentMethod) {
       return res.status(400).json({
         success: false,
@@ -245,7 +242,6 @@ const placeOrder = async (req, res) => {
         .status(200)
         .json({ success: true, message: "Order Placed", order: newOrder });
     }
-    console.log(finalAmount, "finalamount");
     if (paymentMethod === "razorpay") {
       const razorpayOrder = await razorpay.orders.create({
         amount: Math.round(finalAmount * 100),
@@ -254,7 +250,6 @@ const placeOrder = async (req, res) => {
         payment_capture: 1,
       });
       if (discount > 0) {
-        console.log("under");
         const couponData = await Coupons.findOne({ name: couponCode });
         couponData.usesCount += 1;
         await couponData.save();
@@ -283,6 +278,7 @@ const placeOrder = async (req, res) => {
   }
 };
 
+//function to update inventory after order is placed successfully
 const updateInventory = async (orderItems, userId) => {
   await Promise.all(
     orderItems.map(async (item) => {
@@ -321,6 +317,7 @@ const updateInventory = async (orderItems, userId) => {
   );
 };
 
+//function to verify razorpay payment
 const verifyPayment = async (req, res) => {
   try {
     const {
@@ -331,7 +328,6 @@ const verifyPayment = async (req, res) => {
     } = req.body;
 
     if (!razorpay_payment_id) {
-      console.log("Payment failed, updating order status.");
 
       return res.status(400).json({
         success: false,
@@ -340,7 +336,6 @@ const verifyPayment = async (req, res) => {
       });
     }
     if (!razorpay_payment_id) {
-      console.log("Payment failed, updating order status.");
 
       return res.status(400).json({
         success: false,
@@ -374,8 +369,6 @@ const verifyPayment = async (req, res) => {
         order: order.orderId,
       });
     } else {
-      console.log("here,sdnojdiovcsne");
-      console.log("here,sdnojdiovcsne");
       return res.status(400).json({
         success: false,
         message: "Invalid signature",
@@ -392,6 +385,7 @@ const verifyPayment = async (req, res) => {
   }
 };
 
+//function to render the orderplaced page after order is successfull
 const orderPlaced = async (req, res) => {
   try {
     const { orderId } = req.query;
@@ -416,6 +410,7 @@ const orderPlaced = async (req, res) => {
   }
 };
 
+//function to render the orderpending page after order payment failed after failed payment
 const orderPending = async (req, res) => {
   try {
     const { orderId } = req.query;
@@ -446,7 +441,6 @@ const orderPending = async (req, res) => {
 const retryPayment = async (req, res) => {
   try {
     const { orderId } = req.body;
-    console.log("hey");
     if (!orderId) {
       return res.status(400).json({ success: false, message: "No order ID" });
     }
@@ -466,21 +460,17 @@ const retryPayment = async (req, res) => {
           .status(400)
           .json({ success: false, message: "Product not found" });
       }
-      console.log("here");
       const comboIndex = product.combos.findIndex(
         (combo) =>
           combo.ram === item.RAM &&
           combo.storage === item.Storage &&
           combo.color.includes(item.color)
       );
-      console.log("JIOJIOJ");
       if (comboIndex === -1) {
-        console.log("No combo found");
         return res
           .status(400)
           .json({ success: false, message: "Invalid product combo" });
       }
-      console.log("bygdyugigh");
       if (product.combos[comboIndex].quantity < item.quantity) {
         return res
           .status(400)
@@ -509,6 +499,7 @@ const retryPayment = async (req, res) => {
   }
 };
 
+//function to verify payment of retry payment
 const verifyRetryPayment = async (req, res) => {
   try {
     const {
@@ -519,7 +510,6 @@ const verifyRetryPayment = async (req, res) => {
     } = req.body;
 
     if (!razorpay_payment_id) {
-      console.log("Payment failed, updating order status.");
 
       return res.status(400).json({
         success: false,
@@ -528,7 +518,6 @@ const verifyRetryPayment = async (req, res) => {
       });
     }
     if (!razorpay_payment_id) {
-      console.log("Payment failed, updating order status.");
 
       return res.status(400).json({
         success: false,
@@ -574,6 +563,7 @@ const verifyRetryPayment = async (req, res) => {
   }
 };
 
+//function to generate invoice
 const generateInvoice = async (req, res) => {
   try {
     const orderId = req.params.orderId;
@@ -585,7 +575,6 @@ const generateInvoice = async (req, res) => {
       },
       { "orderedItems.$": 1, createdAt: 1, userId: 1, address: 1 }
     );
-    console.log(order, "ordersldlk");
     if (!order) {
       return res
         .status(404)
@@ -599,12 +588,10 @@ const generateInvoice = async (req, res) => {
     }
 
     const addressDocuments = await Address.find({ userId: order.userId });
-    console.log(addressDocuments);
     const specificAddress = addressDocuments
       .flatMap((doc) => doc.address)
       .find((addr) => addr._id.toString() === order.address.toString());
 
-    console.log(specificAddress);
     const doc = new PDFDocument({
       margin: 50,
       size: "A4",

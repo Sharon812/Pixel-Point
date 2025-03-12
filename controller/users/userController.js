@@ -169,7 +169,6 @@ async function sendVerificationEmail(email, otp) {
 //function on verifying signup details
 const signup = async (req, res) => {
   try {
-    console.log(req.body)
     const { name, phone, password  } = req.body;
     const email = req.body.email.trim().toLowerCase();
     const refferalCode = req.body.refferalCode.trim().toUpperCase();
@@ -179,7 +178,6 @@ const signup = async (req, res) => {
     }
     if(refferalCode){
       const refferalCodeUser = await User.findOne({refferalCode : refferalCode})
-      console.log(refferalCodeUser)
       if(!refferalCodeUser){
         return res.status(400).json({success:false,message:"Invalid Refferal Code"})
       }
@@ -384,7 +382,6 @@ const loginVerification = async (req, res) => {
     if (!findUser) {
       return res.render("userLoginPage", { message: "user not found" });
     }
-    console.log(findUser,"findUser")
     if (findUser.isBlocked) {
       return res.render("userLoginPage", {
         message: "user is blocked by admin",
@@ -395,7 +392,6 @@ const loginVerification = async (req, res) => {
     if (!passwordMatch) {
       return res.render("userLoginPage", { message: "incorrect password" });
     }
-    console.log(findUser._id,"findUserid")
 
     req.session.user = findUser._id;
 

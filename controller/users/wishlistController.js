@@ -4,6 +4,7 @@ const Product = require("../../models/productSchema");
 const Cart = require("../../models/cartSchema");
 const Wishlist = require("../../models/wishlistSchema");
 
+//function to render wishlist page
 const getWishlist = async (req, res) => {
   try {
     const user = req.session.user;
@@ -27,6 +28,7 @@ const getWishlist = async (req, res) => {
   }
 };
 
+//function to add to wishlist 
 const addToWishlist = async (req, res) => {
   try {
     const { productId } = req.body;

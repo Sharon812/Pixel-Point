@@ -1,5 +1,6 @@
 const Coupon = require("../../models/couponSchema");
 
+//function to get available cooupons
 const getAvailableCoupons = async (req, res) => {
   try {
     let currentDate = new Date();
@@ -20,6 +21,7 @@ const getAvailableCoupons = async (req, res) => {
   }
 };
 
+//function to apply coupons
 const applyCoupon = async (req, res) => {
   try {
     const { code, cartTotal } = req.body;

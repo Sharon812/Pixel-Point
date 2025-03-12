@@ -3,6 +3,7 @@ const category = require("../../models/categorySchema");
 const User = require("../../models/userSchema");
 const Wishlist = require("../../models/wishlistSchema");
 
+//function to load product detail page
 const productDetails = async (req, res) => {
   try {
     const user = req.session.user;

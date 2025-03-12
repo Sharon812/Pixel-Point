@@ -11,6 +11,8 @@ const Brand = require("../../models/brandSchema");
 const Category = require("../../models/categorySchema");
 const Wishlist = require("../../models/wishlistSchema");
 
+
+//function to render shop page
 const loadShopPage = async (req, res) => {
   try {
     const brands = await Brand.find({ isBlocked: false });

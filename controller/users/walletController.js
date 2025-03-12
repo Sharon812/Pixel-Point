@@ -17,7 +17,6 @@ const getWallet = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = 6; // Items per page
     const userId = req.session.user ? req.session.user : null;
-    console.log(userId)
     const userData = await User.findById(userId);
     let walletData = await Wallet.findOne({ user: userId });
 
@@ -80,6 +79,7 @@ const addMoneyToWallet = async (req, res) => {
   }
 };
 
+//for verifiying payment 
 const verifyPayment = async (req, res) => {
   try {
     const {
