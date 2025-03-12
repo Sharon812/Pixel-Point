@@ -66,7 +66,6 @@ const forgotPasswordOtp = async (req, res) => {
     }
 
     const otp = generateOtp();
-    console.log("forgot password", otp);
 
     const emailSent = sendVerificationEmail(email, otp);
 
@@ -118,7 +117,7 @@ const verifyForgotPasswordOtp = async (req, res) => {
       },
     });
 
-    const resetLink = `http://localhost:3000/reset-password/${resetToken}`;
+    const resetLink = `https://pixelpoint.sharonp.tech/reset-password/${resetToken}`;
 
     await transporter.sendMail({
       from: process.env.NODEMAILER_EMAIL,
@@ -182,7 +181,6 @@ const resetPassword = async (req, res) => {
 
     // Hash the new password
     const hashedPassword = await bycrypt.hash(password, 10);
-    console.log("hashed ", hashedPassword);
 
     // Update the user's password and clear the reset token
     user.password = hashedPassword;
@@ -200,7 +198,6 @@ const resetPassword = async (req, res) => {
 const getAccountDetails = async (req, res) => {
   try {
     const user = req.session.user;
-    console.log(user, "user");
     if (user) {
       const userData = await User.findById({ _id: user }).lean();
       return res.render("accountDetails", {
@@ -216,7 +213,6 @@ const getAccountDetails = async (req, res) => {
 //for updating account details
 const updateAccountDetails = async (req, res) => {
   try {
-    console.log("reqbodu", req.body);
     const { name, email, phone } = req.body;
     const id = req.params.id;
     const user = await User.findByIdAndUpdate(
@@ -230,7 +226,6 @@ const updateAccountDetails = async (req, res) => {
       },
       { new: true } // Return the updated document
     );
-    console.log("user", user);
     if (!user) {
       return res
         .status(400)
@@ -252,7 +247,6 @@ const getAddress = async (req, res) => {
     const user = req.session.user;
     const userData = await User.findById({ _id: user }).lean();
     const addressData = await Address.find({ userId: user });
-    console.log(addressData);
     return res.render("addressDetails", {
       user: userData,
       addresses: addressData,
@@ -371,7 +365,6 @@ const editAddress = async (req, res) => {
         .status(401)
         .json({ success: false, message: "Unauthorized access" });
     }
-    console.log("iddsjo", id);
     const addressUpdateResult = await Address.updateOne(
       { userId: user, "address._id": id },
       {
@@ -387,7 +380,6 @@ const editAddress = async (req, res) => {
         },
       }
     );
-    console.log(addressUpdateResult);
     if (addressUpdateResult.matchedCount === 0) {
       return res
         .status(404)
@@ -421,7 +413,6 @@ const deleteAddress = async (req, res) => {
       { $pull: { address: { _id: id } } },
       { new: true }
     );
-    console.log(updatedAddress);
     if (!updatedAddress) {
       return res.status(404).json({
         success: false,
@@ -439,6 +430,8 @@ const deleteAddress = async (req, res) => {
       .json({ success: false, message: "Unable to delete address" });
   }
 };
+
+//function to render orders in account details page
 
 const getOrders = async (req, res) => {
   try {
@@ -473,6 +466,7 @@ const getOrders = async (req, res) => {
   }
 };
 
+//function to render order details of specific order
 const getOrderDetails = async (req, res) => {
   try {
     const { orderId } = req.query;
@@ -523,6 +517,7 @@ const getOrderDetails = async (req, res) => {
   }
 };
 
+//function to cancel order
 const cancelOrder = async (req, res) => {
   try {
     const { itemId, orderId, reason } = req.body;
@@ -614,6 +609,7 @@ const cancelOrder = async (req, res) => {
   }
 };
 
+//function to return order in user side
 const returnOrder = async (req, res) => {
   try {
     const { itemId, orderId, reason } = req.body;
@@ -658,6 +654,7 @@ const returnOrder = async (req, res) => {
   }
 };
 
+//function to render refferal page
 const getReferallPage = async (req, res) => {
   try {
     const user = req.session.user
