@@ -10,6 +10,7 @@ const Cart = require("../../models/cartSchema");
 const { response } = require("express");
 const _ = require("lodash");
 
+//to render cart page
 const getCart = async (req, res) => {
   try {
     const user = req.session.user;
@@ -35,7 +36,6 @@ const getCart = async (req, res) => {
         const specificCombo = item.productId.combos.find(
           (combo) => combo._id.toString() === item.comboId.toString()
         );
-        console.log(specificCombo, "specificcombos");
         if (specificCombo && specificCombo.quantity <= 0) {
           stockMessage = true;
         }
@@ -45,7 +45,6 @@ const getCart = async (req, res) => {
 
       return item;
     });
-    console.log(cartData, "cart");
 
     res.render("cart", {
       cart: cartData,
@@ -58,6 +57,7 @@ const getCart = async (req, res) => {
   }
 };
 
+//function to add products to cart
 const addToCart = async (req, res) => {
   try {
     const { productId, comboId } = req.params;
@@ -164,6 +164,7 @@ const addToCart = async (req, res) => {
   }
 };
 
+//function to delete products from cart
 const deleteCartItem = async (req, res) => {
   try {
     const { cartId, itemId } = req.params;
@@ -202,6 +203,7 @@ const deleteCartItem = async (req, res) => {
   }
 };
 
+//function to add quantity of a specific product from cart 
 const addquantity = async (req, res) => {
   try {
     const user = req.session.user;
@@ -277,6 +279,7 @@ const addquantity = async (req, res) => {
   }
 };
 
+//function to decrease quantity of a specific product from cart 
 const decreaseQuantity = async (req, res) => {
   try {
     const user = req.session.user;
@@ -315,9 +318,7 @@ const decreaseQuantity = async (req, res) => {
         .json({ success: false, message: "Combo not found" });
     }
 
-    console.log(product.quantity, "ifi");
     if (product.quantity <= 1) {
-      console.log("belloo");
       return res.status(400).json({
         success: false,
         message: "Quantity cannot be less than one.",
@@ -345,7 +346,6 @@ const decreaseQuantity = async (req, res) => {
       .json({ success: false, message: "Internal server error" });
   }
 };
-// 2 seconds throttle time
 
 module.exports = {
   getCart,
