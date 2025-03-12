@@ -52,6 +52,7 @@ const addToWishlist = async (req, res) => {
     }
 
     let wishlistData = await Wishlist.findOne({ userId: user });
+    if(wishlistData){
     const product = wishlistData.product.find(
       (item) => item.productId.toString() === productId
     );
@@ -64,6 +65,7 @@ const addToWishlist = async (req, res) => {
       return res
         .status(200)
         .json({ success: true, message: "Item removed from wishlist" });
+    }
     }
     if (!wishlistData) {
       wishlistData = new Wishlist({
