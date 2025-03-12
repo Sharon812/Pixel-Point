@@ -179,6 +179,6 @@ userRoute.post(
 );
 
 //for referal offer
-userRoute.get("/referaldetails", accountController.getReferallPage);
+userRoute.get("/referaldetails",userAuth.userCheck, accountController.getReferallPage);
 
 module.exports = userRoute;

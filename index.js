@@ -36,6 +36,16 @@ cron.schedule("0 0 * * *",async () => {
 app.use(express.json()); 
 app.use(express.urlencoded({ extended: true })); 
 
+//error handling middleware
+app.use((req,res,next,err)=>{
+  if(err){
+      console.log(err.message);
+      res.redirect("/page-not-found"); 
+  }else{
+      next();
+  }
+})
+
 //configuring session
 app.use(
   session({
