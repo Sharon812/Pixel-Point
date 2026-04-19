@@ -8,43 +8,42 @@ const passport = require("./config/passport");
 const adminSide = require("./routes/admin/adminRoute");
 const userSide = require("./routes/user/userRoute");
 const adminSession = require("./middlewares/adminSessionAuth");
-const userAuth = require("./middlewares/userAuth");
+const userAuth = require("  ./middlewares/userAuth");
 db();
 
-app.use(express.json({limit:"50mb"}));
-app.use(express.urlencoded({limit:"50mb", extended: true }));
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
-const resetCoupons = require("./helpers/couponReset")
-const resetCategoryOffer = require("./helpers/offerReset")
-const resetProductOffer = require("./helpers/productOfferReset")
-const cron = require("node-cron")
+const resetCoupons = require("./helpers/couponReset");
+const resetCategoryOffer = require("./helpers/offerReset");
+const resetProductOffer = require("./helpers/productOfferReset");
+const cron = require("node-cron");
 
-cron.schedule("0 0 * * *",async () => {
+cron.schedule("0 0 * * *", async () => {
   try {
-    const date = new Date()
-    console.log(`cron job started ${date} `)
- 
-    await resetCoupons()
-    await resetCategoryOffer()
-    await resetProductOffer()
+    const date = new Date();
+    console.log(`cron job started ${date} `);
 
+    await resetCoupons();
+    await resetCategoryOffer();
+    await resetProductOffer();
   } catch (error) {
-    console.error("error at cron in index.js",error)
+    console.error("error at cron in index.js", error);
   }
-})
+});
 
-app.use(express.json()); 
-app.use(express.urlencoded({ extended: true })); 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 //error handling middleware
-app.use((req,res,next,err)=>{
-  if(err){
-      console.log(err.message);
-      res.redirect("/page-not-found"); 
-  }else{
-      next();
+app.use((req, res, next, err) => {
+  if (err) {
+    console.log(err.message);
+    res.redirect("/page-not-found");
+  } else {
+    next();
   }
-})
+});
 
 //configuring session
 app.use(
