@@ -3,7 +3,7 @@ const Category = require("../../models/categorySchema");
 const Products = require("../../models/productSchema");
 const Wishlist = require("../../models/wishlistSchema");
 const brand = require("../../models/brandSchema");
-const Wallet = require("../../models/walletSchema")
+const Wallet = require("../../models/walletSchema");
 const nodemailer = require("nodemailer");
 const env = require("dotenv").config();
 const bycrypt = require("bcrypt");
@@ -35,7 +35,7 @@ const loadHomePage = async (req, res) => {
     if (user) {
       userData = await User.findById(user);
       const wishlist = await Wishlist.findOne({ userId: user }).select(
-        "product.productId"
+        "product.productId",
       );
       wishlistProducts = wishlist
         ? wishlist.product.map((item) => item.productId.toString())
@@ -124,18 +124,18 @@ const generateReferralCode = () => {
   return Math.random().toString(36).slice(-6).toUpperCase();
 };
 
-const getVerifyOtpPage = async (req,res) => {
+const getVerifyOtpPage = async (req, res) => {
   try {
-    if(req.session.userData){
-      res.render("verifyOtp")
-    }else{
-      res.redirect("/signup")
+    if (req.session.userData) {
+      res.render("verifyOtp");
+    } else {
+      res.redirect("/signup");
     }
   } catch (error) {
-    console.log(error,"error at rendering verify otp page")
-    res.redirect("/page-not-found")
+    console.log(error, "error at rendering verify otp page");
+    res.redirect("/page-not-found");
   }
-}
+};
 
 //function to send email
 async function sendVerificationEmail(email, otp) {
@@ -169,17 +169,23 @@ async function sendVerificationEmail(email, otp) {
 //function on verifying signup details
 const signup = async (req, res) => {
   try {
-    const { name, phone, password  } = req.body;
+    const { name, phone, password } = req.body;
     const email = req.body.email.trim().toLowerCase();
     const refferalCode = req.body.refferalCode.trim().toUpperCase();
     const findUser = await User.findOne({ email: email });
     if (findUser) {
-      return res.status(400).json({success:false,message:"User already exists"});
+      return res
+        .status(400)
+        .json({ success: false, message: "User already exists" });
     }
-    if(refferalCode){
-      const refferalCodeUser = await User.findOne({refferalCode : refferalCode})
-      if(!refferalCodeUser){
-        return res.status(400).json({success:false,message:"Invalid Refferal Code"})
+    if (refferalCode) {
+      const refferalCodeUser = await User.findOne({
+        refferalCode: refferalCode,
+      });
+      if (!refferalCodeUser) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Invalid Refferal Code" });
       }
     }
 
@@ -188,12 +194,13 @@ const signup = async (req, res) => {
     const emailSent = sendVerificationEmail(email, otp);
 
     if (!emailSent) {
-      return res.status(400).json({success:false,message:"Unable to send email"});
+      return res
+        .status(400)
+        .json({ success: false, message: "Unable to send email" });
     }
 
-
     req.session.userOtp = otp;
-    req.session.userData = { email, password, name, phone , refferalCode};
+    req.session.userData = { email, password, name, phone, refferalCode };
     console.log("otp send", otp);
 
     return res.json({ success: true, redirectUrl: "/verify-otp" });
@@ -232,19 +239,27 @@ const verifyOtp = async (req, res) => {
         email: user.email,
         password: passwordHash,
         profilePhoto: profilePhoto,
-        refferalCode:generateReferralCode()
+        refferalCode: generateReferralCode(),
       });
-      const newUserData =  await saveUserData.save();
-      if(user.refferalCode){
-        const refferalCodeUser = await User.findOne({refferalCode : user.refferalCode})
-        if(refferalCodeUser){
+      const newUserData = await saveUserData.save();
+      if (user.refferalCode) {
+        const refferalCodeUser = await User.findOne({
+          refferalCode: user.refferalCode,
+        });
+        if (refferalCodeUser) {
           refferalCodeUser.refferalUsers.push({
-            userId:newUserData._id,
-            userName:newUserData.name,
-          })
-          await refferalCodeUser.save()
-          await addRefferalMoneyToNewUserWallet(newUserData._id,refferalCodeUser.name)
-          await addRefferalMoneytoRefferalUser(refferalCodeUser._id,newUserData.name)
+            userId: newUserData._id,
+            userName: newUserData.name,
+          });
+          await refferalCodeUser.save();
+          await addRefferalMoneyToNewUserWallet(
+            newUserData._id,
+            refferalCodeUser.name,
+          );
+          await addRefferalMoneytoRefferalUser(
+            refferalCodeUser._id,
+            newUserData.name,
+          );
         }
       }
       req.session.user = newUserData._id;
@@ -259,79 +274,77 @@ const verifyOtp = async (req, res) => {
 };
 
 //function to add money to user wallet
-async function addRefferalMoneyToNewUserWallet(userId,name){
-    let wallet = await Wallet.create({
-      user:userId,
-      balance:500,
-      transactions:[
-        {
-          type:"credit",
-          amount:500,
-          date:new Date(),
-          description:`Money added for refferal by ${name}`
-        }
-      ]
-    })
-    await wallet.save();
+async function addRefferalMoneyToNewUserWallet(userId, name) {
+  let wallet = await Wallet.create({
+    user: userId,
+    balance: 500,
+    transactions: [
+      {
+        type: "credit",
+        amount: 500,
+        date: new Date(),
+        description: `Money added for refferal by ${name}`,
+      },
+    ],
+  });
+  await wallet.save();
 }
 
-async function addRefferalMoneytoRefferalUser(userId,name){
-    let wallet = await Wallet.findOne({ user: userId });
-       if (!wallet) {
-         wallet = await Wallet.create({
-           user: userId,
-           balance: 500,
-           transactions: [
-             {
-               type: "credit",
-               amount: 500,
-               date: new Date(),
-               description: `Money added to wallet for reffering ${name}`,
-             },
-           ],
-         });
-       } else {
-         wallet.balance += 500;
-         wallet.transactions.push({
-           type: "credit",
-           amount: 500,
-           date: new Date(),
-           description: `Money added to wallet for reffering ${name}`,
-          });
-         await wallet.save();
-       }
-   
+async function addRefferalMoneytoRefferalUser(userId, name) {
+  let wallet = await Wallet.findOne({ user: userId });
+  if (!wallet) {
+    wallet = await Wallet.create({
+      user: userId,
+      balance: 500,
+      transactions: [
+        {
+          type: "credit",
+          amount: 500,
+          date: new Date(),
+          description: `Money added to wallet for reffering ${name}`,
+        },
+      ],
+    });
+  } else {
+    wallet.balance += 500;
+    wallet.transactions.push({
+      type: "credit",
+      amount: 500,
+      date: new Date(),
+      description: `Money added to wallet for reffering ${name}`,
+    });
+    await wallet.save();
+  }
 }
 
 //function to generate placeholdderimage
 function generateProfilePhotoUrl(fullName) {
-  if (!fullName || typeof fullName !== 'string') {
-      throw new Error('Input must be a non-empty string');
+  if (!fullName || typeof fullName !== "string") {
+    throw new Error("Input must be a non-empty string");
   }
 
-  const initials = fullName.trim()[0].toUpperCase();  
+  const initials = fullName.trim()[0].toUpperCase();
 
-  const cloudName = process.env.CLOUDINARY_CLOUD; 
+  const cloudName = process.env.CLOUDINARY_CLOUD;
   const baseUrl = `https://res.cloudinary.com/${cloudName}/image/upload/`;
-  
+
   const transformations = [
-      'w_300,h_300',           // Increased to 300x300 for higher resolution
-      'c_fill',               // Fill crop mode
-      'g_center',             // Center gravity
-      'r_max',                // Circular shape
-      'b_rgb:3267d6',         // Slightly darker blue for better contrast (was 4285f4)
-      `l_text:Arial_100_bold:${encodeURIComponent(initials)}`, // Larger, bolder text (was 80)
-      'fl_layer_apply',       // Apply the text layer
-      'g_center',             // Center the text
-      'co_rgb:ffffff',        // White text color
-      'q_auto:best'           // Automatic quality optimization
+    "w_300,h_300", // Increased to 300x300 for higher resolution
+    "c_fill", // Fill crop mode
+    "g_center", // Center gravity
+    "r_max", // Circular shape
+    "b_rgb:3267d6", // Slightly darker blue for better contrast (was 4285f4)
+    `l_text:Arial_100_bold:${encodeURIComponent(initials)}`, // Larger, bolder text (was 80)
+    "fl_layer_apply", // Apply the text layer
+    "g_center", // Center the text
+    "co_rgb:ffffff", // White text color
+    "q_auto:best", // Automatic quality optimization
   ];
 
-  const cloudinaryUrl = `${baseUrl}${transformations.join(',')}/placeholder-headshot_gtsvi5_profileavatar_booggl`;
+  const cloudinaryUrl = `${baseUrl}${transformations.join(",")}/placeholder-headshot_gtsvi5_profileavatar_booggl`;
 
   return cloudinaryUrl;
 }
-
 
 //function for resending otp
 const resendOtp = async (req, res) => {
@@ -432,5 +445,5 @@ module.exports = {
   loadPageNotFound,
   loginVerification,
   logout,
-  generateReferralCode
+  generateReferralCode,
 };
