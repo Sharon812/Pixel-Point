@@ -8,7 +8,7 @@ const passport = require("./config/passport");
 const adminSide = require("./routes/admin/adminRoute");
 const userSide = require("./routes/user/userRoute");
 const adminSession = require("./middlewares/adminSessionAuth");
-const userAuth = require("  ./middlewares/userAuth");
+const userAuth = require("./middlewares/userAuth");
 db();
 
 app.use(express.json({ limit: "50mb" }));
@@ -54,9 +54,9 @@ app.use(
     cookie: {
       secure: false, //use true while production
       httpOnly: true,
-      maxAge: 72 * 60 * 1000, //72 hours
+      maxAge: 72 * 60 * 1000, //72 min
     },
-  })
+  }),
 );
 
 //google auth middleware
