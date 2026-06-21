@@ -140,6 +140,7 @@ const getVerifyOtpPage = async (req, res) => {
 //function to send email
 async function sendVerificationEmail(email, otp) {
   try {
+    console.log("sendVerificationEmail called");
     const transporter = nodemailer.createTransport({
       service: "gmail",
       port: 587,
@@ -158,7 +159,7 @@ async function sendVerificationEmail(email, otp) {
       text: `Your otp is ${otp}`,
       html: `<b> Your otp is ${otp}</b>`,
     });
-
+    console.log("info", info);
     return info.accepted.length > 0;
   } catch (error) {
     console.log("error sending email", error);
@@ -190,7 +191,7 @@ const signup = async (req, res) => {
     }
 
     const otp = generateOtp();
-
+    console.log("About to send mail");
     const emailSent = sendVerificationEmail(email, otp);
 
     if (!emailSent) {
