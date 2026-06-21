@@ -11,7 +11,7 @@ passport.use(
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRECTKEY,
       // callbackURL: "/auth/google/callback",
-      callbackURL: "https://pixelpoint.sharonp.tech/auth/google/callback",
+      callbackURL: "https://pixelpoint.sharonp.pro/auth/google/callback",
     },
 
     async (accessToken, refreshToken, profile, done) => {
@@ -34,8 +34,8 @@ passport.use(
       } catch (error) {
         return done(error, null);
       }
-    }
-  )
+    },
+  ),
 );
 //to assign user details to session
 passport.serializeUser((user, done) => {
