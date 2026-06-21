@@ -1,5 +1,4 @@
 const User = require("../../models/userSchema");
-const nodemailer = require("nodemailer");
 const mongoose = require("mongoose");
 const env = require("dotenv").config();
 const bycrypt = require("bcrypt");
@@ -224,7 +223,7 @@ const updateAccountDetails = async (req, res) => {
           email: email,
         },
       },
-      { new: true } // Return the updated document
+      { new: true }, // Return the updated document
     );
     if (!user) {
       return res
@@ -337,7 +336,7 @@ const getEditAddress = async (req, res) => {
     const userData = await User.findById({ _id: user });
     const addressData = await Address.findOne(
       { userId: user, "address._id": id },
-      { "address.$": 1 }
+      { "address.$": 1 },
     );
     if (!addressData) {
       return res
@@ -378,7 +377,7 @@ const editAddress = async (req, res) => {
           "address.$.phone": phone,
           "address.$.alternatePhone": altPhone,
         },
-      }
+      },
     );
     if (addressUpdateResult.matchedCount === 0) {
       return res
@@ -411,7 +410,7 @@ const deleteAddress = async (req, res) => {
     const updatedAddress = await Address.findOneAndUpdate(
       { userId },
       { $pull: { address: { _id: id } } },
-      { new: true }
+      { new: true },
     );
     if (!updatedAddress) {
       return res.status(404).json({
@@ -460,7 +459,7 @@ const getOrders = async (req, res) => {
   } catch (error) {
     console.log(
       error,
-      "error at getting order details at accountcontroller.js"
+      "error at getting order details at accountcontroller.js",
     );
     res.redirect("/page-not-found");
   }
@@ -474,7 +473,7 @@ const getOrderDetails = async (req, res) => {
     const user = req.session.user;
     const userData = await User.findById(user);
     const orders = await Order.find({ userId: user }).populate(
-      "orderedItems.product"
+      "orderedItems.product",
     );
 
     if (!orders || orders.length === 0) {
@@ -485,7 +484,7 @@ const getOrderDetails = async (req, res) => {
     }
 
     const orderWithItem = orders.find((order) =>
-      order.orderedItems.some((item) => item._id.toString() === orderId)
+      order.orderedItems.some((item) => item._id.toString() === orderId),
     );
 
     if (!orderWithItem) {
@@ -496,7 +495,7 @@ const getOrderDetails = async (req, res) => {
     }
 
     const orderDetails = orderWithItem.orderedItems.filter(
-      (item) => item._id.toString() === orderId
+      (item) => item._id.toString() === orderId,
     );
 
     const addressDocuments = await Address.find({ userId: user });
@@ -532,7 +531,7 @@ const cancelOrder = async (req, res) => {
     }
     let refundAmount = 0;
     let orderItem = order.orderedItems.find(
-      (item) => item._id.toString() === itemId
+      (item) => item._id.toString() === itemId,
     );
     if (!orderItem) {
       return res
@@ -543,30 +542,32 @@ const cancelOrder = async (req, res) => {
 
     await Promise.all(
       orderItem.map(async (item) => {
-        const product = await Product.findById(item.product).populate("brand").populate("category")
-  
-      const brand = product.brand;
-      const category = product.category; 
+        const product = await Product.findById(item.product)
+          .populate("brand")
+          .populate("category");
+
+        const brand = product.brand;
+        const category = product.category;
 
         const comboIndex = product.combos.findIndex(
           (combo) =>
             combo.ram === item.RAM &&
             combo.storage === item.Storage &&
-            combo.color.includes(item.color)
+            combo.color.includes(item.color),
         );
 
-      brand.soldCount = brand.soldCount || 0;
-      category.soldCount = category.soldCount || 0;
-      product.combos[comboIndex].soldCount -= item.quantity;
-      brand.soldCount -= item.quantity;
-      category.soldCount -= item.quantity;
+        brand.soldCount = brand.soldCount || 0;
+        category.soldCount = category.soldCount || 0;
+        product.combos[comboIndex].soldCount -= item.quantity;
+        brand.soldCount -= item.quantity;
+        category.soldCount -= item.quantity;
         product.combos[comboIndex].quantity += item.quantity;
         if (product.combos[comboIndex].quantity > 0) {
           product.combos[comboIndex].status = "Available";
         }
 
         await Promise.all([brand.save(), category.save(), product.save()]);
-      })
+      }),
     );
 
     if (
@@ -614,25 +615,39 @@ const returnOrder = async (req, res) => {
   try {
     const { itemId, orderId, reason } = req.body;
 
-    
-    const order = await Order.findOne({ _id: orderId, "orderedItems._id": itemId });
+    const order = await Order.findOne({
+      _id: orderId,
+      "orderedItems._id": itemId,
+    });
 
     if (!order) {
       return res
         .status(404)
         .json({ success: false, message: "Order or item not found" });
     }
-    const orderedItem = order.orderedItems.find(item => item._id.toString() === itemId);
+    const orderedItem = order.orderedItems.find(
+      (item) => item._id.toString() === itemId,
+    );
 
     if (!orderedItem) {
-      return res.status(404).json({ success: false, message: "Ordered item not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Ordered item not found" });
     }
 
     const deliveredAt = new Date(orderedItem.delivered_at);
-    const sevenDaysLater = new Date(deliveredAt.getTime() + 7 * 24 * 60 * 60 * 1000);
-    
+    const sevenDaysLater = new Date(
+      deliveredAt.getTime() + 7 * 24 * 60 * 60 * 1000,
+    );
+
     if (new Date() > sevenDaysLater) {
-      return res.status(400).json({ success: false, message: "Return period expired. You can only return within 7 days after delivery." });
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message:
+            "Return period expired. You can only return within 7 days after delivery.",
+        });
     }
 
     const updatedOrder = await Order.findOneAndUpdate(
@@ -643,7 +658,7 @@ const returnOrder = async (req, res) => {
           "orderedItems.$.cancellationReason": reason,
         },
       },
-      { new: true }
+      { new: true },
     );
     return res
       .status(200)
@@ -657,20 +672,19 @@ const returnOrder = async (req, res) => {
 //function to render refferal page
 const getReferallPage = async (req, res) => {
   try {
-    const user = req.session.user
-    const userData = await User.findById(user)
-    .populate("refferalUsers.userId");
+    const user = req.session.user;
+    const userData = await User.findById(user).populate("refferalUsers.userId");
 
-    const refferalAmountPerUser = 500
+    const refferalAmountPerUser = 500;
 
-    const refferedUsersCount = userData.refferalUsers.length
-    const totalRefferalAmount = userData.refferalUsers.length * refferalAmountPerUser
+    const refferedUsersCount = userData.refferalUsers.length;
+    const totalRefferalAmount =
+      userData.refferalUsers.length * refferalAmountPerUser;
 
-
-    res.render("referallPage",{
-      user:userData,
+    res.render("referallPage", {
+      user: userData,
       refferedUsersCount,
-      totalRefferalAmount
+      totalRefferalAmount,
     });
   } catch (error) {
     console.log(error, "error at loading referal page in user side");

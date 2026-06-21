@@ -4,7 +4,7 @@ const Products = require("../../models/productSchema");
 const Wishlist = require("../../models/wishlistSchema");
 const brand = require("../../models/brandSchema");
 const Wallet = require("../../models/walletSchema");
-const nodemailer = require("nodemailer");
+const resend = require("resend");
 const env = require("dotenv").config();
 const bycrypt = require("bcrypt");
 
@@ -137,35 +137,30 @@ const getVerifyOtpPage = async (req, res) => {
   }
 };
 
-//function to send email
+// function to send email
 async function sendVerificationEmail(email, otp) {
   try {
-    console.log("sendVerificationEmail called");
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 465,
-      secure: true,
-      auth: {
-        user: process.env.NODEMAILER_EMAIL,
-        pass: process.env.NODEMAILER_PASSWORD,
-      },
-    });
+    const client = new resend.Resend(process.env.RESEND_API_KEY);
 
-    const info = await transporter.sendMail({
-      from: process.env.NODEMAILER_EMAIL,
+    const { data, error } = await client.emails.send({
+      from: "otp@pixelpoint.sharonp.pro",
       to: email,
       subject: "Verify your account",
-      text: `Your otp is ${otp}`,
-      html: `<b> Your otp is ${otp}</b>`,
+      html: `<b>Your OTP is ${otp}</b>`,
     });
-    console.log("info", info);
-    return info.accepted.length > 0;
+
+    if (error) {
+      console.error("Resend error:", error);
+      return false;
+    }
+
+    console.log("Email sent:", data);
+    return true;
   } catch (error) {
-    console.log("error sending email", error);
+    console.error("Error sending email:", error);
     return false;
   }
 }
-
 //function on verifying signup details
 const signup = async (req, res) => {
   try {

@@ -1,5 +1,4 @@
 const User = require("../../models/userSchema");
-const nodemailer = require("nodemailer");
 const mongoose = require("mongoose");
 const env = require("dotenv").config();
 const bycrypt = require("bcrypt");
@@ -34,7 +33,7 @@ const getCart = async (req, res) => {
     cartData.items = cartData.items.map((item) => {
       if (item.productId && item.productId.combos) {
         const specificCombo = item.productId.combos.find(
-          (combo) => combo._id.toString() === item.comboId.toString()
+          (combo) => combo._id.toString() === item.comboId.toString(),
         );
         if (specificCombo && specificCombo.quantity <= 0) {
           stockMessage = true;
@@ -69,8 +68,10 @@ const addToCart = async (req, res) => {
         .status(400)
         .json({ success: false, message: "Invalid input data" });
     }
-    if(quantity > 5){
-      return res.status(400).json({success:false,message:"can only add 5 items at a time"})
+    if (quantity > 5) {
+      return res
+        .status(400)
+        .json({ success: false, message: "can only add 5 items at a time" });
     }
 
     const productData = await Product.findById(productId);
@@ -103,11 +104,14 @@ const addToCart = async (req, res) => {
     if (cart) {
       const existingItem = cart.items.find(
         (item) =>
-          item.productId.equals(productId) && item.comboId.equals(comboId)
+          item.productId.equals(productId) && item.comboId.equals(comboId),
       );
       if (existingItem) {
-        if(existingItem.quantity + quantity > 5){
-          return res.status(400).json({success:false,message:"Can only add 5 products at a time"})
+        if (existingItem.quantity + quantity > 5) {
+          return res.status(400).json({
+            success: false,
+            message: "Can only add 5 products at a time",
+          });
         }
         if (existingItem.quantity + quantity > combo.quantity) {
           return res
@@ -152,7 +156,7 @@ const addToCart = async (req, res) => {
 
     cart.totalPrice = cart.items.reduce(
       (sum, item) => sum + item.totalPrice,
-      0
+      0,
     );
 
     await cart.save();
@@ -177,7 +181,7 @@ const deleteCartItem = async (req, res) => {
     }
 
     const itemToDelete = cart.items.find(
-      (item) => item._id.toString() === itemId
+      (item) => item._id.toString() === itemId,
     );
     if (!itemToDelete) {
       return res
@@ -203,7 +207,7 @@ const deleteCartItem = async (req, res) => {
   }
 };
 
-//function to add quantity of a specific product from cart 
+//function to add quantity of a specific product from cart
 const addquantity = async (req, res) => {
   try {
     const user = req.session.user;
@@ -238,7 +242,7 @@ const addquantity = async (req, res) => {
     }
     const productWithCombo = await Product.findOne(
       { "combos._id": comboId },
-      { "combos.$": 1 }
+      { "combos.$": 1 },
     );
 
     if (!productWithCombo || !productWithCombo.combos.length) {
@@ -263,7 +267,7 @@ const addquantity = async (req, res) => {
 
     cart.totalPrice = cart.items.reduce(
       (sum, item) => sum + item.totalPrice,
-      0
+      0,
     );
 
     await cart.save();
@@ -279,7 +283,7 @@ const addquantity = async (req, res) => {
   }
 };
 
-//function to decrease quantity of a specific product from cart 
+//function to decrease quantity of a specific product from cart
 const decreaseQuantity = async (req, res) => {
   try {
     const user = req.session.user;
@@ -309,7 +313,7 @@ const decreaseQuantity = async (req, res) => {
 
     const productWithCombo = await Product.findOne(
       { "combos._id": comboId },
-      { "combos.$": 1 }
+      { "combos.$": 1 },
     );
 
     if (!productWithCombo || !productWithCombo.combos.length) {
@@ -330,7 +334,7 @@ const decreaseQuantity = async (req, res) => {
 
       cart.totalPrice = cart.items.reduce(
         (sum, item) => sum + item.totalPrice,
-        0
+        0,
       );
 
       await cart.save();

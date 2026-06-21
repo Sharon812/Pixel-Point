@@ -1,5 +1,4 @@
 const User = require("../../models/userSchema");
-const nodemailer = require("nodemailer");
 const mongoose = require("mongoose");
 const env = require("dotenv").config();
 const bycrypt = require("bcrypt");
@@ -10,7 +9,6 @@ const Cart = require("../../models/cartSchema");
 const Brand = require("../../models/brandSchema");
 const Category = require("../../models/categorySchema");
 const Wishlist = require("../../models/wishlistSchema");
-
 
 //function to render shop page
 const loadShopPage = async (req, res) => {
@@ -116,7 +114,6 @@ const loadShopPage = async (req, res) => {
       { $sort: { createdAt: -1 } },
       { $skip: skip },
       { $limit: limit },
-
     ]);
 
     const [colors, rams, storages] = await Promise.all([
@@ -133,7 +130,7 @@ const loadShopPage = async (req, res) => {
     if (user) {
       const userId = user;
       const wishlist = await Wishlist.findOne({ userId: user }).select(
-        "product.productId"
+        "product.productId",
       );
       wishlistProducts = wishlist
         ? wishlist.product.map((item) => item.productId.toString())
