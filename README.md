@@ -1,219 +1,126 @@
-🖥️ Pixel Point – Laptop E-Commerce Platform
+# PixelPoint 🛒
 
-Pixel Point is a full-stack e-commerce web application for selling new and refurbished laptops, featuring secure authentication, advanced filtering, wallet-based payments, referral rewards, and a powerful admin dashboard.
+A full-stack e-commerce platform for buying new and refurbished laptops, built with Node.js, Express.js, MongoDB, and EJS.
 
-The project is built with server-side rendering and designed to simulate real-world e-commerce workflows including payments, refunds, offers, analytics, and automation.
+PixelPoint simulates real-world e-commerce workflows including authentication, payments, refunds, wallet transactions, referral rewards, inventory management, order management, admin analytics, and scheduled automation.
 
-🚀 Live Demo
+## 🚀 Live Demo
 
-pixelpoint.sharonp.pro
+[PixelPoint](https://pixelpoint.sharonp.pro)
 
-🛠️ Tech Stack
+## ✨ Features
 
-Frontend (SSR):
+### User Features
 
-EJS
+- Email/password authentication
+- Google OAuth authentication
+- OTP-based verification
+- Browse new and refurbished laptops
+- Advanced product search and filtering
+- Filter by price, brand, color, and category
+- Product variants
+- Cart and wishlist management
+- Coupon and offer application
+- Razorpay online payments
+- Wallet for refunds and balance usage
+- Referral system with rewards
+- Order tracking and management
+- Order cancellation and return requests
+- Automatic refund processing through wallet credits
+- Profile and account management
 
-HTML, CSS, JavaScript
+### Admin Features
 
-Backend:
+- Admin dashboard with revenue and sales analytics
+- Order statistics and sales tracking
+- Product management
+- Category and brand management
+- Coupon management
+- Product-based and category-based offers
+- User management with block/unblock functionality
+- Order lifecycle management
+- Downloadable PDF sales reports
 
-Node.js
+## 💳 Payments & Wallet
 
+PixelPoint integrates Razorpay for online payments along with a custom wallet system for handling refunds and account balance.
+
+The wallet supports:
+
+- Refund credits
+- Partial payment usage
+- Automatic wallet credit for eligible returns and cancellations
+
+## ⚙️ Automation
+
+Scheduled Cron Jobs handle time-dependent business operations such as:
+
+- Automatic offer expiration
+- Time-based order status updates
+- Other scheduled business rules
+
+This reduces manual administration and keeps recurring workflows consistent.
+
+## 📊 Analytics & Reporting
+
+The admin dashboard provides insights into the application's business activity, including:
+
+- Revenue analytics
+- Total sales
+- Order statistics
+- Sales reports
+- Product management
+- PDF report generation
+
+MongoDB aggregation pipelines are used for reporting and analytics-related operations.
+
+## 🛠️ Tech Stack
+
+### Frontend
+
+- EJS
+- HTML
+- CSS
+- JavaScript
+- Bootstrap
+
+### Backend
+
+- Node.js
+- Express.js
+
+### Database
+
+- MongoDB
+- Mongoose
+
+### Authentication
+
+- Express Sessions
+- Google OAuth
+- OTP Verification
+
+### Payments
+
+- Razorpay
+- Custom Wallet System
+
+### Cloud & Tools
+
+- Cloudinary
+- AWS
+- Cron Jobs
+- PDF Generation
+
+## 🏗️ Architecture
+
+```text
+User
+  ↓
+EJS / Server-Side Rendering
+  ↓
 Express.js
-
-Database:
-
-MongoDB (Mongoose)
-
-Authentication & Payments:
-
-Google OAuth
-
-Razorpay
-
-Wallet System
-
-Other Tools & Services:
-
-AWS (Hosting)
-
-Cron Jobs
-
-PDF Generation
-
-✨ Key Features
-👤 User Features
-
-User authentication (Email/Password + Google OAuth)
-
-Browse new & refurbished laptops
-
-Advanced search & filtering:
-
-Price
-
-Brand
-
-Color
-
-Category
-
-Wishlist & Cart management
-
-Coupon & offer application
-
-Online payments via Razorpay
-
-Wallet system for refunds & balance usage
-
-Referral system with rewards
-
-Order tracking:
-
-View orders
-
-Cancel orders
-
-Return orders
-
-Refunds credited automatically to wallet
-
-Profile & account management
-
-🧑‍💼 Admin Features
-
-Admin dashboard with:
-
-Revenue analytics
-
-Order statistics
-
-Total sales tracking
-
-Downloadable PDF reports with order details
-
-Product, category & brand management
-
-Coupon & offer management:
-
-Product-based offers
-
-Category-based offers
-
-User management:
-
-Block / unblock users
-
-Order lifecycle management:
-
-Pending
-
-Shipped
-
-Delivered
-
-Automated tasks using Cron Jobs:
-
-Expiring offers automatically
-
-Updating order status based on time
-
-🔄 Automation
-
-Scheduled cron jobs handle:
-
-Offer expiration
-
-Order status transitions
-
-Reduces manual admin intervention and ensures system consistency
-
-💳 Payments & Refunds
-
-Secure online payments using Razorpay
-
-Wallet integration for:
-
-Refunds
-
-Partial payments
-
-Automatic wallet credit on order returns or cancellations
-
-🏗️ Installation & Setup
-Prerequisites
-
-Node.js
-
-MongoDB
-
-Razorpay account
-
-Google OAuth credentials
-
-Steps
-git clone https://github.com/your-username/pixel-point.git
-cd pixel-point
-npm install
-npm start
-
-Server starts using:
-
-npm start
-
-🔐 Environment Variables
-
-Create a .env file and configure:
-
-Server Configuration
-
-PORT= "Your_Port"
-
-Database Configuration
-
-MONGODB_URI= "Your_Connection_String"
-
-Session Secret Key
-
-SESSION_SECRET= "Your_Random_Secret_Key"
-
-Nodemailer Configuration
-
-NODEMAILER_EMAIL= "Your_Nodemailer_Email"
-NODEMAILER_PASSWORD= "Your_Nodemailer_Password"
-
-Google OAuth Configuration
-
-GOOGLE_CLIENT_ID= "Your_Google_Client_ID"
-GOOGLE_CLIENT_SECRET= "Your_Google_Client_Secret"
-
-Cloudinary Configuration
-
-CLOUDINARY_CLOUD_NAME= "Your_Cloudinary_Cloud_Name"
-CLOUDINARY_API_KEY= "Your_Cloudinary_API_Key"
-CLOUDINARY_API_SECRET= "Your_Cloudinary_API_Secret"
-
-Razorpay Payment Gateway
-
-RAZORPAY_ID_KEY= "Your_Razorpay_ID"
-RAZORPAY_SECRET_KEY= "Your_Razorpay_Secret_Key"
-
-📌 Project Highlights
-
-Server-Side Rendering for SEO & performance
-
-Real-world payment & refund workflows
-
-Wallet-based transaction handling
-
-Scalable admin analytics system
-
-Production-style automation using cron jobs
-
-Deployed on AWS
-
-👩‍💻 Author
-
-Sharon P
-Self-taught MERN Developer
+  ↓
+Application Logic
+  ↓
+MongoDB / Mongoose
