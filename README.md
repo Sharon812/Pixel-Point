@@ -109,6 +109,7 @@ MongoDB aggregation pipelines are used for reporting and analytics-related opera
 
 - Cloudinary
 - AWS
+- Render
 - Cron Jobs
 - PDF Generation
 
