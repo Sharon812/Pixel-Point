@@ -34,7 +34,7 @@ PixelPoint simulates real-world e-commerce workflows including authentication, p
 
 #### Product Management
 
-<img width="1200" alt="PixelPoint Product Management" src="https://github.com/user-attachments/assets/61f131c9-9e6f-4f15-afca-306b5014091f" />
+<img width="1200" alt="productmanagement" src="https://github.com/user-attachments/assets/f6c8f8d2-761e-46db-b702-2cfd2093a55e" />
 
 #### Order Management
 
