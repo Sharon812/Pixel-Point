@@ -8,6 +8,39 @@ PixelPoint simulates real-world e-commerce workflows including authentication, p
 
 [PixelPoint](https://pixelpoint.sharonp.pro)
 
+## 📸 Screenshots
+
+### User Side
+
+#### Homepage
+
+![PixelPoint Homepage](<img width="1200" alt="homePage" src="https://github.com/user-attachments/assets/1ce84fe6-0e45-488a-a516-f2d020676fee" />)
+
+#### Product Browsing
+
+![PixelPoint Shop](<img width="1200" alt="shopPage" src="https://github.com/user-attachments/assets/fc359252-b8be-4195-98d4-096ca2817a2f" />)
+
+#### Cart & Checkout
+
+![PixelPoint Cart](<img width="1200" alt="cartPage" src="https://github.com/user-attachments/assets/b47ea218-87db-4afa-95be-23c8c5192945" />)
+
+![PixelPoint Checkout](<img width="1200" alt="checkOut" src="https://github.com/user-attachments/assets/5439f36c-5205-4783-aeab-198a3cde7cb0" />)
+
+### Admin Side
+
+#### Dashboard & Analytics
+
+![PixelPoint Admin Dashboard](<img width="1200" alt="adminDashboard" src="https://github.com/user-attachments/assets/958aa973-89be-4294-a463-fbdbc0762132" />)
+
+#### Product Management
+
+![PixelPoint Product Management](<img width="1200" alt="ordermanagement" src="https://github.com/user-attachments/assets/61f131c9-9e6f-4f15-afca-306b5014091f" />
+)
+
+#### Order Management
+
+![PixelPoint Order Management](<img width="1200"  alt="ordermanagement" src="https://github.com/user-attachments/assets/316641c3-2357-484b-8d5f-f2cbaab80db6" />)
+
 ## ✨ Features
 
 ### User Features
@@ -51,6 +84,8 @@ The wallet supports:
 - Partial payment usage
 - Automatic wallet credit for eligible returns and cancellations
 
+Payment workflows also handle payment failures and recovery scenarios.
+
 ## ⚙️ Automation
 
 Scheduled Cron Jobs handle time-dependent business operations such as:
@@ -74,54 +109,23 @@ The admin dashboard provides insights into the application's business activity, 
 
 MongoDB aggregation pipelines are used for reporting and analytics-related operations.
 
-## 🛠️ Tech Stack
-
-### Frontend
-
-- EJS
-- HTML
-- CSS
-- JavaScript
-- Bootstrap
-
-### Backend
-
-- Node.js
-- Express.js
-
-### Database
-
-- MongoDB
-- Mongoose
-
-### Authentication
-
-- Express Sessions
-- Google OAuth
-- OTP Verification
-
-### Payments
-
-- Razorpay
-- Custom Wallet System
-
-### Cloud & Tools
-
-- Cloudinary
-- AWS
-- Render
-- Cron Jobs
-- PDF Generation
-
 ## 🏗️ Architecture
 
 ```text
-User
-  ↓
-EJS / Server-Side Rendering
-  ↓
-Express.js
-  ↓
-Application Logic
-  ↓
-MongoDB / Mongoose
+                         User
+                           │
+                           ▼
+                  EJS / Server-Side Rendering
+                           │
+                           ▼
+                      Express.js
+                           │
+                           ▼
+                    Application Logic
+                           │
+                           ▼
+                    MongoDB / Mongoose
+                           │
+              ┌────────────┼────────────┐
+              ▼            ▼            ▼
+        Google OAuth    Razorpay    Cloudinary
