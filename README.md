@@ -14,32 +14,31 @@ PixelPoint simulates real-world e-commerce workflows including authentication, p
 
 #### Homepage
 
-![PixelPoint Homepage](<img width="1200" alt="homePage" src="https://github.com/user-attachments/assets/1ce84fe6-0e45-488a-a516-f2d020676fee" />)
+<img width="1200" alt="PixelPoint Homepage" src="https://github.com/user-attachments/assets/1ce84fe6-0e45-488a-a516-f2d020676fee" />
 
 #### Product Browsing
 
-![PixelPoint Shop](<img width="1200" alt="shopPage" src="https://github.com/user-attachments/assets/fc359252-b8be-4195-98d4-096ca2817a2f" />)
+<img width="1200" alt="PixelPoint Shop" src="https://github.com/user-attachments/assets/fc359252-b8be-4195-98d4-096ca2817a2f" />
 
 #### Cart & Checkout
 
-![PixelPoint Cart](<img width="1200" alt="cartPage" src="https://github.com/user-attachments/assets/b47ea218-87db-4afa-95be-23c8c5192945" />)
+<img width="1200" alt="PixelPoint Cart" src="https://github.com/user-attachments/assets/b47ea218-87db-4afa-95be-23c8c5192945" />
 
-![PixelPoint Checkout](<img width="1200" alt="checkOut" src="https://github.com/user-attachments/assets/5439f36c-5205-4783-aeab-198a3cde7cb0" />)
+<img width="1200" alt="PixelPoint Checkout" src="https://github.com/user-attachments/assets/5439f36c-5205-4783-aeab-198a3cde7cb0" />
 
 ### Admin Side
 
 #### Dashboard & Analytics
 
-![PixelPoint Admin Dashboard](<img width="1200" alt="adminDashboard" src="https://github.com/user-attachments/assets/958aa973-89be-4294-a463-fbdbc0762132" />)
+<img width="1200" alt="PixelPoint Admin Dashboard" src="https://github.com/user-attachments/assets/958aa973-89be-4294-a463-fbdbc0762132" />
 
 #### Product Management
 
-![PixelPoint Product Management](<img width="1200" alt="ordermanagement" src="https://github.com/user-attachments/assets/61f131c9-9e6f-4f15-afca-306b5014091f" />
-)
+<img width="1200" alt="PixelPoint Product Management" src="https://github.com/user-attachments/assets/61f131c9-9e6f-4f15-afca-306b5014091f" />
 
 #### Order Management
 
-![PixelPoint Order Management](<img width="1200"  alt="ordermanagement" src="https://github.com/user-attachments/assets/316641c3-2357-484b-8d5f-f2cbaab80db6" />)
+<img width="1200" alt="PixelPoint Order Management" src="https://github.com/user-attachments/assets/316641c3-2357-484b-8d5f-f2cbaab80db6" />
 
 ## ✨ Features
 
